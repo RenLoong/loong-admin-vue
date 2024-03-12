@@ -1,0 +1,48 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:vue/vue3-essential",
+        "plugin:@typescript-eslint/recommended",
+        "./.eslintrc-auto-import.json"
+    ],
+    "overrides": [],
+    "parser": "vue-eslint-parser",
+    "parserOptions": {
+        "parser": "@typescript-eslint/parser",
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "vue",
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "no-var": "error",
+        "import/named": "off",
+        "vue/multi-word-component-names": "off",
+        "import/no-unresolved": [
+            2,
+            {
+                "ignore": [
+                    "element-plus"
+                ]
+            }
+        ]
+    },
+    "include": [
+        "src/common/**/*.d.ts"
+    ],
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "allowModules": [
+                    "element-plus"
+                ]
+            }
+        }
+    }
+}

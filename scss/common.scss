@@ -1,0 +1,664 @@
+:root {
+    --layouts-width: 900px;
+}
+
+html,
+body {
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    font-synthesis: none;
+    color: var(--el-text-color-primary);
+    background-color: var(--el-bg-color);
+}
+
+a {
+    text-decoration: none;
+}
+
+* {
+    outline: none;
+    box-sizing: border-box;
+}
+
+.layouts {
+    width: 100%;
+    max-width: var(--layouts-width);
+    margin: 0 auto;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.layouts-empty {
+    min-height: calc(100vh - var(--header-height) - var(--footer-height));
+}
+
+.z-index {
+    z-index: 1
+}
+
+// 方向
+$direction: top, right, bottom, left;
+// 边距
+$spacing: 3px;
+// 圆角
+$rounded-size: 2px;
+// 边框粗细
+$border-size: 1px;
+// 背景颜色
+$color-list: (
+    "white":var(--el-bg-color),
+    "primary":var(--el-color-primary),
+    "primary-light-3":var(--el-color-primary-light-3),
+    "primary-light-9":var(--el-color-primary-light-9),
+    "success":var(--el-color-success),
+    "success-light-3":var(--el-color-success-light-3),
+    "warning":var(--el-color-warning),
+    "warning-light-3":var(--el-color-warning-light-3),
+    "danger":var(--el-color-danger),
+    "danger-light-3":var(--el-color-danger-light-3),
+    "danger-dark-2":var(--el-color-danger-dark-2),
+    "error":var(--el-color-error),
+    "hover":var(--el-bg-color-page),
+    "mask":var(--el-mask-color),
+    "mask-light":var(--el-mask-color-extra-light),
+    "dark":var(--el-color-black)
+);
+// 文字颜色
+$text-color-list: (
+    "primary":var(--el-color-primary),
+    "primary-light-3":var(--el-color-primary-light-3),
+    "success":var(--el-color-success),
+    "danger":var(--el-color-danger),
+    "warning":var(--el-color-warning),
+    "error":var(--el-color-error),
+    "white":var(--el-bg-color),
+    "grey":var(--el-color-info),
+    "info":var(--el-color-info),
+    "placeholder":var(--el-text-color-placeholder),
+    "disable":var(--el-text-color-disabled),
+    "dark":var(--el-text-color-primary),
+    "price":#f56c6c
+);
+
+
+.pb-safe-area {
+    padding-bottom: constant(safe-area-inset-bottom) !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
+}
+
+.pt-safe-area {
+    padding-top: constant(safe-area-inset-top) !important;
+    padding-top: env(safe-area-inset-top) !important;
+}
+
+.mx-auto,
+.ml-auto {
+    margin-left: auto !important;
+}
+
+.mx-auto,
+.mr-auto {
+    margin-right: auto !important;
+}
+
+@for $i from 0 through 10 {
+
+    .p-#{$i},
+    .pl-#{$i},
+    .px-#{$i} {
+        padding-left: $spacing * $i !important;
+    }
+
+    .p-#{$i},
+    .pr-#{$i},
+    .px-#{$i} {
+        padding-right: $spacing * $i !important;
+    }
+
+    .p-#{$i},
+    .pt-#{$i},
+    .py-#{$i} {
+        padding-top: $spacing * $i !important;
+    }
+
+    .p-#{$i},
+    .pb-#{$i},
+    .py-#{$i} {
+        padding-bottom: $spacing * $i !important;
+    }
+
+    .m-#{$i},
+    .ml-#{$i},
+    .mx-#{$i} {
+        margin-left: $spacing * $i !important;
+    }
+
+    .m-#{$i},
+    .mr-#{$i},
+    .mx-#{$i} {
+        margin-right: $spacing * $i !important;
+    }
+
+    .m-#{$i},
+    .mt-#{$i},
+    .my-#{$i} {
+        margin-top: $spacing * $i !important;
+    }
+
+    .m-#{$i},
+    .mb-#{$i},
+    .my-#{$i} {
+        margin-bottom: $spacing * $i !important;
+    }
+
+    .top-#{$i} {
+        top: $spacing * $i !important;
+    }
+
+    .left-#{$i} {
+        left: $spacing * $i !important;
+    }
+
+    .right-#{$i} {
+        right: $spacing * $i !important;
+    }
+
+    .bottom-#{$i} {
+        bottom: $spacing * $i !important;
+    }
+
+    .top--#{$i} {
+        top: -$spacing * $i !important;
+    }
+
+    .left--#{$i} {
+        left: -$spacing * $i !important;
+    }
+
+    .right--#{$i} {
+        right: -$spacing * $i !important;
+    }
+
+    .bottom--#{$i} {
+        bottom: -$spacing * $i !important;
+    }
+}
+.inline-flex{
+    display: inline-flex;
+}
+.flex {
+    display: flex;
+
+    @each $var in wrap,
+    nowrap {
+        &-#{$var} {
+            flex-wrap: $var;
+        }
+    }
+
+    @each $var in column,
+    row {
+        &-#{$var} {
+            flex-direction: $var;
+        }
+    }
+
+    @each $var in center,
+    baseline,
+    flex-start,
+    flex-end {
+        &-y-#{$var} {
+            align-items: $var;
+        }
+    }
+
+    @each $var in center,
+    flex-start,
+    flex-end,
+    space-around,
+    space-between,
+    space-evenly {
+        &-x-#{$var} {
+            justify-content: $var;
+        }
+    }
+
+    @for $i from 1 through 12 {
+        &-#{$i} {
+            flex: $i;
+            min-width: 0;
+        }
+    }
+
+    &-center {
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+[class*="grid-columns-"] {
+    display: grid;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(24, minmax(0px, 1fr));
+
+    @for $i from 1 through 23 {
+        &-columns-#{$i} {
+            grid-template-columns: repeat($i, minmax(0px, 1fr));
+        }
+    }
+
+    @for $i from 1 through 10 {
+
+        &-gap-#{$i} {
+            gap: $spacing * $i !important;
+        }
+    }
+
+    @for $i from 1 through 24 {
+        &-column-#{$i} {
+            grid-column: span $i / span $i;
+        }
+    }
+}
+
+@each $var in relative,
+absolute,
+fixed,
+sticky {
+    .position-#{$var} {
+        position: $var;
+    }
+}
+
+@for $i from 1 through 20 {
+    .vh-#{$i * 5} {
+        height: $i * 5vh;
+    }
+
+    .vw-#{$i * 5} {
+        width: $i * 5vw;
+    }
+
+    .h-#{$i * 5} {
+        height: $i * 5%;
+    }
+
+    .w-#{$i * 5} {
+        width: $i * 5%;
+    }
+
+    .min-h-#{$i * 5} {
+        min-height: $i * 5%;
+    }
+
+    .min-w-#{$i * 5} {
+        min-width: $i * 5%;
+    }
+
+    .min-vh-#{$i * 5} {
+        min-height: $i * 5vh;
+    }
+
+    .min-vw-#{$i * 5} {
+        min-width: $i * 5vw;
+    }
+}
+
+.bg {
+    background-color: var(--el-bg-color-page);
+}
+
+.bg-filter {
+    backdrop-filter: blur(6px);
+}
+
+@each $key,
+$color in $color-list {
+
+    .bg-#{$key},
+    .hover-bg-#{$key}:hover {
+        background-color: $color;
+    }
+}
+
+@for $i from 1 through 20 {
+
+    .bg-white-#{$i * 5} {
+        background-color: rgba(var(--el-bg-color-rgb-r), var(--el-bg-color-rgb-g), var(--el-bg-color-rgb-b), $i * 0.05);
+    }
+}
+
+
+.text {
+
+    @each $key,
+    $color in $text-color-list {
+        &-#{$key} {
+            color: $color;
+        }
+    }
+
+    @each $var in nowrap,
+    wrap {
+        &-#{$var} {
+            white-space: $var;
+        }
+    }
+
+    @each $var in break-all,
+    break-word,
+    keep-all {
+        &-#{$var} {
+            word-break: $var;
+        }
+    }
+
+    @for $i from 1 through 5 {
+        &-ellipsis-#{$i} {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: $i;
+            -webkit-box-orient: vertical;
+        }
+    }
+
+    @for $i from 1 through 5 {
+        &-spacing-#{$i} {
+            word-spacing: $i * 0.53333vw;
+        }
+    }
+    @for $i from 1 through 5 {
+        &-letter-spacing-#{$i} {
+            letter-spacing: $i * 0.53333vw;
+        }
+    }
+
+    @each $var in left,
+    center,
+    right,
+    initial {
+        &-#{$var} {
+            text-align: $var;
+        }
+    }
+
+    @each $var in capitalize,
+    uppercase,
+    lowercase {
+        &-#{$var} {
+            text-transform: $var;
+        }
+    }
+
+    &-s {
+        text-decoration: line-through;
+    }
+}
+
+@each $i in $direction {
+
+    .border,
+    .border-#{$i} {
+        border-#{$i}-width: $border-size;
+        border-#{$i}-style: solid;
+        border-#{$i}-color: var(--el-border-color);
+    }
+
+    @each $key,
+    $var in $color-list {
+
+        .border-#{$key},
+        .border-#{$i}-#{$key} {
+            border-#{$i}-color: $var;
+        }
+
+        .border-hover-#{$key}:hover,
+        .border-hover-#{$i}-#{$key}:hover {
+            border-#{$i}-color: $var;
+        }
+    }
+}
+
+@for $i from 0 through 6 {
+    @each $n in $direction {
+
+        .border-#{$i},
+        .border-#{$n}-#{$i} {
+            border-#{$n}-width: $i * $border-size;
+        }
+    }
+}
+
+@each $i in dotted,
+dashed,
+double,
+groove,
+ridge,
+inset,
+outset {
+    @each $n in $direction {
+
+        .border-#{$i},
+        .border-#{$n}-#{$i} {
+            border-#{$n}-style: $i;
+        }
+    }
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}
+
+.rounded-round {
+    border-radius: 100px !important;
+}
+
+@for $i from 0 through 6 {
+    @if $i ==1 {
+
+        .rounded,
+        .rounded-left,
+        .rounded-bottom,
+        .rounded-bottom-left {
+            border-bottom-left-radius: $i * $rounded-size;
+        }
+
+        .rounded,
+        .rounded-left,
+        .rounded-top,
+        .rounded-top-left {
+            border-top-left-radius: $i * $rounded-size;
+        }
+
+        .rounded,
+        .rounded-right,
+        .rounded-bottom,
+        .rounded-bottom-right {
+            border-bottom-right-radius: $i * $rounded-size;
+        }
+
+        .rounded,
+        .rounded-right,
+        .rounded-top,
+        .rounded-top-right {
+            border-top-right-radius: $i * $rounded-size;
+        }
+    }
+
+    @else {
+
+        .rounded-#{$i},
+        .rounded-left-#{$i},
+        .rounded-bottom-#{$i},
+        .rounded-bottom-left-#{$i} {
+            border-bottom-left-radius: $i * $rounded-size !important;
+        }
+
+        .rounded-#{$i},
+        .rounded-left-#{$i},
+        .rounded-top-#{$i},
+        .rounded-top-left-#{$i} {
+            border-top-left-radius: $i * $rounded-size !important;
+        }
+
+        .rounded-#{$i},
+        .rounded-right-#{$i},
+        .rounded-bottom-#{$i},
+        .rounded-bottom-right-#{$i} {
+            border-bottom-right-radius: $i * $rounded-size !important;
+        }
+
+        .rounded-#{$i},
+        .rounded-right-#{$i},
+        .rounded-top-#{$i},
+        .rounded-top-right-#{$i} {
+            border-top-right-radius: $i * $rounded-size !important;
+        }
+    }
+}
+
+.font-weight {
+    &-bold {
+        font-weight: bold;
+    }
+
+    &-normal {
+        font-weight: normal;
+    }
+
+    @for $i from 1 through 9 {
+        &-#{$i * 100} {
+            font-weight: $i * 100;
+        }
+    }
+}
+
+@for $i from 1 through 10 {
+    .h#{$i} {
+        font-size: 32px - ($i * 2px);
+    }
+}
+.el-text--small{
+    --el-link-font-size:var(--el-font-size-extra-small) !important;
+}
+.line-height {
+    line-height: 1;
+
+    @for $i from 1 through 10 {
+        &-#{$i} {
+            line-height: 20px + ($i * 2px);
+        }
+    }
+}
+
+@each $i in hidden,
+visible,
+auto,
+scroll {
+
+    .overflow-#{$i},
+    .overflow-x-#{$i} {
+        overflow-x: $i;
+    }
+
+    .overflow-#{$i},
+    .overflow-y-#{$i} {
+        overflow-y: $i;
+    }
+}
+
+img {
+    vertical-align: middle;
+}
+.shadow{
+    box-shadow: var(--el-box-shadow);
+}
+.shadow-light{
+    box-shadow: var(--el-box-shadow-light);
+}
+.shadow-lighter{
+    box-shadow: var(--el-box-shadow-lighter);
+}
+.shadow-dark{
+    box-shadow: var(--el-box-shadow-dark);
+}
+::-webkit-scrollbar {
+    width: 6px
+}
+
+::-webkit-scrollbar:horizontal {
+    height: 6px
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 10px
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #0003;
+    border-radius: 10px;
+    transition: all .2s ease-in-out
+}
+
+::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+    background-color: #0000004d
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.el-switch__core .el-switch__action {
+    color: var(--el-switch-on-color) !important;
+}
+
+.el-switch.is-checked .el-switch__core .el-switch__action {
+    color: var(--el-switch-on-color) !important;
+}
+.el-radio {
+    margin-right: 10px !important;
+}
+
+.el-popper.is-red {
+    /* Set padding to ensure the height is 32px */
+    padding: 6px 12px;
+    background: rgb(240, 77, 77);
+    color: #FFFFFF;
+}
+
+.el-popper.is-red .el-popper__arrow::before {
+    background: rgb(240, 77, 77);
+    right: 0;
+}
+
+
+.el-messagebox-width{
+    .el-message-box__message{
+        flex:1;
+    }
+}
+.userinfo-menu{
+    width: 180px;
+    --el-dropdown-menuItem-hover-fill:var(--el-bg-color-page)!important;
+    --el-dropdown-menuItem-hover-color:var(--el-text-color-primary)!important;
+    --el-text-color-regular:var(--el-text-color-primary)!important;
+    .el-dropdown-menu{
+        padding: 10px;
+    }
+    .el-dropdown-menu__item{
+        .el-icon{
+            color: var(--el-text-color-primary);
+            font-size:16px;
+        }
+        border-radius: 6px;
+    }
+    .el-dropdown-menu__item:hover{
+        background-color: var(--el-bg-color-page);
+    }
+}
