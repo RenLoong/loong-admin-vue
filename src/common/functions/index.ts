@@ -413,6 +413,7 @@ export const hasWhere = (extra:any,form:any) => {
 	return true;
 }
 export const parseRules=(rules:any,rule:any,group?:string)=>{
+    if(!rule)return;
     for (let i = 0; i < rule.length; i++) {
         const element = rule[i];
         const field=group?`${group}.${element.field}`:element.field;

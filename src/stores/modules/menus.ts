@@ -2,7 +2,7 @@ import { useStorage } from '@/common';
 import type { RouteRecordRaw, RouteRecordName } from 'vue-router'
 import router from "@/routers";
 import * as components from '@/layouts'
-type componentsType = 'defaultComponent' | 'formComponent'|'paymentFormComponent' | 'imagesComponent' | 'tableComponent';
+type componentsType = 'defaultComponent' | 'formComponent' | 'paymentFormComponent' | 'imagesComponent' | 'tableComponent';
 export default () => {
     const storage = useStorage()
     const MenusStorageKey = 'MENUS'
@@ -56,8 +56,12 @@ export default () => {
             let component = `${item.component}Component`;
             // 破折号、下划线转驼峰
             component = component.replace(/-(\w)/g, (_all, letter) => letter.toUpperCase());
+            let path=item.path;
+            if(!item.path?.startsWith('/')){
+                path=`/${item.path}`;
+            }
             const find: RouteRecordRaw = {
-                path: `/${item.path}`,
+                path: path,
                 name: item.path,
                 component: components[component as componentsType],
                 meta: {
@@ -68,6 +72,7 @@ export default () => {
                     query: item.query,
                     params: item.params,
                     show: item.show,
+                    api: item.path,
                     ...item.meta
                 },
                 children: []
@@ -120,7 +125,7 @@ export default () => {
                     clearLock: true
                 },
                 redirect: firstRouter.path,
-                children:[]
+                children: []
             })
         }
         // 动态注册路由

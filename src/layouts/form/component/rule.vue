@@ -14,6 +14,7 @@ interface RuleInterface {
     field: string;
     component: string;
     extra?: any;
+    children: any;
 }
 const rule = ref<RuleInterface[]>([]);
 const form = ref<any>({})
@@ -48,6 +49,12 @@ const prop=(field:string)=>{
 
                 <template v-else-if="item.component === 'bundle'">
                     <xl-bundle v-model="form[item.field]" v-bind="item.extra.props" />
+                </template>
+                <template v-else-if="item.component === 'marked-editor'">
+                    <xl-marked-editor v-model="form[item.field]" v-bind="item.extra.props" />
+                </template>
+                <template v-else-if="item.component === 'admin-rule'">
+                    <xl-admin-rule v-model="form[item.field]" v-bind="item.extra.props" :options="item.extra.options" />
                 </template>
 
                 <template v-else-if="['radio', 'checkbox'].includes(item.component)">

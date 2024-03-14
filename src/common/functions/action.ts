@@ -1,10 +1,11 @@
 import { ElMessage, ElMessageBox } from 'element-plus';
 import formComponent from '@/layouts/form/index.vue';
+import tableComponent from '@/layouts/table/index.vue';
 import { $http } from '..';
 import router from '@/routers';
 import { useUserStore, useWebConfigStore } from '@/stores';
 interface UseClickOptionsInterface {
-    model: '' | 'comfirm' | 'dialog' | 'Lock' | 'Search' | 'Notification' | 'FullScreen'|'OutLogin';
+    model: '' | 'comfirm' | 'dialog'|'dialogTable' | 'Lock' | 'Search' | 'Notification' | 'FullScreen'|'OutLogin';
     path: string;
     props?: any;
     data?: any;
@@ -121,7 +122,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                 if (messageProps.title) {  
                     if(!Array.isArray(options.data)){
                         for (let key in options.data) {
-                            messageProps.message = messageProps.message.replace(new RegExp(`{${key}}`, 'g'), options.data[key]);
+                            messageProps.title = messageProps.title.replace(new RegExp(`{${key}}`, 'g'), options.data[key]);
                         }
                     }                      
                 }
@@ -155,11 +156,49 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     }
                 }).then(() => { }).catch(() => { })
                 break;
+            case 'dialogTable':
+                if (messageProps.title) {  
+                    if(!Array.isArray(options.data)){
+                        for (let key in options.data) {
+                            messageProps.title = messageProps.title.replace(new RegExp(`{${key}}`, 'g'), options.data[key]);
+                        }
+                    }                      
+                }
+                ElMessageBox({
+                    title: '温馨提示',
+                    cancelButtonText: '取消',
+                    showClose: true,
+                    draggable: true,
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    closeOnClickModal: false,
+                    customStyle: {
+                        '--el-messagebox-width': '60%'
+                    },
+                    customClass: 'el-messagebox-width',
+                    ...messageProps,
+                    message: () => h(tableComponent, {
+                        params: {
+                            api: options.path,
+                            query: options.query,
+                            params: options.props.params,
+                        }
+                    }),
+                    beforeClose: (_action, _instance, done) => {
+                        done();
+                        reject();
+                    }
+                }).then(() => { }).catch(() => { })
+                break;
             default:
                 options.query.back = currentRoute.fullPath;
                 options.query.routerName = currentRoute.name;
+                let path=options.path;
+                if(!options.path?.startsWith('/')){
+                    path=`/${options.path}`;
+                }
                 router.push({
-                    path: options.path,
+                    path: path,
                     query: options.query
                 });
                 break;

@@ -641,6 +641,7 @@ img {
 .el-messagebox-width{
     .el-message-box__message{
         flex:1;
+        overflow: hidden;
     }
 }
 .userinfo-menu{

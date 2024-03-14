@@ -10,8 +10,8 @@ const getHeaders = () => {
     })
     return headers.value
 }
-const uploadRef=ref();
-const clearFiles=()=>{
+const uploadRef = ref();
+const clearFiles = () => {
     uploadRef.value.clearFiles();
 }
 defineExpose({
@@ -19,14 +19,17 @@ defineExpose({
 })
 </script>
 <template>
-    <el-upload ref="uploadRef" :action="$http.baseURL + '/Uploads/upload'" :headers="getHeaders()" :show-file-list="false">
+    <el-upload ref="uploadRef" :action="$http.getCompleteUrl('Uploads/upload')" :headers="getHeaders()"
+        :show-file-list="false">
         <template #tip>
             <slot name="tip" />
         </template>
         <template #file="{ file }">
             <slot name="file" :file="file" />
         </template>
-        <slot />
+        <permissions name="Uploads/upload">
+            <slot />
+        </permissions>
     </el-upload>
 </template>
 <style></style>

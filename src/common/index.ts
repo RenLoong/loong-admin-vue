@@ -3,7 +3,6 @@ import config from "./config";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { useUserStore, useWebConfigStore } from "@/stores";
 import { getRoundImage } from "@/common/functions";
-import router from "@/routers";
 export const useStorage = () => {
     /**
      * 设置储存数据
@@ -82,17 +81,29 @@ export const useStorage = () => {
     }
     return { set, get, remove, getOnce, getKey };
 }
-let baseURL = globalThis.location.origin+'/'
-if(import.meta.env.DEV){
-    baseURL=baseURL+'local/'
+let baseURL = globalThis.location.origin + '/'
+if (import.meta.env.DEV) {
+    baseURL = baseURL + 'local/'
 }
-baseURL = (baseURL + config.URLModule);
+const getCompleteUrl = (url: string) => {
+    // 判断url是否不以“/”开头
+    if (url.startsWith('/')) {
+        return `${baseURL}${url}`;
+    } else {
+        return `${baseURL}${config.URLModule}/${url}`;
+    }
+}
 axios.interceptors.request.use((_config) => {
     const { hasLogin, getToken } = useUserStore();
     if (hasLogin()) {
         _config.headers.set('Authorization', getToken());
     }
-    _config.baseURL = baseURL;
+    // 判断url是否不以“/”开头
+    if (!_config.url?.startsWith('/')) {
+        _config.baseURL = (baseURL + config.URLModule);
+    } else {
+        _config.baseURL = baseURL;
+    }
     return _config;
 }, (error) => {
     return Promise.reject(error);
@@ -100,20 +111,26 @@ axios.interceptors.request.use((_config) => {
 axios.interceptors.response.use((response: AxiosResponse) => {
     if (response?.data !== undefined) {
         const userStore = useUserStore()
-        if (response?.data?.code === $http.ResponseCode.NEED_LOGIN) {
-            userStore.clearUserInfo();
-        }
-        if (response?.data?.code === $http.ResponseCode.SUCCESS_EVENT_PUSH) {
-            response.data.code = $http.ResponseCode.SUCCESS;
-            if(response.data.data.event){
-                if(Array.isArray(response.data.data.event)){
-                    response.data.data.event.forEach((e:string)=>{
-                        $eventBus.emit(e);
-                    })
-                }else{
-                    $eventBus.emit(response.data.data.event);
+        switch(response?.data?.code)
+        {
+            case $http.ResponseCode.NEED_LOGIN:
+                userStore.clearUserInfo();
+                break;
+            case $http.ResponseCode.SUCCESS_EVENT_PUSH:
+                response.data.code = $http.ResponseCode.SUCCESS;
+                if (response.data.data.event) {
+                    if (Array.isArray(response.data.data.event)) {
+                        response.data.data.event.forEach((e: string) => {
+                            $eventBus.emit(e);
+                        })
+                    } else {
+                        $eventBus.emit(response.data.data.event);
+                    }
                 }
-            }
+                break;
+            case $http.ResponseCode.NO_PERMISSION:
+                showErrorBox(response.data);
+                break;
         }
         return response.data;
     }
@@ -133,26 +150,27 @@ axios.interceptors.response.use((response: AxiosResponse) => {
 export const $http = {
     ResponseCode: {
         SUCCESS: 200,
-        SUCCESS_EVENT_PUSH:201,
+        SUCCESS_EVENT_PUSH: 201,
         NEED_LOGIN: 12000,
         PAY_SUCCESS: 9000,
         REDIRECT: 302,
         REDIRECT_CONFIRM: 303,
+        NO_PERMISSION: 403
     },
-    baseURL,
+    getCompleteUrl,
     get: axios.get,
     post: axios.post,
     axios
 }
-const eventOn = (event: string,callback:Function) => {
+const eventOn = (event: string, callback: Function) => {
     globalThis.addEventListener(event, (e: any) => {
         callback(e.detail)
     })
 }
-const eventRemove = (event: string,callback:Function) => {
-        globalThis.removeEventListener(event, (e: any) => {
-            callback(e.detail)
-        })
+const eventRemove = (event: string, callback: Function) => {
+    globalThis.removeEventListener(event, (e: any) => {
+        callback(e.detail)
+    })
 }
 const eventEmit = (event: string, data?: any) => {
     globalThis.dispatchEvent(new CustomEvent(event, { detail: data }))
@@ -180,7 +198,7 @@ export const showErrorBox = (res: any) => {
                 const value = res.data[key];
                 content.push(h('div', { class: 'flex py-2' }, [
                     h('div', { class: 'text-grey text-right mr-2', style: { width: '100px' } }, key),
-                    h('div', {}, value)
+                    h('div', {class:'text-break-all'}, value)
                 ]))
             }
         }
@@ -194,7 +212,7 @@ export const useLoginImageBuild = () => {
     const { WEBCONFIG } = useWebConfigStore();
     const Image = ref<string>('');
     const BgImage = ref<string>('./static/bg.jpg');
-    let BgImageEr: NodeJS.Timeout|undefined;
+    let BgImageEr: NodeJS.Timeout | undefined;
     const getLoginBg = () => {
         getRoundImage().then((res: any) => {
             BgImage.value = res.blob;

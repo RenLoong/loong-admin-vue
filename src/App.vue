@@ -8,10 +8,10 @@ const {initState} = useStateStore();
 const {WEBCONFIG} = useRefs(webConfigStore);
 onBeforeMount(() => {
 	$eventBus.on("UPDATE::WEBCONFIG",()=>{
-		getWebConfig();
+		getWebConfig().catch(()=>{});
 	})
 	$eventBus.on("UPDATE::USERINFO",()=>{
-		getUserInfo();
+		getUserInfo()?.catch(()=>{});
 	})
 	userListener();
 	initState();

@@ -389,7 +389,7 @@ const hidePopover=()=>{
                     </el-form-item>
                     <el-form-item label="图片链接" prop="url">
                         <el-input v-model="imageForm.url" placeholder="图片链接" />
-                        <uploads :action="$http.baseURL + 'Upload/upload'" :data="{ dir_name: 'marked' }"
+                        <uploads :data="{ dir_name: 'marked' }"
                             :show-file-list="false" accept="image/*" :on-success="handleUploadSuccess"
                             :before-upload="beforeUpload">
                             <el-button type="primary" size="small">上传</el-button>
@@ -446,7 +446,7 @@ const hidePopover=()=>{
         <div class="marked-editor-body">
             <el-input type="textarea" ref="textareaRef" v-model="content" :autosize="{ minRows: 10, maxRows: 20 }"
                 :placeholder="placeholder" @keydown.enter="textareaEnter" />
-            <marked-text class="marked-editor-preview" :content="content" v-if="isFullScreen" />
+            <xl-marked-text class="marked-editor-preview" :content="content" v-if="isFullScreen" />
         </div>
     </div>
 </template>

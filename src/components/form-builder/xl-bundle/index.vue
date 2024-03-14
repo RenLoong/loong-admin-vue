@@ -2,24 +2,24 @@
 import { $http } from '@/common';
 import { ElMessage, ElMessageBox, ElInput, ElSelect, ElInputNumber } from 'element-plus'
 import { useWebConfigStore } from "@/stores";
-const {WEBCONFIG} = useWebConfigStore();
+const { WEBCONFIG } = useWebConfigStore();
 const props = withDefaults(defineProps<{
     modelValue: string | string[],
     accept?: string,
     multiple?: number,
-    view?:string
+    view?: string
 }>(), {
     modelValue: '',
     accept: '',
     multiple: 1,
-    view:'image'
+    view: 'image'
 });
 const emit = defineEmits(['update:modelValue'])
-const uploadRef=ref();
+const uploadRef = ref();
 const dialogVisible = ref(false);
 const open = () => {
     dialogVisible.value = true;
-    nextTick(()=>{
+    nextTick(() => {
         getUploadClassify();
         getList();
     })
@@ -27,7 +27,7 @@ const open = () => {
 const bundleBodyRef = ref();
 const values = ref<string[]>([]);
 watchEffect(() => {
-    if (!props.modelValue){
+    if (!props.modelValue) {
         return values.value = []
     }
     if (typeof props.modelValue === 'string') {
@@ -42,7 +42,7 @@ const fileList = ref<any[]>([]);
 const loadingState = ref(false);
 const search = ref({
     dir_name: 'all',
-    accept:props.accept,
+    accept: props.accept,
     page: 1,
     limit: 24,
     total: 0,
@@ -50,7 +50,7 @@ const search = ref({
 const getList = () => {
     if (loadingState.value) return;
     loadingState.value = true;
-    selectedEdit.value=[];
+    selectedEdit.value = [];
     $http.get('Uploads/getList', {
         params: search.value
     }).then((res: ResponseInterface) => {
@@ -101,7 +101,7 @@ const handleRemove = (index: number) => {
         emit('update:modelValue', selected.value)
     }
 }
-const deleteUploads=()=>{
+const deleteUploads = () => {
     ElMessageBox.confirm(`是否删除选中的附件？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -118,8 +118,8 @@ const deleteUploads=()=>{
     }).catch(() => {
     });
 }
-const updateUploads=()=>{
-    const dir_name=ref();
+const updateUploads = () => {
+    const dir_name = ref();
     ElMessageBox({
         title: '将附件移动到',
         cancelButtonText: '取消',
@@ -139,9 +139,9 @@ const updateUploads=()=>{
                     onChange: (val: string) => {
                         dir_name.value = val
                     },
-                },{
-                    default:()=>classify.value.map((item: any) => {
-                        if(!item.id){
+                }, {
+                    default: () => classify.value.map((item: any) => {
+                        if (!item.id) {
                             return;
                         }
                         return h(ElSelect.Option, { label: item.title, value: item.dir_name })
@@ -154,7 +154,7 @@ const updateUploads=()=>{
                 instance.confirmButtonLoading = true
                 $http.post('Uploads/updateUploads', {
                     ids: selectedEdit.value.map((item: any) => item.id),
-                    dir_name:dir_name.value
+                    dir_name: dir_name.value
                 }).then((res: any) => {
                     if (res.code === $http.ResponseCode.SUCCESS) {
                         done()
@@ -175,10 +175,10 @@ const updateUploads=()=>{
     }).catch(() => { })
 
 }
-const submitSelected=()=>{
-    if(props.multiple===1){
+const submitSelected = () => {
+    if (props.multiple === 1) {
         emit('update:modelValue', selected.value[0].url)
-    }else{
+    } else {
         emit('update:modelValue', selected.value)
     }
     dialogVisible.value = false;
@@ -191,7 +191,7 @@ interface ClassifyInterface {
     id?: number
     title: string
     dir_name: string
-    channels:string
+    channels: string
     sort?: number
     is_system?: number
 }
@@ -209,6 +209,7 @@ const uploadForm = ref({
 const selectedClassify = (item: ClassifyInterface) => {
     uploadForm.value.dir_name = item.dir_name;
     search.value.dir_name = item.dir_name;
+    isEdit.value = false;
     getList();
 }
 const handleUploadSuccess = (res: ResponseInterface) => {
@@ -236,14 +237,14 @@ const deleteClassify = (item: ClassifyInterface) => {
     }).catch(() => {
     });
 }
-const saveClassify = (item?:ClassifyInterface) => {
+const saveClassify = (item?: ClassifyInterface) => {
     const classifyForm = ref<ClassifyInterface>({
         title: '',
         dir_name: '',
-        channels:'',
+        channels: '',
         sort: 99
     });
-    if(item){
+    if (item) {
         classifyForm.value.title = item.title;
         classifyForm.value.dir_name = item.dir_name;
         classifyForm.value.channels = item.channels;
@@ -279,8 +280,8 @@ const saveClassify = (item?:ClassifyInterface) => {
                     onChange: (val: string) => {
                         classifyForm.value.channels = val
                     },
-                },{
-                    default:()=>WEBCONFIG.storage.map((item: any) => {
+                }, {
+                    default: () => WEBCONFIG.storage.map((item: any) => {
                         return h(ElSelect.Option, { label: item.label, value: item.value })
                     })
                 }),
@@ -302,9 +303,9 @@ const saveClassify = (item?:ClassifyInterface) => {
                     class: 'mb-4',
                     placeholder: '排序（选填）',
                     modelValue: classifyForm.value.sort,
-                    controls:false,
-                    min:0,
-                    max:99,
+                    controls: false,
+                    min: 0,
+                    max: 99,
                     onChange: (val?: number) => {
                         classifyForm.value.sort = val
                     },
@@ -338,12 +339,13 @@ const saveClassify = (item?:ClassifyInterface) => {
     <div class="bundle-images-list el-upload-list el-upload-list--picture-card">
         <slot :open="open">
             <div class="el-upload-list__item is-success" @click.stop v-for="(url, index) in values">
-                <img class="el-upload-list__item-thumbnail" :src="url" alt="" v-if="view==='image'"/>
-                <el-icon class="el-upload-list__item-thumbnail" v-else-if="view==='file'" size="64">
+                <img class="el-upload-list__item-thumbnail" :src="url" alt="" v-if="view === 'image'" />
+                <el-icon class="el-upload-list__item-thumbnail" v-else-if="view === 'file'" size="64">
                     <Document />
                 </el-icon>
                 <span class="el-upload-list__item-actions">
-                    <span class="el-upload-list__item-preview" @click.stop="handlePictureCardPreview(url)" v-if="view==='image'">
+                    <span class="el-upload-list__item-preview" @click.stop="handlePictureCardPreview(url)"
+                        v-if="view === 'image'">
                         <el-icon><zoom-in /></el-icon>
                     </span>
                     <span class="el-upload-list__item-delete" @click.stop="open()" v-if="props.multiple === 1">
@@ -373,9 +375,11 @@ const saveClassify = (item?:ClassifyInterface) => {
         <template #header>
             <div class="bundle-name">
                 <div class="flex-1">附件分类</div>
-                <el-icon :size="20" class="pointer" @click="saveClassify">
-                    <FolderAdd />
-                </el-icon>
+                <permissions name="Uploads/saveClassify">
+                    <el-icon :size="20" class="pointer" @click="saveClassify">
+                        <FolderAdd />
+                    </el-icon>
+                </permissions>
             </div>
             <div class="bundle-title">
                 附件管理器
@@ -388,19 +392,20 @@ const saveClassify = (item?:ClassifyInterface) => {
                     <FolderOpened />
                 </el-icon>
                 <div class="categrory-item-title">{{ item.title }}</div>
-                <el-icon class="delete-icon" v-if="!item.is_system" @click.stop="deleteClassify(item)"
-                color="var(--el-color-danger)">
-                    <Delete />
-                </el-icon>
+                <permissions name="Uploads/deleteClassify">
+                    <el-icon class="delete-icon" v-if="!item.is_system" @click.stop="deleteClassify(item)"
+                        color="var(--el-color-danger)">
+                        <Delete />
+                    </el-icon>
+                </permissions>
             </div>
         </div>
         <div class="bundle-body" ref="bundleBodyRef">
             <div class="bundle-file-list" v-loading="loadingState">
-                <div class="file-item" v-for="(item,index) in fileList" :index="index"
+                <div class="file-item" v-for="(item, index) in fileList" :index="index"
                     :class="{ 'active': !isEdit && selected.includes(item), 'active-warning': isEdit && selectedEdit.includes(item) }"
                     @click="handelSelected(item)">
-                    <el-image :src="item.url"
-                        class="file-thumb" v-if="item.mime.includes('image')"/>
+                    <el-image :src="item.url" class="file-thumb" v-if="item.mime.includes('image')" />
                     <el-icon class="file-thumb" v-else>
                         <Document />
                     </el-icon>
@@ -415,21 +420,27 @@ const saveClassify = (item?:ClassifyInterface) => {
         </div>
 
         <template #footer>
-            <uploads ref="uploadRef" :on-success="handleUploadSuccess" :data="uploadForm" class="mr-4" :multiple="props.multiple > 1"
-                :accept="props.accept" :limit="props.multiple">
-                <el-button type="success">上传</el-button>
-            </uploads>
-            <el-button type="primary" v-if="isEdit" @click="isEdit = false">完成</el-button>
-            <el-button v-else-if="uploadForm.dir_name!='all'" @click="isEdit = true">管理</el-button>
-            <el-button v-if="isEdit">全选</el-button>
+            <template v-if="uploadForm.dir_name != 'all'">
+                <uploads ref="uploadRef" :on-success="handleUploadSuccess" :data="uploadForm" class="mr-4"
+                    :multiple="props.multiple > 1" :accept="props.accept" :limit="props.multiple">
+                    <el-button type="success">上传</el-button>
+                </uploads>
+                <permissions name="Uploads/updateUploads">
+                    <el-button type="primary" v-if="isEdit" @click="isEdit = false">完成</el-button>
+                    <el-button v-else @click="isEdit = true">管理</el-button>
+                    <el-button v-if="isEdit">全选</el-button>
+                </permissions>
+            </template>
             <div class="flex-1"></div>
             <div class="btn-group" v-if="isEdit">
-                <el-button type="warning" :disabled="selectedEdit.length <= 0"
-                @click="updateUploads">移动</el-button>
-                <el-button type="danger" :disabled="selectedEdit.length <= 0"
-                @click="deleteUploads">
-                    删除({{ selectedEdit.length }})
-                </el-button>
+                <permissions name="Uploads/updateUploads">
+                    <el-button type="warning" :disabled="selectedEdit.length <= 0" @click="updateUploads">移动</el-button>
+                </permissions>
+                <permissions name="Uploads/deleteUploads">
+                    <el-button type="danger" :disabled="selectedEdit.length <= 0" @click="deleteUploads">
+                        删除({{ selectedEdit.length }})
+                    </el-button>
+                </permissions>
             </div>
             <div class="btn-group" v-else>
                 <el-button @click="dialogVisible = false">取消</el-button>

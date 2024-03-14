@@ -25,12 +25,16 @@ const rule = ref<RuleInterface[]>([]);
 const rules = ref<any>()
 const showScreen = ref(false);
 const selection = ref(false);
-let ApiUrl = currentRoute.fullPath;
+let ApiUrl = currentRoute.meta.api;
 if (props.params) {
 	ApiUrl = props.params.api;
 }
 onBeforeMount(() => {
-	$http.get(`${ApiUrl}GetTable`).then((res: any) => {
+	$http.get(`${ApiUrl}GetTable`,{
+		params:{
+			...currentRoute.query
+		}
+	}).then((res: any) => {
 		if (res.code === $http.ResponseCode.SUCCESS) {
 			tableProps.value = res.data.props;
 			selection.value = res.data.selection;
@@ -99,6 +103,7 @@ const search = ref<{
 	limit: number;
 	[key: string]: any;
 }>({
+	...currentRoute.query,
 	page: 1,
 	total: 0,
 	limit: 10,
@@ -108,7 +113,7 @@ const getList = () => {
 	if (listLoading.value) return;
 	listLoading.value = true;
 	tableData.value = [];
-	$http.get(currentRoute.fullPath, {
+	$http.get(ApiUrl as string, {
 		params: search.value
 	}).then((res: any) => {
 		if (res.code === $http.ResponseCode.SUCCESS) {
@@ -119,14 +124,26 @@ const getList = () => {
 		listLoading.value = false;
 	})
 }
-const pageChange = (val: number) => {
-	search.value.page = val
-	getList()
+const load = (row: any, _treeNode: unknown, resolve: (date: any[]) => void) => {
+	const api = tableProps.value?.api;
+	if (!api) return resolve([]);
+	const query = {
+		[tableProps.value.rowKey]: row[tableProps.value.rowKey]
+	};
+	$http.get(api, {
+		params: query
+	}).then((res: any) => {
+		if (res.code === $http.ResponseCode.SUCCESS) {
+			resolve(res.data.data);
+		}
+	})
 }
-const sizeChange = (val: number) => {
-	search.value.limit = val
+watch(()=>search.value.page,()=>{
 	getList()
-}
+})
+watch(()=>search.value.limit,()=>{
+	getList()
+})
 const onSubmit = () => {
 	search.value.page = 1;
 	getList();
@@ -224,7 +241,7 @@ const handleSelectionChange = (val: any[]) => {
 </script>
 
 <template>
-	<el-skeleton :loading="loading" animated :throttle="500">
+	<el-skeleton :loading="loading" animated>
 		<template #template>
 			<div class="table-screen">
 				<el-skeleton-item />
@@ -242,10 +259,12 @@ const handleSelectionChange = (val: any[]) => {
 				<div class="font-weight-600">{{ currentRoute.meta.title }}</div>
 				<div class="flex-1"></div>
 				<template v-for="(group, _index) in header.extra.group" :index="_index">
-					<component :is="`el-${group.extra.component.name}`" v-bind="group.extra.component.props"
-						@click="handleHeader(group)">
-						{{ group.label }}
-					</component>
+					<permissions :name="group.extra.path">
+						<component :is="`el-${group.extra.component.name}`" v-bind="group.extra.component.props"
+							@click="handleHeader(group)">
+							{{ group.label }}
+						</component>
+					</permissions>
 				</template>
 			</div>
 			<div class="table-layouts">
@@ -255,44 +274,48 @@ const handleSelectionChange = (val: any[]) => {
 						<ruleComponent v-model="search" :rule="rule" />
 						<el-form-item>
 							<el-button type="primary" @click="onSubmit" :loading="listLoading">查询</el-button>
-							<el-button @click="resetForm" v-if="rules">重置</el-button>
+							<el-button @click="resetForm">重置</el-button>
 						</el-form-item>
 					</div>
 				</el-form>
 				<el-table ref="tableRef" :data="tableData" v-if="showTable" v-bind="tableProps"
-					@selection-change="handleSelectionChange">
+					@selection-change="handleSelectionChange" :load="load">
 					<template v-for="(column, _index) in columns" :index="_index">
 						<columnComponent :column="column" :tableData="tableData" @change="updateTableDataValue" />
 					</template>
 					<el-table-column v-if="action" :label="action.label" v-bind="action.extra.props">
 						<template #default="scope">
 							<template v-for="(group, _index) in action.extra.group" :index="_index">
-								<component :is="`el-${group.extra.component.name}`" v-bind="group.extra.component.props"
-									v-if="hasWhere(group.extra, scope.row)" @click="handleAction(group, scope.row)">
-									{{ group.label }}
-								</component>
+								<permissions :name="group.extra.path">
+									<component :is="`el-${group.extra.component.name}`"
+										v-bind="group.extra.component.props" v-if="hasWhere(group.extra, scope.row)"
+										@click="handleAction(group, scope.row)">
+										{{ group.label }}
+									</component>
+								</permissions>
 							</template>
 						</template>
 					</el-table-column>
 				</el-table>
-				<el-scrollbar>
+				<el-scrollbar v-if="search.total>0">
 					<div class="pagination">
 						<div class="flex mr-4" v-if="selection">
 							<el-button type="success" @click="toggleSelection(tableData)">全选</el-button>
 							<el-button type="info" @click="toggleSelection()">取消</el-button>
 							<template v-if="footer">
 								<template v-for="(group, _index) in footer.extra.group" :index="_index">
-									<component :is="`el-${group.extra.component.name}`"
-										v-bind="group.extra.component.props" @click="handleFooter(group)">
-										{{ group.label }}
-									</component>
+									<permissions :name="group.extra.path">
+										<component :is="`el-${group.extra.component.name}`"
+											v-bind="group.extra.component.props" @click="handleFooter(group)">
+											{{ group.label }}
+										</component>
+									</permissions>
 								</template>
 							</template>
 						</div>
 						<el-pagination background :page-sizes="[10, 20, 50, 100, 200]"
 							layout="total,sizes,prev, pager, next,jumper" :total="search.total"
-							:page-size="search.limit" :current-page="search.page" @current-change="pageChange"
-							@size-change="sizeChange">
+							v-model:page-size="search.limit" v-model:current-page="search.page">
 						</el-pagination>
 					</div>
 				</el-scrollbar>

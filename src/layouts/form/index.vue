@@ -26,13 +26,16 @@ const basicFormName = ref('');
 const selectedGroup = ref('');
 const tabs = ref<any>([]);
 const group = ref<any>([]);
-let ApiUrl = currentRoute.fullPath;
+let ApiUrl = currentRoute.meta.api as string;
 if (props.params) {
 	ApiUrl = props.params.api;
 }
 onBeforeMount(() => {
 	$http.get(ApiUrl, {
-		params: props.params?.query
+		params: {
+			...currentRoute.query,
+			...props.params?.query
+		}
 	}).then((res: any) => {
 		if (res.code === $http.ResponseCode.SUCCESS) {
 			rule.value = res.data.rule;
@@ -80,6 +83,8 @@ const onSubmit = () => {
 					emit('confirm');
 					if (currentRoute.query.back) {
 						router.push(currentRoute.query.back as string);
+					}else{
+						resetForm();
 					}
 				} else {
 					ElMessage.info(res.msg);
@@ -105,7 +110,7 @@ const resetForm = () => {
 </script>
 
 <template>
-	<el-skeleton :loading="loading" animated :throttle="500">
+	<el-skeleton :loading="loading" animated>
 		<template #template>
 			<div class="layouts">
 				<div class="grid grid-gap-4 mb-4" v-for="item in 10" :index="item">
@@ -132,9 +137,9 @@ const resetForm = () => {
 					</template>
 					<template v-if="group.length > 0">
 						<template v-for="(item, _index) in group" :index="_index">
-							<template v-if="selectedGroup === item.name">
+							<div v-show="selectedGroup === item.name">
 								<ruleComponent v-model="form[item.name]" :rule="item.rule" :group="item.name" />
-							</template>
+							</div>
 						</template>
 					</template>
 					<el-form-item>

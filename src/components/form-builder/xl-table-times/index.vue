@@ -29,18 +29,20 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="flex flex-column" v-for="(item, index) in group" :index="index">
+    <div class="flex flex-column xl-table-times" v-for="(item, index) in group" :index="index">
         <component v-if="item.component" :is="`el-${item.component}`" v-bind="item.props">
             {{ item.label }}：{{ item.value }}
         </component>
-        <div v-else class="text">{{ item.label }}：{{ item.value }}</div>
+        <div v-else class="text" v-bind="item.props">{{ item.label }}：{{ item.value }}</div>
     </div>
 </template>
 
 <style scoped lang="scss">
-.text{
+.xl-table-times{
     font-size: 12px;
     color: var(--el-color-info);
+}
+.text{
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;

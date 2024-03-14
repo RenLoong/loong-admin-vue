@@ -26,6 +26,7 @@ export default defineConfig({
 		},
 	},
 	build: {
+		assetsDir:'assets',
 		rollupOptions: {
 			output: {
 				manualChunks(id) {
@@ -79,7 +80,7 @@ export default defineConfig({
 		}),
 		Inspect()
 	],
-	base: '/admin',
+	// base: '/admin',
 	server: {
 		open: true,
 		port: 5173,

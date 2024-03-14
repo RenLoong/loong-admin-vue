@@ -51,7 +51,13 @@ export default () => {
         router.push('/login');
         return storage.remove(UserInfoStorageKey)
     }
-    const hasPermission = (permission: string | string[]): boolean => {
+    const hasPermission = (permission?: string | string[]): boolean => {
+        if (USERINFO.value?.is_system) {
+            return true;
+        }
+        if (!permission) {
+            return true;
+        }
         if (USERINFO.value?.permissions === undefined) {
             return false;
         }

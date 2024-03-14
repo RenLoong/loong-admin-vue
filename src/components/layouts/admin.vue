@@ -90,13 +90,16 @@ const handleAction = (command: any) => {
         <el-aside class="layout-aside" :class="{ 'close': !STATE.AsideState || STATE.NotMenusAsideState }">
             <div class="layout-tabs">
                 <item-logo theme="dark" width="60px" height="60px" />
-                <div class="layout-tab" v-for="(item, index) in ROUTERLIST" :key="index"
-                    :class="{ 'active': index == TabsSelectedIndex }" @click="clickTab(item)">
-                    <el-icon size="20" v-if="item.meta.icon">
-                        <component :is="item.meta.icon" />
-                    </el-icon>
-                    <div class="title">{{ item.meta.title }}</div>
-                </div>
+                <permissions v-for="(item, index) in ROUTERLIST" :key="index" :name="item.meta.api">
+                    <div class="layout-tab"
+                        :class="{ 'active': index == TabsSelectedIndex }" @click="clickTab(item)"
+                        v-if="item.meta.show">
+                        <el-icon size="20" v-if="item.meta.icon">
+                            <component :is="item.meta.icon" />
+                        </el-icon>
+                        <div class="title">{{ item.meta.title }}</div>
+                    </div>
+                </permissions>
             </div>
             <div class="layout-menus">
                 <div class="layout-menus-header">
@@ -163,12 +166,14 @@ const handleAction = (command: any) => {
                     </div>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item v-for="item in WEBCONFIG.user_dropdown_menu" v-bind="item.props"
+					        <permissions v-for="item in WEBCONFIG.user_dropdown_menu" :name="item.props.path">
+                            <el-dropdown-item v-bind="item.props"
                                 :command="item">
                                 <div class="flex-1 p-4 flex flex-y-center font-weight-600">
                                     {{ item.props.label }}
                                 </div>
                             </el-dropdown-item>
+                            </permissions>
                             <el-dropdown-item divided
                                 :command="{ model: 'OutLogin', props: { confirmButtonClass: 'el-button--danger' } }">
                                 <div class="flex-1 text-center text-danger font-weight-600 p-4">
