@@ -2,15 +2,16 @@
 import {$eventBus} from "@/common";
 import { getWebConfig,getUserInfo } from "@/common/functions/request";
 import { useUserStore, useWebConfigStore,useStateStore, useRefs } from "@/stores";
+import ResponseEvent from "./common/enum/ResponseEvent";
 const { userListener } = useUserStore()
 const webConfigStore = useWebConfigStore();
 const {initState} = useStateStore();
 const {WEBCONFIG} = useRefs(webConfigStore);
 onBeforeMount(() => {
-	$eventBus.on("UPDATE::WEBCONFIG",()=>{
+	$eventBus.on(ResponseEvent.UPDATE_WEBCONFIG,()=>{
 		getWebConfig().catch(()=>{});
 	})
-	$eventBus.on("UPDATE::USERINFO",()=>{
+	$eventBus.on(ResponseEvent.UPDATE_USERINFO,()=>{
 		getUserInfo()?.catch(()=>{});
 	})
 	userListener();

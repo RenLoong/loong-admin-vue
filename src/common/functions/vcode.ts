@@ -1,9 +1,11 @@
 import { ElMessage } from "element-plus";
 import { $http } from "..";
+import { useWebConfigStore } from "@/stores";
 
 export const useVcode = (options?: VcodeInterface) => {
+    const {WEBCONFIG} = useWebConfigStore();
     let _config = {
-        url: 'Sms/sendSMS',
+        url: WEBCONFIG.apis.vcode,
         time: 60,
         method: 'POST',
         message: true

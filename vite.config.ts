@@ -81,6 +81,7 @@ export default defineConfig({
 		Inspect()
 	],
 	// base: '/admin',
+	// base: '/control',
 	server: {
 		open: true,
 		port: 5173,

@@ -1,8 +1,7 @@
 import { useStorage } from '@/common';
 import type { RouteRecordRaw, RouteRecordName } from 'vue-router'
 import router from "@/routers";
-import * as components from '@/layouts'
-type componentsType = 'defaultComponent' | 'formComponent' | 'paymentFormComponent' | 'imagesComponent' | 'tableComponent';
+import components, {componentsType} from '@/layouts'
 export default () => {
     const storage = useStorage()
     const MenusStorageKey = 'MENUS'
@@ -65,6 +64,7 @@ export default () => {
                 name: item.path,
                 component: components[component as componentsType],
                 meta: {
+                    component,
                     routerKey: key,
                     title: item.title,
                     sort: item.sort,

@@ -49,7 +49,7 @@ declare global {
         title:string,
         bg_image:string|string[],
         image:string,
-        image_code:boolean,
+        captcha:boolean,
         user_agreement:string
     }
     interface WebConfigInterface {

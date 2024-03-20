@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 import ruleComponent from './component/rule.vue'
 import type { FormInstance } from 'element-plus'
 import { parseRules } from '@/common/functions';
+import SubmitEvent from '@/common/enum/SubmitEvent';
 const props = withDefaults(defineProps<{
 	params?: any
 }>(), {
@@ -30,6 +31,7 @@ let ApiUrl = currentRoute.meta.api as string;
 if (props.params) {
 	ApiUrl = props.params.api;
 }
+const submitEvent=ref<string>();
 onBeforeMount(() => {
 	$http.get(ApiUrl, {
 		params: {
@@ -59,6 +61,9 @@ onBeforeMount(() => {
 				}
 			}
 			form.value = res.data.form;
+			if(res.data.props.submitEvent){
+				submitEvent.value=res.data.props.submitEvent;
+			}
 			nextTick(() => {
 				showForm.value = true;
 			})
@@ -84,7 +89,13 @@ const onSubmit = () => {
 					if (currentRoute.query.back) {
 						router.push(currentRoute.query.back as string);
 					}else{
-						resetForm();
+						switch (submitEvent.value) {
+							case SubmitEvent.SILENT:
+								break;
+							default:
+								resetForm();
+								break;
+						}
 					}
 				} else {
 					ElMessage.info(res.msg);
@@ -151,9 +162,3 @@ const resetForm = () => {
 		</template>
 	</el-skeleton>
 </template>
-
-<style lang="scss">
-.layouts {
-	min-height: 200px;
-}
-</style>

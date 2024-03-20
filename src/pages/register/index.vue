@@ -85,7 +85,7 @@ const {BgImage, Image}=useLoginImageBuild();
                                 <template #append>
                                     <div class="px-3">
                                         <el-link
-                                            @click="getVcode({ mobile: form.username, token: form.token, captcha: form.captcha })"
+                                            @click="getVcode({ username: form.username, token: form.token, captcha: form.captcha,scene:'register' })"
                                             :type="isDisabled ? 'info' : 'primary'" target="_blank" :underline="false">{{
                                                 vcodeText }}</el-link>
                                     </div>

@@ -1,6 +1,5 @@
 import { ElMessage, ElMessageBox } from 'element-plus';
-import formComponent from '@/layouts/form/index.vue';
-import tableComponent from '@/layouts/table/index.vue';
+import components, {componentsType} from '@/layouts'
 import { $http } from '..';
 import router from '@/routers';
 import { useUserStore, useWebConfigStore } from '@/stores';
@@ -17,6 +16,10 @@ export const useClick = (options: UseClickOptionsInterface) => {
         ...options.props
     };
     const {WEBCONFIG} = useWebConfigStore();
+    let path=options.path;
+    if(!options.path?.startsWith('/')){
+        path=`/${options.path}`;
+    }
     return new Promise((resolve, reject) => {
         switch (options.model) {
             case 'Lock':
@@ -77,6 +80,13 @@ export const useClick = (options: UseClickOptionsInterface) => {
                 }).catch(() => { })
                 break;
             case 'comfirm':
+                if (messageProps.title) {
+                    if(!Array.isArray(options.data)){
+                        for (let key in options.data) {
+                            messageProps.title = messageProps.title.replace(new RegExp(`{${key}}`, 'g'), options.data[key]);
+                        }
+                    }
+                }
                 if (messageProps.message) {
                     if(!Array.isArray(options.data)){
                         for (let key in options.data) {
@@ -126,6 +136,8 @@ export const useClick = (options: UseClickOptionsInterface) => {
                         }
                     }                      
                 }
+                const findRouter=router.getRoutes().find((item) => item.path===path);
+                
                 ElMessageBox({
                     title: '温馨提示',
                     cancelButtonText: '取消',
@@ -139,7 +151,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     },
                     customClass: 'el-messagebox-width',
                     ...messageProps,
-                    message: () => h(formComponent, {
+                    message: () => h(findRouter?components[findRouter.meta.component as componentsType]:components.defaultComponent, {
                         params: {
                             api: options.path,
                             query: options.query,
@@ -156,49 +168,14 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     }
                 }).then(() => { }).catch(() => { })
                 break;
-            case 'dialogTable':
-                if (messageProps.title) {  
-                    if(!Array.isArray(options.data)){
-                        for (let key in options.data) {
-                            messageProps.title = messageProps.title.replace(new RegExp(`{${key}}`, 'g'), options.data[key]);
-                        }
-                    }                      
-                }
-                ElMessageBox({
-                    title: '温馨提示',
-                    cancelButtonText: '取消',
-                    showClose: true,
-                    draggable: true,
-                    showCancelButton: false,
-                    showConfirmButton: false,
-                    closeOnClickModal: false,
-                    customStyle: {
-                        '--el-messagebox-width': '60%'
-                    },
-                    customClass: 'el-messagebox-width',
-                    ...messageProps,
-                    message: () => h(tableComponent, {
-                        params: {
-                            api: options.path,
-                            query: options.query,
-                            params: options.props.params,
-                        }
-                    }),
-                    beforeClose: (_action, _instance, done) => {
-                        done();
-                        reject();
-                    }
-                }).then(() => { }).catch(() => { })
-                break;
             default:
                 options.query.back = currentRoute.fullPath;
                 options.query.routerName = currentRoute.name;
-                let path=options.path;
-                if(!options.path?.startsWith('/')){
-                    path=`/${options.path}`;
+                if(!options.path){
+                    return;
                 }
                 router.push({
-                    path: path,
+                    path,
                     query: options.query
                 });
                 break;

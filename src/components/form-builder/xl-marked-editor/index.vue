@@ -191,7 +191,7 @@ const handleUploadSuccess: UploadProps['onSuccess'] = (
 ) => {
     if (res.code === $http.ResponseCode.SUCCESS) {
         switch (res.data.dir_name) {
-            case 'marked':
+            case 'uploads/marked':
                 imageForm.value.url = res.data.url;
                 break;
         }
@@ -389,7 +389,7 @@ const hidePopover=()=>{
                     </el-form-item>
                     <el-form-item label="图片链接" prop="url">
                         <el-input v-model="imageForm.url" placeholder="图片链接" />
-                        <uploads :data="{ dir_name: 'marked' }"
+                        <uploads :data="{ dir_name: 'uploads/marked',dir_title:'MD编辑器' }"
                             :show-file-list="false" accept="image/*" :on-success="handleUploadSuccess"
                             :before-upload="beforeUpload">
                             <el-button type="primary" size="small">上传</el-button>

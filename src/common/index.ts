@@ -1,7 +1,7 @@
-import { ElMessageBox } from "element-plus";
+import { ElMessageBox, ElNotification } from "element-plus";
 import config from "./config";
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { useUserStore, useWebConfigStore } from "@/stores";
+import { useRefs, useUserStore, useWebConfigStore } from "@/stores";
 import { getRoundImage } from "@/common/functions";
 export const useStorage = () => {
     /**
@@ -111,10 +111,14 @@ axios.interceptors.request.use((_config) => {
 axios.interceptors.response.use((response: AxiosResponse) => {
     if (response?.data !== undefined) {
         const userStore = useUserStore()
-        switch(response?.data?.code)
-        {
+        switch (response?.data?.code) {
             case $http.ResponseCode.NEED_LOGIN:
                 userStore.clearUserInfo();
+                ElNotification({
+                    title: '提示',
+                    message: `[${response.data.code}]${response.data.msg}`,
+                    type: 'error',
+                })
                 break;
             case $http.ResponseCode.SUCCESS_EVENT_PUSH:
                 response.data.code = $http.ResponseCode.SUCCESS;
@@ -135,7 +139,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
         return response.data;
     }
 }, (error: AxiosError) => {
-    if (import.meta.env.DEV) {
+    if (import.meta.env.DEV && error.code != 'ERR_CANCELED') {
         showErrorBox({
             code: error.code,
             msg: error.message,
@@ -150,6 +154,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
 export const $http = {
     ResponseCode: {
         SUCCESS: 200,
+        WAIT: 202,
         SUCCESS_EVENT_PUSH: 201,
         NEED_LOGIN: 12000,
         PAY_SUCCESS: 9000,
@@ -198,7 +203,7 @@ export const showErrorBox = (res: any) => {
                 const value = res.data[key];
                 content.push(h('div', { class: 'flex py-2' }, [
                     h('div', { class: 'text-grey text-right mr-2', style: { width: '100px' } }, key),
-                    h('div', {class:'text-break-all'}, value)
+                    h('div', { class: 'text-break-all' }, value)
                 ]))
             }
         }
@@ -209,9 +214,10 @@ export const showErrorBox = (res: any) => {
     })
 }
 export const useLoginImageBuild = () => {
-    const { WEBCONFIG } = useWebConfigStore();
-    const Image = ref<string>('');
-    const BgImage = ref<string>('./static/bg.jpg');
+    const webConfigStore = useWebConfigStore();
+    const { WEBCONFIG } = useRefs(webConfigStore);
+    const Image = ref<string>(WEBCONFIG.value.login?.image);
+    const BgImage = ref<string>('/static/bg.jpg');
     let BgImageEr: NodeJS.Timeout | undefined;
     const getLoginBg = () => {
         getRoundImage().then((res: any) => {
@@ -219,7 +225,7 @@ export const useLoginImageBuild = () => {
         })
     }
     onMounted(() => {
-        switch (WEBCONFIG.login?.bg_image) {
+        switch (WEBCONFIG.value.login?.bg_image) {
             case 'off':
                 BgImage.value = '';
                 break;
@@ -229,15 +235,15 @@ export const useLoginImageBuild = () => {
                 }, 30000)
                 break;
             default:
-                if (WEBCONFIG.login) {
-                    if (Array.isArray(WEBCONFIG.login?.bg_image)) {
+                if (WEBCONFIG.value.login) {
+                    if (Array.isArray(WEBCONFIG.value.login?.bg_image)) {
                         BgImageEr = setInterval(() => {
-                            if (WEBCONFIG.login) {
-                                BgImage.value = WEBCONFIG.login?.bg_image[Math.floor(Math.random() * WEBCONFIG.login?.bg_image.length)];
+                            if (WEBCONFIG.value.login) {
+                                BgImage.value = WEBCONFIG.value.login?.bg_image[Math.floor(Math.random() * WEBCONFIG.value.login?.bg_image.length)];
                             }
                         }, 30000)
                     } else {
-                        BgImage.value = WEBCONFIG.login?.bg_image;
+                        BgImage.value = WEBCONFIG.value.login?.bg_image;
                     }
                 }
                 break;

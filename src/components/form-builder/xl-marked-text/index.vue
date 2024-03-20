@@ -9,8 +9,7 @@ const props = withDefaults(defineProps<{
     content?: string
 }>(), {
 });
-const renderer = new Renderer(
-);
+const renderer = new Renderer();
 renderer.link = function (href: string, title: string, text: string) {
     if (!href) return '';
     let style = '';
@@ -62,7 +61,7 @@ onObserve(markedTextRef, (e: IntersectionObserverEntry[], done: Function) => {
 })
 </script>
 <template>
-    <div v-html="html" ref="markedTextRef" class="marked-text p-4"></div>
+    <div v-html="html" ref="markedTextRef" class="marked-text"></div>
 </template>
 <style lang="scss">
 .marked-text {

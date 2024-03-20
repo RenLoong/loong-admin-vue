@@ -13,7 +13,7 @@ const copy=()=>{
 
 <template>
     <div class="flex grid-gap-4 flex-wrap">
-        <div>{{props.text}}</div>
+        <div class="text-wrap text-keep-all max-w-100">{{props.text}}</div>
         <el-link type="success" :underline="false" @click="copy">复制</el-link>
     </div>
 </template>

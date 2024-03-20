@@ -270,13 +270,11 @@ const handleSelectionChange = (val: any[]) => {
 			<div class="table-layouts">
 				<el-form ref="formRef" :model="search" :rules="rules" label-width="80px" v-if="showScreen"
 					:disabled="listLoading" class="py-6">
-					<div class="table-screen">
-						<ruleComponent v-model="search" :rule="rule" />
-						<el-form-item>
-							<el-button type="primary" @click="onSubmit" :loading="listLoading">查询</el-button>
-							<el-button @click="resetForm">重置</el-button>
-						</el-form-item>
-					</div>
+					<ruleComponent v-model="search" :rule="rule" />
+					<el-form-item>
+						<el-button type="primary" @click="onSubmit" :loading="listLoading">查询</el-button>
+						<el-button @click="resetForm">重置</el-button>
+					</el-form-item>
 				</el-form>
 				<el-table ref="tableRef" :data="tableData" v-if="showTable" v-bind="tableProps"
 					@selection-change="handleSelectionChange" :load="load">
@@ -325,9 +323,6 @@ const handleSelectionChange = (val: any[]) => {
 </template>
 
 <style lang="scss">
-.table-layouts {
-	min-height: 200px;
-}
 
 .pagination {
 	padding: 10px 0;

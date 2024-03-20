@@ -30,7 +30,12 @@ export default () => {
             if (!e || e.newValue === null) {
                 USERINFO.value = undefined;
                 if (router.currentRoute.value.meta.login !== false) {
-                    router.push('/login');
+                    router.push({
+                        path: '/login',
+                        query: {
+                            redirect: router.currentRoute.value.fullPath
+                        }
+                    });
                 }
             } else if (e.newValue !== null) {
                 if (router.currentRoute.value.meta.login_access === true) {
@@ -48,7 +53,12 @@ export default () => {
     }
     const clearUserInfo = (): Promise<boolean> => {
         USERINFO.value = undefined;
-        router.push('/login');
+        router.push({
+            path: '/login',
+            query: {
+                redirect: router.currentRoute.value.fullPath
+            }
+        });
         return storage.remove(UserInfoStorageKey)
     }
     const hasPermission = (permission?: string | string[]): boolean => {

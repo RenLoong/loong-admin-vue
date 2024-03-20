@@ -70,7 +70,7 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes,
 })
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
     const { hasLogin, initUserInfo } = useUserStore()
     const {WEBCONFIG,initWebConfig} = useWebConfigStore();
     if(!WEBCONFIG.web_name){
@@ -83,9 +83,6 @@ router.beforeEach(async (to, from, next) => {
      * 判断是否登录
      */
     if (hasLogin()) {
-        if (from.name === 'login' && from.query.redirect_url) {
-            return next(from.query.redirect_url as string);
-        }
         // 判断当前跳转是否为已登录不可访问地址
         if (to.meta.login_access) {
             return next('/');
@@ -95,8 +92,8 @@ router.beforeEach(async (to, from, next) => {
             return next({
                 path: '/login',
                 query: {
-                    redirect_url: to.fullPath
-                }
+                    redirect: to.fullPath
+                },
             });
         }
     }

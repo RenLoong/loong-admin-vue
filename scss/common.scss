@@ -306,6 +306,22 @@ sticky {
     .min-vw-#{$i * 5} {
         min-width: $i * 5vw;
     }
+
+    .max-h-#{$i * 5} {
+        max-height: $i * 5%;
+    }
+
+    .max-w-#{$i * 5} {
+        max-width: $i * 5%;
+    }
+
+    .max-vh-#{$i * 5} {
+        max-height: $i * 5vh;
+    }
+
+    .max-vw-#{$i * 5} {
+        max-width: $i * 5vw;
+    }
 }
 
 .bg {
@@ -662,4 +678,19 @@ img {
     .el-dropdown-menu__item:hover{
         background-color: var(--el-bg-color-page);
     }
+}
+.el-button--dark{
+    --el-button-bg-color: #303133;
+    --el-button-text-color: var(--el-color-white);
+    --el-button-border-color: #303133;
+    --el-button-hover-bg-color: rgb(110, 111, 112);
+    --el-button-hover-text-color: var(--el-color-white);
+    --el-button-hover-border-color: rgb(110, 111, 112);
+    --el-button-active-bg-color: rgb(42, 43, 45);
+    --el-button-active-border-color: rgb(42, 43, 45);
+}
+
+.el-messagebox-payment{
+    .el-message-box__header,.el-message-box__btns{display: none;}
+    padding: 0;
 }
