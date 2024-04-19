@@ -1,8 +1,9 @@
-import { ElMessageBox, ElNotification } from "element-plus";
+import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import config from "./config";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { useRefs, useUserStore, useWebConfigStore } from "@/stores";
 import { getRoundImage } from "@/common/functions";
+import { useClick } from '@/common/functions/action';
 export const useStorage = () => {
     /**
      * 设置储存数据
@@ -135,6 +136,10 @@ axios.interceptors.response.use((response: AxiosResponse) => {
             case $http.ResponseCode.NO_PERMISSION:
                 showErrorBox(response.data);
                 break;
+            case $http.ResponseCode.LOCK:
+                showUnlockBox();
+                throw new AxiosError(`[${response.data.code}]${response.data.msg}`,'ERR_CANCELED');
+                break;
         }
         return response.data;
     }
@@ -160,7 +165,8 @@ export const $http = {
         PAY_SUCCESS: 9000,
         REDIRECT: 302,
         REDIRECT_CONFIRM: 303,
-        NO_PERMISSION: 403
+        NO_PERMISSION: 403,
+        LOCK: 423,
     },
     getCompleteUrl,
     get: axios.get,
@@ -211,6 +217,50 @@ export const showErrorBox = (res: any) => {
     ElMessageBox({
         title: '错误',
         message: h('div', {}, content),
+    })
+}
+export const showUnlockBox = () => {
+    const {WEBCONFIG} = useWebConfigStore();
+    ElMessageBox({
+        title: '输入PIN码解锁',
+        confirmButtonText: '解锁',
+        confirmButtonClass:'el-button--success is-text is-has-bg',
+        cancelButtonText: '退出登录',
+        cancelButtonClass:'el-button--danger is-text is-has-bg',
+        showClose: false,
+        showCancelButton: true,
+        closeOnClickModal: false,
+        buttonSize:'small',
+        customClass: 'el-messagebox-width',
+        showInput: true,
+        inputType:'number',
+        inputPattern:/^\d{6}$/,
+        inputPlaceholder:'请输入6位数字PIN码',
+        inputErrorMessage:'请输入6位数字PIN码',
+        beforeClose: (action: string, instance: { confirmButtonLoading: boolean;inputValue:string }, done: () => void) => {
+            if (action === 'confirm') {
+                instance.confirmButtonLoading = true
+                $http.post(WEBCONFIG.apis.unlock, {password:instance.inputValue}).then((res: any) => {
+                    if (res.code === $http.ResponseCode.SUCCESS) {
+                        done()
+                    } else {
+                        ElMessage.error(res.msg);
+                    }
+                }).catch(() => {
+                }).finally(() => {
+                    instance.confirmButtonLoading = false
+                })
+            } else {
+                useClick({
+                    model:'OutLogin',
+                    path:''
+                }).then(() => {
+                    done();
+                }).catch(() => { })
+            }
+        },
+    }).then(() => {
+    }).catch(() => {
     })
 }
 export const useLoginImageBuild = () => {

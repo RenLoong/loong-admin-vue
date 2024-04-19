@@ -33,7 +33,7 @@
             }
         ]
     },
-    "include": [
+    "includes": [
         "src/common/**/*.d.ts"
     ],
     "settings": {

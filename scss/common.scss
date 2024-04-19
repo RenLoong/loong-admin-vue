@@ -1,42 +1,3 @@
-:root {
-    --layouts-width: 900px;
-}
-
-html,
-body {
-    padding: 0;
-    margin: 0;
-    font-size: 14px;
-    font-synthesis: none;
-    color: var(--el-text-color-primary);
-    background-color: var(--el-bg-color);
-}
-
-a {
-    text-decoration: none;
-}
-
-* {
-    outline: none;
-    box-sizing: border-box;
-}
-
-.layouts {
-    width: 100%;
-    max-width: var(--layouts-width);
-    margin: 0 auto;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-.layouts-empty {
-    min-height: calc(100vh - var(--header-height) - var(--footer-height));
-}
-
-.z-index {
-    z-index: 1
-}
-
 // 方向
 $direction: top, right, bottom, left;
 // 边距
@@ -184,9 +145,11 @@ $text-color-list: (
         bottom: -$spacing * $i !important;
     }
 }
-.inline-flex{
+
+.inline-flex {
     display: inline-flex;
 }
+
 .flex {
     display: flex;
 
@@ -198,7 +161,9 @@ $text-color-list: (
     }
 
     @each $var in column,
-    row {
+    column-reverse,
+    row,
+    row-reverse {
         &-#{$var} {
             flex-direction: $var;
         }
@@ -252,7 +217,6 @@ $text-color-list: (
     }
 
     @for $i from 1 through 10 {
-
         &-gap-#{$i} {
             gap: $spacing * $i !important;
         }
@@ -261,6 +225,64 @@ $text-color-list: (
     @for $i from 1 through 24 {
         &-column-#{$i} {
             grid-column: span $i / span $i;
+        }
+        &-row-#{$i} {
+            grid-row: span $i / span $i;
+        }
+    }
+
+    @media only screen and (max-width: 767px) {
+        @for $i from 1 through 24 {
+            &-column-xs-#{$i} {
+                grid-column: span $i / span $i;
+            }
+            &-row-xs-#{$i} {
+                grid-row: span $i / span $i;
+            }
+        }
+    }
+
+    @media only screen and (min-width: 768px) {
+        @for $i from 1 through 24 {
+            &-column-sm-#{$i} {
+                grid-column: span $i / span $i;
+            }
+            &-row-sm-#{$i} {
+                grid-row: span $i / span $i;
+            }
+        }
+    }
+
+    @media only screen and (min-width: 992px) {
+        @for $i from 1 through 24 {
+            &-column-md-#{$i} {
+                grid-column: span $i / span $i;
+            }
+            &-row-md-#{$i} {
+                grid-row: span $i / span $i;
+            }
+        }
+    }
+
+    @media only screen and (min-width: 1200px) {
+        @for $i from 1 through 24 {
+            &-column-lg-#{$i} {
+                grid-column: span $i / span $i;
+            }
+            &-row-lg-#{$i} {
+                grid-row: span $i / span $i;
+            }
+        }
+    }
+
+    @media only screen and (min-width: 1920px) {
+        @for $i from 1 through 24 {
+            &-column-xl-#{$i} {
+                grid-column: span $i / span $i;
+            }
+            &-row-xl-#{$i} {
+                grid-row: span $i / span $i;
+            }
         }
     }
 }
@@ -342,7 +364,6 @@ $color in $color-list {
 }
 
 @for $i from 1 through 20 {
-
     .bg-white-#{$i * 5} {
         background-color: rgba(var(--el-bg-color-rgb-r), var(--el-bg-color-rgb-g), var(--el-bg-color-rgb-b), $i * 0.05);
     }
@@ -388,6 +409,7 @@ $color in $color-list {
             word-spacing: $i * 0.53333vw;
         }
     }
+
     @for $i from 1 through 5 {
         &-letter-spacing-#{$i} {
             letter-spacing: $i * 0.53333vw;
@@ -559,9 +581,7 @@ outset {
         font-size: 32px - ($i * 2px);
     }
 }
-.el-text--small{
-    --el-link-font-size:var(--el-font-size-extra-small) !important;
-}
+
 .line-height {
     line-height: 1;
 
@@ -591,106 +611,17 @@ scroll {
 img {
     vertical-align: middle;
 }
-.shadow{
+
+.shadow {
     box-shadow: var(--el-box-shadow);
+    @each $i in light,
+    lighter,
+    dark {
+        &-#{$i} {
+            box-shadow:var(--el-box-shadow-#{$i});
+        }
+    }
 }
-.shadow-light{
-    box-shadow: var(--el-box-shadow-light);
-}
-.shadow-lighter{
-    box-shadow: var(--el-box-shadow-lighter);
-}
-.shadow-dark{
-    box-shadow: var(--el-box-shadow-dark);
-}
-::-webkit-scrollbar {
-    width: 6px
-}
-
-::-webkit-scrollbar:horizontal {
-    height: 6px
-}
-
-::-webkit-scrollbar-track {
-    border-radius: 10px
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #0003;
-    border-radius: 10px;
-    transition: all .2s ease-in-out
-}
-
-::-webkit-scrollbar-thumb:hover {
-    cursor: pointer;
-    background-color: #0000004d
-}
-
 .pointer {
     cursor: pointer;
-}
-
-.el-switch__core .el-switch__action {
-    color: var(--el-switch-on-color) !important;
-}
-
-.el-switch.is-checked .el-switch__core .el-switch__action {
-    color: var(--el-switch-on-color) !important;
-}
-.el-radio {
-    margin-right: 10px !important;
-}
-
-.el-popper.is-red {
-    /* Set padding to ensure the height is 32px */
-    padding: 6px 12px;
-    background: rgb(240, 77, 77);
-    color: #FFFFFF;
-}
-
-.el-popper.is-red .el-popper__arrow::before {
-    background: rgb(240, 77, 77);
-    right: 0;
-}
-
-
-.el-messagebox-width{
-    .el-message-box__message{
-        flex:1;
-        overflow: hidden;
-    }
-}
-.userinfo-menu{
-    width: 180px;
-    --el-dropdown-menuItem-hover-fill:var(--el-bg-color-page)!important;
-    --el-dropdown-menuItem-hover-color:var(--el-text-color-primary)!important;
-    --el-text-color-regular:var(--el-text-color-primary)!important;
-    .el-dropdown-menu{
-        padding: 10px;
-    }
-    .el-dropdown-menu__item{
-        .el-icon{
-            color: var(--el-text-color-primary);
-            font-size:16px;
-        }
-        border-radius: 6px;
-    }
-    .el-dropdown-menu__item:hover{
-        background-color: var(--el-bg-color-page);
-    }
-}
-.el-button--dark{
-    --el-button-bg-color: #303133;
-    --el-button-text-color: var(--el-color-white);
-    --el-button-border-color: #303133;
-    --el-button-hover-bg-color: rgb(110, 111, 112);
-    --el-button-hover-text-color: var(--el-color-white);
-    --el-button-hover-border-color: rgb(110, 111, 112);
-    --el-button-active-bg-color: rgb(42, 43, 45);
-    --el-button-active-border-color: rgb(42, 43, 45);
-}
-
-.el-messagebox-payment{
-    .el-message-box__header,.el-message-box__btns{display: none;}
-    padding: 0;
 }

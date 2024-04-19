@@ -76,15 +76,15 @@ onObserve(markedTextRef, (e: IntersectionObserverEntry[], done: Function) => {
         margin: 1em 0;
         font-size: 14px;
         line-height: 1.6;
-        border: 1px solid #ddd;
+        border: var(--el-border);
         th {
             padding: 10px 15px;
-            background-color: #f5f5f5;
-            border: 1px solid #ddd;
+            background-color: var(--el-bg-color-page);
+            border: var(--el-border);
         }
         td {
             padding: 10px 15px;
-            border: 1px solid #ddd;
+            border: var(--el-border);
         }
     }
 }
