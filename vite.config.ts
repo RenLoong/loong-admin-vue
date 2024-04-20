@@ -88,7 +88,7 @@ export default defineConfig({
 		// 接口代理（解决跨域）
 		proxy: {
 			"/local": {
-				target: "http://cloud.renloong.com/",
+				target: "http://zwk.renloong.com/",
 				changeOrigin: true,
 				rewrite: (path) => path.replace(/^\/local/, ""),
 			}
