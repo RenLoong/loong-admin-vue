@@ -1,4 +1,4 @@
-import { useStorage } from '@/common';
+import { useStorage } from '@/common/config';
 export default () => {
     const storage = useStorage();
     const WEBCONFIG = ref<WebConfigInterface>({});

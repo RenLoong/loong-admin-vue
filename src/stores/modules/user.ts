@@ -1,4 +1,4 @@
-import { useStorage } from '@/common';
+import { useStorage } from '@/common/config';
 import { onStoreageChange } from '@/common/functions';
 import router from '@/routers';
 export default () => {

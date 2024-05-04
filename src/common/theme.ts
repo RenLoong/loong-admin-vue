@@ -1,12 +1,12 @@
-import { useStorage } from "@/common";
+import { useStorage } from "@/common/config";
 import { onStoreageChange } from "./functions";
 
 type Theme = 'dark' | 'OS';
 const THEME_KEY = 'THEME';
+const storage = useStorage();
+const theme = ref<Theme>(storage.get(THEME_KEY) as Theme || 'OS');
 export type { Theme };
 export default function useTheme() {
-    const storage = useStorage();
-    const theme = ref<Theme>(storage.get(THEME_KEY) as Theme || 'OS');
     const match = matchMedia('(prefers-color-scheme: dark)');
     const followOS = () => {
         if (match.matches) {

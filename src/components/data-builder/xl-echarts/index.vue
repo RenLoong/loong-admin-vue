@@ -13,7 +13,6 @@ const props = withDefaults(defineProps<{
 });
 type EChartsOption = echarts.EChartsOption;
 let EChartInstance: echarts.ECharts;
-const echartsRef = ref();
 const setChartOptions = (options: EChartsOption) => {
     EChartInstance && EChartInstance.setOption(options);
 }
@@ -28,9 +27,11 @@ const switchEchartsTheme = (val: Theme) => {
         EChartInstance.setOption(light);
     }
 }
+const datav=Date.now().toString(16);
 onMounted(() => {
-    if (echartsRef.value) {
-        EChartInstance = echarts.init(echartsRef.value);
+    const dom = document.getElementById(`echarts-${datav}`);
+    if (dom) {
+        EChartInstance = echarts.init(dom);
         props.data && EChartInstance.setOption(props.data);
         switchEchartsTheme(theme.value);
     }
@@ -41,12 +42,15 @@ onUnmounted(() => {
 })
 onWindowResize(() => {
     EChartInstance && EChartInstance.resize();
+    intervalEr && clearTimeout(intervalEr);
 }, 300)
 const search = ref({})
+let intervalEr: NodeJS.Timeout|undefined;
 const createInterval = () => {
-    if (props.interval && props.interval > 500) {
-        setInterval(() => {
+    if (!intervalEr && props.interval && props.interval > 500) {
+        intervalEr=setTimeout(() => {
             getData();
+            intervalEr=undefined;
         }, props.interval)
     }
 }
@@ -73,7 +77,7 @@ defineExpose({
 </script>
 
 <template>
-    <div ref="echartsRef"></div>
+    <div :id="`echarts-${datav}`"></div>
 </template>
 
 <style lang="scss" scoped></style>

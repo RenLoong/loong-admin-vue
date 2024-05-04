@@ -1,4 +1,4 @@
-import { useStorage } from '@/common';
+import { useStorage } from '@/common/config';
 import type { RouteRecordRaw, RouteRecordName } from 'vue-router'
 import router from "@/routers";
 import components, {componentsType} from '@/layouts'

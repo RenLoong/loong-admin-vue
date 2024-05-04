@@ -42,27 +42,19 @@ const handleAction = (command: any) => {
         </slot>
         <div class="flex-1"></div>
             <template v-for="(item, _index) in WEBCONFIG.toolbar" :index="_index">
-                <template v-if="item.tips">
-                    <el-tooltip effect="dark" :content="item.tips" placement="bottom">
-                        <div class="pointer header-item flex flex-center" @click="handleAction(item)">
-                            <el-icon v-if="item.props.icon">
-                                <component :is="item.props.icon" />
-                            </el-icon>
-                            <span v-if="item.props.label">{{ item.props.label }}</span>
-                        </div>
-                    </el-tooltip>
-                </template>
-                <div class="pointer header-item flex flex-center" v-else @click="handleAction(item)">
-                    <el-icon v-if="item.props.icon">
-                        <component :is="item.props.icon" />
-                    </el-icon>
-                    <span v-if="item.props.label">{{ item.props.label }}</span>
-                    <template v-if="item.props.field && USERINFO">
-                        <component :is="item.props.field.component.name" v-bind="item.props.field.component.props">
-                            {{ USERINFO[item.props.field.name] }}
-                        </component>
-                    </template>
-                </div>
+                <el-tooltip effect="dark" :content="item.props.tips" placement="bottom" :disabled="!item.props.tips">
+                    <div class="pointer header-item flex flex-center" @click="handleAction(item)">
+                        <el-icon v-if="item.props.icon">
+                            <component :is="item.props.icon" />
+                        </el-icon>
+                        <span v-if="item.props.label">{{ item.props.label }}</span>
+                        <template v-if="item.props.field && USERINFO">
+                            <component :is="item.props.field.component.name" v-bind="item.props.field.component.props">
+                                {{ USERINFO[item.props.field.name] }}
+                            </component>
+                        </template>
+                    </div>
+                </el-tooltip>
             </template>
         <div class="pointer px-3 flex flex-center">
             <el-switch v-model="theme" style="--el-switch-on-color:#2c2c2c;" active-action-icon="Moon"

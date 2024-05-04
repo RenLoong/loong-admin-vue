@@ -1,4 +1,4 @@
-import { useStorage } from '@/common';
+import { useStorage } from '@/common/config';
 interface StateInterface{
     AsideState:boolean
     NotMenusAsideState:boolean

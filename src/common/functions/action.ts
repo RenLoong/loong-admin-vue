@@ -5,11 +5,12 @@ import router from '@/routers';
 import { useUserStore, useWebConfigStore } from '@/stores';
 import { RouteRecordNormalized } from 'vue-router';
 interface UseClickOptionsInterface {
-    model: '' | 'redirect' | 'comfirm' | 'dialog' | 'dialogTable' | 'Lock' | 'Search' | 'Notification' | 'FullScreen' | 'OutLogin';
+    model: '' | 'redirect'|'link' | 'comfirm' | 'dialog' | 'dialogTable' | 'Lock' | 'Search' | 'Notification' | 'FullScreen' | 'OutLogin';
     path: string;
     props?: any;
     data?: any;
     query?: any;
+    [key: string]: any;
 }
 export const useClick = (options: UseClickOptionsInterface) => {
     const currentRoute = router.currentRoute.value;
@@ -77,7 +78,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                         left: '50%',
                         transform: 'translateX(-50%)'
                     },
-                    customClass: 'el-messagebox-width',
+                    customClass: 'el-messagebox-width rounded-6',
                     ...messageProps,
                     message: () => h('div', {
                         class:'flex flex-column'
@@ -106,7 +107,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                                 class:'p-4 flex flex-column'
                             },result.value.map((item:any)=>{
                                 return h('div',{
-                                    class:'shadow-lighter rounded-lg pointer p-4 mt-4 hover-bg-primary-light-9',
+                                    class:'shadow-lighter rounded-6 pointer p-4 mt-4 hover-bg-primary-light-9',
                                     onClick:()=>{
                                         ElMessageBox.close();
                                         router.push(item);
@@ -282,6 +283,12 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     path,
                     query: options.query
                 });
+                break;
+            case 'link':
+                console.log(options);
+                if (options.props?.url) {
+                    window.open(options.props?.url, options.props?.target || '_self',options.props?.features);
+                }
                 break;
             default:
                 options.query.back = currentRoute.fullPath;
