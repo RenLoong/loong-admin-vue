@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import { getWebConfig, getMenus } from "@/common/functions/request";
 import { useUserStore, useWebConfigStore } from "@/stores";
+import { useStorage } from "@/common/config";
 /**
  * meta.title 页面标题
  * meta.login false：未登录可访问
@@ -71,6 +72,13 @@ const router = createRouter({
     routes,
 })
 router.beforeEach(async (to, _from, next) => {
+	const {icode}=to.query;
+    const storage = useStorage();
+    // 保存到本地存储
+    if (icode&&!storage.get('ICODE')) {
+        storage.set('ICODE', icode);
+    }
+
     const { hasLogin, initUserInfo } = useUserStore()
     const {WEBCONFIG,initWebConfig} = useWebConfigStore();
     if(!WEBCONFIG.web_name){

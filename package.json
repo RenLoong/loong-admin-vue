@@ -1,7 +1,7 @@
 {
   "name": "cloud-vue",
   "private": true,
-  "version": "0.0.29",
+  "version": "0.0.35",
   "type": "module",
   "scripts": {
     "dev": "vite --mode development --host 0.0.0.0",
@@ -24,6 +24,7 @@
     "marked-highlight": "^2.0.6",
     "pinia": "^2.0.35",
     "qrcode": "^1.5.3",
+    "swiper": "^11.1.1",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6"
   },

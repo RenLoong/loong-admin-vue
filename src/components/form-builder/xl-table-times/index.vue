@@ -29,11 +29,13 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="flex flex-column xl-table-times" v-for="(item, index) in group" :index="index">
-        <component v-if="item.component" :is="`el-${item.component}`" v-bind="item.props">
-            {{ item.label }}：{{ item.value }}
-        </component>
-        <div v-else class="text" v-bind="item.props">{{ item.label }}：{{ item.value }}</div>
+    <div class="flex flex-column xl-table-times">
+        <div  v-for="(item, index) in group" :index="index">
+            <component v-if="item.component" :is="`el-${item.component}`" v-bind="item.props">
+                {{ item.label }}：{{ item.value }}
+            </component>
+            <div v-else class="text" v-bind="item.props">{{ item.label }}：{{ item.value }}</div>
+        </div>
     </div>
 </template>
 

@@ -137,6 +137,11 @@ a {
     .el-message-box__btns {
         display: none;
     }
-
+    .el-message-box__message{
+        flex:1;
+    }
     padding: 0;
+    .recharge{
+        .close{display: block !important;}
+    }
 }

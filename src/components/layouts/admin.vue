@@ -37,7 +37,7 @@ watchEffect(() => {
     if (i[0] !== undefined) {
         TabsSelectedIndex.value = i[0];
     }
-    if(!["dataComponent"].includes(currentRoute.value.meta.component as string)){
+    if(!["databoardComponent"].includes(currentRoute.value.meta.component as string)){
         layoutsMainClass.value='bg-white rounded-4 p-4 shadow';
     }else{
         layoutsMainClass.value='';

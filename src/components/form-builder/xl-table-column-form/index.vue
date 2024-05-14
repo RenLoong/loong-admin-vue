@@ -5,10 +5,12 @@ import { hasWhere } from '@/common/functions';
 
 
 const props = withDefaults(defineProps<{
+    field?: string,
     scope: any,
     column: any
 }>(), {
-    column: {}
+    column: {},
+    field:'id'
 });
 const emit = defineEmits(['change'])
 const values=ref();
@@ -25,7 +27,7 @@ const submitSwitch=()=>{
     loading.value = true
     return new Promise((resolve, reject) => {
         $http.post(props.column.api,{
-            id:props.scope.row.id,
+            id:props.scope.row[props.field],
             field:props.scope.column.property,
             value:values.value?0:1
         }).then((res:ResponseInterface)=>{
@@ -45,7 +47,7 @@ const submitSwitch=()=>{
 const submit=()=>{
     loading.value = true
     $http.post(props.column.api,{
-        id:props.scope.row.id,
+        id:props.scope.row[props.field],
         field:props.scope.column.property,
         value:values.value
     }).then((res:ResponseInterface)=>{

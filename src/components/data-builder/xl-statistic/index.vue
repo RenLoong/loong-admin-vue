@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { $http } from '@/common';
+import { useClick } from '@/common/functions/action';
 
 type dataType = {
     today: number
     growth_rate?: number
     yesterday?: number
+    footer?: number
 };
 const props = withDefaults(defineProps<{
     data?: dataType
     label: string
+    footer_text?: string
     tips?: string
     unit?: string
+    action?: any
     api?: string
     interval?: number
 }>(), {
@@ -63,6 +67,21 @@ const update=(query?:any)=>{
     search.value=query;
     getData();
 }
+const handleAction = () => {
+	if (!props.action) return;
+	let query = {
+		...props.action.params
+	};
+	const options = {
+		model: props.action.model,
+		props: props.action.props,
+		path: props.action.path,
+		query,
+		data: {}
+	};
+	useClick(options).then(() => {
+	}).catch(() => { })
+}
 defineExpose({
     update
 })
@@ -97,6 +116,23 @@ defineExpose({
                         <CaretBottom/>
                     </el-icon>
                 </span>
+            </div>
+        </div>
+        <div class="statistic-footer" v-else-if="props.footer_text">
+            <div class="footer-item">
+                <span>{{props.footer_text}}</span>
+                <span class="yesterday">
+                    <span>{{ value.footer }}</span>
+                </span>
+            </div>
+            <div v-if="props.action">
+                <permissions :name="props.action.path">
+                    <component :is="`el-${props.action.component.name}`"
+                        v-bind="props.action.component.props"
+                        @click="handleAction()">
+                        {{ props.action.component.label }}
+                    </component>
+                </permissions>
             </div>
         </div>
     </div>

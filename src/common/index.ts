@@ -1,5 +1,5 @@
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
-import config from "./config";
+import config, { useStorage } from "./config";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { useRefs, useUserStore, useWebConfigStore } from "@/stores";
 import { getRoundImage } from "@/common/functions";
@@ -21,6 +21,11 @@ axios.interceptors.request.use((_config) => {
     if (hasLogin()) {
         _config.headers.set('Authorization', getToken());
     }
+    const storage=useStorage();
+    if(storage.get('ICODE')){
+        _config.headers.set('X-ICODE', storage.get('ICODE') as string);
+    }
+    _config.headers.set('X-Platform', 'pc');
     // 判断url是否不以“/”开头
     if (!_config.url?.startsWith('/')) {
         _config.baseURL = (baseURL + config.URLModule);

@@ -44,7 +44,8 @@ const getComponentValue = (component: any, value: any) => {
 	<el-table-column v-else :prop="column.prop" :label="column.label" v-bind="column.extra.props">
 		<template #default="scope">
 			<template v-if="column.extra?.component.api">
-				<xl-table-column-form :column="column.extra?.component" :scope="scope" @change="updateTableDataValue" />
+				<xl-table-column-form :column="column.extra?.component" :scope="scope" :field="column.extra?.field"
+					@change="updateTableDataValue" />
 			</template>
 			<template v-else-if="column.extra?.component.name === 'table-userinfo'">
 				<xl-table-userinfo :data="scope.row" v-bind="column.extra?.component.props" />
@@ -57,25 +58,28 @@ const getComponentValue = (component: any, value: any) => {
 			</template>
 			<template v-else-if="column.extra?.component.name === 'image'">
 				<template v-if="Array.isArray(scope.row[column.prop])">
-					<el-image v-for="(item, index) in scope.row[column.prop]" :index="index"
+					<el-image v-for="(item, index) in scope.row[column.prop]" :key="index"
 						v-bind="column.extra?.component.props" :src="item"
 						:preview-src-list="scope.row[column.prop]"></el-image>
 				</template>
-				<el-image v-else v-bind="column.extra?.component.props" :src="scope.row[column.prop]"
+				<el-image v-else v-bind="column.extra?.component.props" v-if="scope.row[column.prop]" :src="scope.row[column.prop]"
 					:preview-src-list="tableDataPreview(column.prop)"></el-image>
 			</template>
 
 			<template v-else>
 				<template v-if="Array.isArray(scope.row[column.prop])">
-					<component v-for="(item, index) in scope.row[column.prop]" :is="`el-${column.extra.component.name}`"
-						:index="index" v-bind="getComponentProps(column.extra?.component, item, index)">
-						{{ getComponentValue(column.extra?.component, item) }}</component>
+					<template v-for="(item, index) in scope.row[column.prop]">
+						<component :is="`el-${column.extra.component.name}`" :key="index"
+							v-bind="getComponentProps(column.extra?.component, item, index)"
+							v-if="getComponentValue(column.extra?.component, item)">
+							{{ getComponentValue(column.extra?.component, item) }}</component>
+					</template>
 				</template>
 				<component v-else :is="`el-${column.extra?.component.name}`"
-					v-bind="getComponentProps(column.extra?.component, scope.row[column.prop])">
+					v-bind="getComponentProps(column.extra?.component, scope.row[column.prop])"
+					v-if="getComponentValue(column.extra?.component, scope.row[column.prop])">
 					{{ getComponentValue(column.extra?.component, scope.row[column.prop]) }}
 				</component>
 			</template>
 		</template>
-	</el-table-column>
-</template>
+</el-table-column></template>

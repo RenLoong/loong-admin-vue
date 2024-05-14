@@ -170,8 +170,8 @@ const handleAction = (group: any, row: any) => {
 				</div>
 				<div class="flex flex-center" v-if="search.total > 0">
 					<el-pagination background center :page-sizes="[10, 20, 50, 100, 200]"
-						layout="total,sizes,prev, pager, next,jumper" :total="search.total"
-						v-model:page-size="search.limit" v-model:current-page="search.page">
+						layout="total,sizes,prev, pager, next,jumper" :total="search.total" v-model:page-size="search.limit"
+						v-model:current-page="search.page">
 					</el-pagination>
 				</div>
 			</div>
@@ -180,11 +180,14 @@ const handleAction = (group: any, row: any) => {
 </template>
 
 <style lang="scss">
+.el-main:has(> .apps-layouts) {
+	background: radial-gradient(circle at 50% 0%, #2DCBA5 -60%, transparent 30%),
+		radial-gradient(circle at 60% 20%, #49B2FF -50%, transparent 10%);
+}
+</style>
+<style lang="scss" scoped>
 .apps-layouts {
 	--layouts-width: 1300px;
-	background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUwIiBoZWlnaHQ9IjI3MCIgdmlld0JveD0iMCAwIDQ1MCAyNzAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMF80MzUzXzk2OTYzKSI+CjxtYXNrIGlkPSJtYXNrMF80MzUzXzk2OTYzIiBzdHlsZT0ibWFzay10eXBlOmFscGhhIiBtYXNrVW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4PSIwIiB5PSIwIiB3aWR0aD0iNDUwIiBoZWlnaHQ9IjQ5OCI+CjxyZWN0IHdpZHRoPSI0NTAiIGhlaWdodD0iNDk4IiBmaWxsPSJ3aGl0ZSIvPgo8L21hc2s+CjxnIG1hc2s9InVybCgjbWFzazBfNDM1M185Njk2MykiPgo8ZyBvcGFjaXR5PSIwLjUiIGZpbHRlcj0idXJsKCNmaWx0ZXIwX2ZfNDM1M185Njk2MykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE1NC4yNzIgMTQuNTU1M0MxNzMuNjUgMTMuNDAwNSAxOTUuNjQ2IDEyLjUwNSAyMDguMDU3IDI4LjY1MzRDMjIwLjY0MiA0NS4wMjggMjE2LjkyNSA2OC43Mjg2IDIxMS42ODggODkuMjU5OUMyMDYuODExIDEwOC4zODIgMTk3LjAxNSAxMjUuNDc5IDE4MC45MzMgMTM0Ljk5NkMxNjMuNzA5IDE0NS4xODggMTQzLjAwNyAxNDkuMzU2IDEyNS4xODYgMTQwLjQ0N0MxMDcuMDY2IDEzMS4zODkgOTUuNDYzNyAxMTEuNzQgOTEuODk3NSA5MC40ODQ5Qzg4LjUyMTUgNzAuMzYzOSA5NC44OCA0OS45MzI3IDEwNy40MzUgMzQuNjQ5N0MxMTkuMTc1IDIwLjM1OCAxMzYuNjMgMTUuNjA2NyAxNTQuMjcyIDE0LjU1NTNaIiBmaWxsPSIjMkRDQkE1Ii8+CjwvZz4KPGcgb3BhY2l0eT0iMC41IiBmaWx0ZXI9InVybCgjZmlsdGVyMV9mXzQzNTNfOTY5NjMpIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yNTIuMTE5IDIxLjAwMDNDMjcxLjkyNyAyMC45MTI1IDI4NC41MDUgNDEuOTkwMiAyOTYuMTk0IDU5LjM1NDhDMzA3LjAyOSA3NS40NTExIDMxNi4zODcgOTMuMDgwNyAzMTMuOTQxIDExMi44NEMzMTEuMTk5IDEzNC45OCAzMDEuNjQ4IDE1Ny43MjUgMjgyLjg4MSAxNjYuODc4QzI2NC41MDEgMTc1Ljg0MSAyNDQuMDQxIDE2Ni4wOCAyMjYuMzg1IDE1NS41NDFDMjEwLjIwNCAxNDUuODgyIDE5NS40MjEgMTMyLjEyOSAxOTEuNzUxIDExMi40OEMxODguMTcgOTMuMzA3OCAxOTcuOTk5IDc1LjY0NTEgMjA4LjQ5MiA1OS43NDMzQzIyMC4wMDQgNDIuMjk4MSAyMzIuMzU0IDIxLjA4NzggMjUyLjExOSAyMS4wMDAzWiIgZmlsbD0iIzQ5QjJGRiIvPgo8L2c+CjwvZz4KPC9nPgo8ZGVmcz4KPGZpbHRlciBpZD0iZmlsdGVyMF9mXzQzNTNfOTY5NjMiIHg9Ii0zNyIgeT0iLTExNCIgd2lkdGg9IjM4MS41NTYiIGhlaWdodD0iMzg3LjMyNSIgZmlsdGVyVW5pdHM9InVzZXJTcGFjZU9uVXNlIiBjb2xvci1pbnRlcnBvbGF0aW9uLWZpbHRlcnM9InNSR0IiPgo8ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPgo8ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPgo8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI2NCIgcmVzdWx0PSJlZmZlY3QxX2ZvcmVncm91bmRCbHVyXzQzNTNfOTY5NjMiLz4KPC9maWx0ZXI+CjxmaWx0ZXIgaWQ9ImZpbHRlcjFfZl80MzUzXzk2OTYzIiB4PSI2MyIgeT0iLTEwNyIgd2lkdGg9IjM3OS4zMzMiIGhlaWdodD0iNDA1LjM5OCIgZmlsdGVyVW5pdHM9InVzZXJTcGFjZU9uVXNlIiBjb2xvci1pbnRlcnBvbGF0aW9uLWZpbHRlcnM9InNSR0IiPgo8ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPgo8ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJzaGFwZSIvPgo8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI2NCIgcmVzdWx0PSJlZmZlY3QxX2ZvcmVncm91bmRCbHVyXzQzNTNfOTY5NjMiLz4KPC9maWx0ZXI+CjxjbGlwUGF0aCBpZD0iY2xpcDBfNDM1M185Njk2MyI+CjxyZWN0IHdpZHRoPSI0NTAiIGhlaWdodD0iMjcwIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=);
-	background-repeat: no-repeat;
-	background-position: center top;
 
 	.search-form {
 		padding: 50px 0;

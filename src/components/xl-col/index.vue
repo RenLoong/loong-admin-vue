@@ -24,12 +24,14 @@ watchEffect(() => {
             case 'row':
                 if(typeof props[s] === 'number'){
                     classList.value.push(`grid-row-${props[s]}`);
-                }else{
+                }else if(typeof props[s] === 'object'){
                     for (const key in props[s]) {
                         if(props[s][key]){
-                            responsive(key as keyof typeof props,'row');
+                            classList.value.push(`grid-row-${props.row[key]}`);
                         }
                     }
+                }else{
+                    classList.value.push(`grid-row-1`);
                 }
                 break;
             default:
