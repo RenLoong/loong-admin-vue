@@ -21,8 +21,8 @@ axios.interceptors.request.use((_config) => {
     if (hasLogin()) {
         _config.headers.set('Authorization', getToken());
     }
-    const storage=useStorage();
-    if(storage.get('ICODE')){
+    const storage = useStorage();
+    if (storage.get('ICODE')) {
         _config.headers.set('X-ICODE', storage.get('ICODE') as string);
     }
     _config.headers.set('X-Platform', 'pc');
@@ -65,7 +65,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
                 break;
             case $http.ResponseCode.LOCK:
                 showUnlockBox();
-                throw new AxiosError(`[${response.data.code}]${response.data.msg}`,'ERR_CANCELED');
+                throw new AxiosError(`[${response.data.code}]${response.data.msg}`, 'ERR_CANCELED');
                 break;
         }
         return response.data;
@@ -119,6 +119,7 @@ export const $eventBus = {
     remove: eventRemove
 }
 export const showErrorBox = (res: any) => {
+    if (import.meta.env.PROD) return;
     const content = [];
     if (res.code) {
         content.push(h('div', { class: 'flex py-2' }, [
@@ -147,27 +148,27 @@ export const showErrorBox = (res: any) => {
     })
 }
 export const showUnlockBox = () => {
-    const {WEBCONFIG} = useWebConfigStore();
+    const { WEBCONFIG } = useWebConfigStore();
     ElMessageBox({
         title: '输入PIN码解锁',
         confirmButtonText: '解锁',
-        confirmButtonClass:'el-button--success is-text is-has-bg',
+        confirmButtonClass: 'el-button--success is-text is-has-bg',
         cancelButtonText: '退出登录',
-        cancelButtonClass:'el-button--danger is-text is-has-bg',
+        cancelButtonClass: 'el-button--danger is-text is-has-bg',
         showClose: false,
         showCancelButton: true,
         closeOnClickModal: false,
-        buttonSize:'small',
+        buttonSize: 'small',
         customClass: 'el-messagebox-width',
         showInput: true,
-        inputType:'number',
-        inputPattern:/^\d{6}$/,
-        inputPlaceholder:'请输入6位数字PIN码',
-        inputErrorMessage:'请输入6位数字PIN码',
-        beforeClose: (action: string, instance: { confirmButtonLoading: boolean;inputValue:string }, done: () => void) => {
+        inputType: 'number',
+        inputPattern: /^\d{6}$/,
+        inputPlaceholder: '请输入6位数字PIN码',
+        inputErrorMessage: '请输入6位数字PIN码',
+        beforeClose: (action: string, instance: { confirmButtonLoading: boolean; inputValue: string }, done: () => void) => {
             if (action === 'confirm') {
                 instance.confirmButtonLoading = true
-                $http.post(WEBCONFIG.apis.unlock, {password:instance.inputValue}).then((res: any) => {
+                $http.post(WEBCONFIG.apis.unlock, { password: instance.inputValue }).then((res: any) => {
                     if (res.code === $http.ResponseCode.SUCCESS) {
                         done()
                     } else {
@@ -179,8 +180,8 @@ export const showUnlockBox = () => {
                 })
             } else {
                 useClick({
-                    model:'OutLogin',
-                    path:''
+                    model: 'OutLogin',
+                    path: ''
                 }).then(() => {
                     done();
                 }).catch(() => { })

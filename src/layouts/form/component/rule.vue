@@ -60,6 +60,9 @@ const prop = (field: string) => {
                             <xl-admin-rule v-model="form[item.field]" v-bind="item.extra.props"
                                 :options="item.extra.options" />
                         </template>
+                        <template v-else-if="item.component === 'wangeditor'">
+                            <xl-wangeditor v-model="form[item.field]" v-bind="item.extra.props" />
+                        </template>
 
                         <template v-else-if="['radio', 'checkbox'].includes(item.component)">
                             <component :is="'el-'+item.component+'-group'" v-model="form[item.field]"

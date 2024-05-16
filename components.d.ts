@@ -87,6 +87,7 @@ declare module '@vue/runtime-core' {
     XlTableColumnForm: typeof import('./src/components/form-builder/xl-table-column-form/index.vue')['default']
     XlTableTimes: typeof import('./src/components/form-builder/xl-table-times/index.vue')['default']
     XlTableUserinfo: typeof import('./src/components/form-builder/xl-table-userinfo/index.vue')['default']
+    XlWangeditor: typeof import('./src/components/form-builder/xl-wangeditor/index.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

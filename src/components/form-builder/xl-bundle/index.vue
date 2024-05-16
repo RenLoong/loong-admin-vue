@@ -4,7 +4,7 @@ import { ElMessage, ElMessageBox, ElInput, ElSelect, ElInputNumber } from 'eleme
 import { useWebConfigStore } from "@/stores";
 const { WEBCONFIG } = useWebConfigStore();
 const props = withDefaults(defineProps<{
-    modelValue: string | string[],
+    modelValue?: string | string[],
     accept?: string,
     multiple?: number,
     view?: string
@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<{
     multiple: 1,
     view: 'image'
 });
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue','change'])
 const uploadRef = ref();
 const dialogVisible = ref(false);
 const open = () => {
@@ -98,7 +98,7 @@ const handleRemove = (index: number) => {
     if (props.multiple === 1) {
         emit('update:modelValue', '')
     } else {
-        emit('update:modelValue', selected.value)
+        emit('update:modelValue', selected.value.map((item: any) => item.url))
     }
 }
 const deleteUploads = () => {
@@ -178,8 +178,10 @@ const updateUploads = () => {
 const submitSelected = () => {
     if (props.multiple === 1) {
         emit('update:modelValue', selected.value[0].url)
+        emit('change', selected.value[0])
     } else {
-        emit('update:modelValue', selected.value)
+        emit('update:modelValue', selected.value.map((item: any) => item.url))
+        emit('change', selected.value)
     }
     dialogVisible.value = false;
 }
@@ -333,6 +335,15 @@ const saveClassify = (item?: ClassifyInterface) => {
     }).then(() => {
     }).catch(() => { })
 }
+const clear=()=>{
+    selected.value = [];
+    selectedEdit.value = [];
+    values.value = [];
+}
+defineExpose({
+    open,
+    clear
+})
 </script>
 
 <template>

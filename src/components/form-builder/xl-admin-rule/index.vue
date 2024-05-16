@@ -4,34 +4,24 @@ import { TransferKey } from 'element-plus';
 const props = withDefaults(defineProps<{
     modelValue: string[],
     options: any,
-    rightDefaultChecked:string[]
+    rightDefaultChecked: string[]
 }>(), {
     options: []
 });
 const emit = defineEmits(['update:modelValue']);
-const data = ref<any>([]);
-const initData = (options: any, prefix?: string[]) => {
-    options.sort((a: any, b: any) => a.sort - b.sort).forEach((item: any) => {
-        let title = item.title;
-        if (prefix && prefix.length > 0) {
-            title = `${prefix.join(' - ')} - ${item.title}`
-        }
-        data.value.push({
-            label: title,
-            key: item.path,
-            disabled: props.rightDefaultChecked.includes(item.path)
-        })
+const flattenData = (items: any[], parentTitle = '') => {
+    let result: any[] = [];
+    items.sort((a: any, b: any) => a.sort - b.sort).forEach(item => {
+        const fullTitle = parentTitle ? `${parentTitle} - ${item.title}` : item.title;
+        result.push({ label: fullTitle, key: item.path, disabled: props.rightDefaultChecked.includes(item.path) });
         if (item.children && item.children.length > 0) {
-            if (!prefix) {
-                prefix = [];
-            }
-            prefix.push(item.title)
-            initData(item.children, prefix)
-            prefix = [];
+            result = result.concat(flattenData(item.children, fullTitle));
         }
     });
+    return result;
 }
-initData(props.options)
+const data = flattenData(props.options);
+
 
 const value = ref([
     ...props.modelValue,
@@ -47,13 +37,26 @@ const filterMethod = (query: string, item: any) => {
 </script>
 
 <template>
-    <el-transfer v-model="value" :titles="['未授权', '已授权']" :button-texts="['取消授权', '添加授权']" filterable :right-default-checked="props.rightDefaultChecked"
-        :filter-method="filterMethod" filter-placeholder="搜索权限" :data="data" class="admin-rule" @change="updateValue" />
+    <el-transfer v-model="value" :titles="['未授权', '已授权']" :button-texts="['取消授权', '添加授权']" filterable
+        :right-default-checked="props.rightDefaultChecked" :filter-method="filterMethod" filter-placeholder="搜索权限"
+        :data="data" class="admin-rule" @change="updateValue" />
 </template>
 
 <style lang="scss" scoped>
 .admin-rule {
-    --el-transfer-panel-width: 300px;
+    --el-transfer-panel-width: 423px;
     --el-transfer-panel-body-height: 50vh;
+}
+
+@media only screen and (max-width: 1468px) {
+    .admin-rule {
+        --el-transfer-panel-width: 100%;
+        --el-transfer-panel-body-height: 50vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+    }
 }
 </style>

@@ -72,3 +72,23 @@ declare global {
         extra?: any;
     }
 }
+import { SlateDescendant, SlateElement, SlateText } from '@wangeditor/editor'
+
+declare module '@wangeditor/editor' {
+    // 扩展 Text
+    interface SlateText {
+        text: string
+    }
+
+    // 扩展 Element
+    interface SlateElement {
+        type: string
+        children: SlateDescendant[]
+    }
+}
+declare module '@wangeditor/editor-for-vue' {
+    import { Editor } from '@wangeditor/editor'
+    export * from '@wangeditor/editor'
+    export default Editor
+  }
+  
