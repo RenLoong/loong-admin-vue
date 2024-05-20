@@ -7,7 +7,7 @@ const props = withDefaults(defineProps<{
 </script>
 
 <template>
-    <div class="flex flex-y-center flex-warp" v-for="(item, index) in props.prompt" :index="index">
+    <div class="flex flex-y-center flex-wrap" v-for="(item, index) in props.prompt" :index="index">
         <component v-for="(c, cindex) in item" :index="cindex" :is="'el-'+c.component" v-bind="c.props">
             <template v-for="(slot, _slot) in c.children" v-slot="_slot">
                 <component :is="slot.component" v-bind="slot.props" v-if="typeof slot==='object'"/>

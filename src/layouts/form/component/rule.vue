@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { hasWhere } from '@/common/functions';
+import { useClick } from '@/common/functions/action';
 const props = withDefaults(defineProps<{
     modelValue: any
     rule: any
@@ -33,6 +34,33 @@ const prop = (field: string) => {
         return props.group + '.' + field;
     }
     return field;
+}
+const handleAction = (group: any, field: any,_e:any) => {
+    console.log(group, field)
+	if (!group.extra) return;
+	let query = {
+		...group.extra.params,
+        field
+	};
+	if (group.extra.field) {
+		for (let key in group.extra.field) {
+			query[group.extra.field[key]] = form.value[key];
+		}
+	} else {
+		query.id = form.value.id;
+	}
+	const options = {
+		model: group.extra.model,
+		props: group.extra.props,
+		path: group.extra.path,
+		query,
+		data: form.value
+	};
+	useClick(options).then((data:any) => {
+        if(data[field]){
+            form.value[field] = data[field]
+        }
+	}).catch(() => { })
 }
 </script>
 
@@ -76,16 +104,18 @@ const prop = (field: string) => {
                         <template v-else>
                             <component :is="'el-'+item.component" v-model="form[item.field]" v-bind="item.extra.props">
                                 <template v-for="(child, name) in item.extra.children" :index="name" v-slot:[name]>
-                                    <component :is="child.component" v-if="typeof child === 'object'"
-                                        v-bind="child.props">
-                                        <template v-for="(subChild, subName) in child.children" :index="subName"
-                                            v-slot:[subName]>
-                                            <component :is="subChild.component" v-if="typeof subChild === 'object'"
-                                                v-bind="subChild.props" />
-                                            <template v-else>{{ subChild }}</template>
-                                        </template>
-                                    </component>
-                                    <template v-else>{{ child }}</template>
+                                    <permissions :name="child.extra?.path">
+                                        <component :is="child.component" v-if="typeof child === 'object'"
+                                            v-bind="child.props" @click="handleAction(child,item.field,$event)" @change="handleAction(child,item.field,$event)">
+                                            <template v-for="(subChild, subName) in child.children" :index="subName"
+                                                v-slot:[subName]>
+                                                <component :is="subChild.component" v-if="typeof subChild === 'object'"
+                                                    v-bind="subChild.props" />
+                                                <template v-else>{{ subChild }}</template>
+                                            </template>
+                                        </component>
+                                        <template v-else>{{ child }}</template>
+                                    </permissions>
                                 </template>
                             </component>
                         </template>

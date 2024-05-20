@@ -217,7 +217,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                                 if (res.code === $http.ResponseCode.SUCCESS) {
                                     done()
                                     ElMessage.success(res.msg);
-                                    resolve(true);
+                                    resolve(res.data);
                                 } else {
                                     reject();
                                     ElMessage.error(res.msg);
