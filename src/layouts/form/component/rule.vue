@@ -70,7 +70,7 @@ const handleAction = (group: any, field: any,_e:any) => {
             <el-col v-bind="item.extra?.col">
                 <el-form-item :index="index" :label="item.title" :prop="prop(item.field)"
                     v-if="hasWhere(item.extra, form)">
-                    <div class="w-100">
+                    <div class="w-100 overflow-hidden">
                         <template v-if="item.component === 'select'">
                             <el-select v-model="form[item.field]" v-bind="item.extra.props">
                                 <el-option v-for="(sub, subIndex) in item.extra.options" :key="subIndex"
@@ -131,7 +131,7 @@ const handleAction = (group: any, field: any,_e:any) => {
 .el-group {
     display: flex;
     gap: 10px;
-
+    flex-wrap: wrap;
     .el-radio {
         margin-right: 0 !important;
     }
