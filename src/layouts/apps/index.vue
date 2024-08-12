@@ -146,7 +146,7 @@ const handleAction = (group: any, row: any) => {
 					<div class="apps-item flex flex-column" v-for="(item, index) in tableData" :index="index"
 						@click="handleAction(appsProps?.details, item)">
 						<div class="p-2">
-							<el-image :src="item.icon" class="apps-icon"></el-image>
+							<el-avatar :src="item.icon" shape="square" class="apps-icon">{{ item.title }}</el-avatar>
 						</div>
 						<div class="p-4">
 							<div class="font-weight-600 pointer apps-title text-ellipsis-2 text-break-all">
@@ -170,8 +170,8 @@ const handleAction = (group: any, row: any) => {
 				</div>
 				<div class="flex flex-center" v-if="search.total > 0">
 					<el-pagination background center :page-sizes="[10, 20, 50, 100, 200]"
-						layout="total,sizes,prev, pager, next,jumper" :total="search.total" v-model:page-size="search.limit"
-						v-model:current-page="search.page">
+						layout="total,sizes,prev, pager, next,jumper" :total="search.total"
+						v-model:page-size="search.limit" v-model:current-page="search.page">
 					</el-pagination>
 				</div>
 			</div>

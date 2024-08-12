@@ -58,11 +58,11 @@ const getComponentValue = (component: any, value: any) => {
 			</template>
 			<template v-else-if="column.extra?.component.name === 'image'">
 				<template v-if="Array.isArray(scope.row[column.prop])">
-					<el-image v-for="(item, index) in scope.row[column.prop]" :key="index"
+					<el-image preview-teleported v-for="(item, index) in scope.row[column.prop]" :key="index"
 						v-bind="column.extra?.component.props" :src="item"
 						:preview-src-list="scope.row[column.prop]"></el-image>
 				</template>
-				<el-image v-else v-bind="column.extra?.component.props" v-if="scope.row[column.prop]" :src="scope.row[column.prop]"
+				<el-image v-else preview-teleported v-bind="column.extra?.component.props" v-if="scope.row[column.prop]" :src="scope.row[column.prop]"
 					:preview-src-list="tableDataPreview(column.prop)"></el-image>
 			</template>
 
