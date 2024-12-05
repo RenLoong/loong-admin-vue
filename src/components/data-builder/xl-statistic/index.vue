@@ -11,6 +11,7 @@ type dataType = {
 const props = withDefaults(defineProps<{
     data?: dataType
     label: string
+    yesterday_label?: string
     footer_text?: string
     tips?: string
     unit?: string
@@ -18,7 +19,8 @@ const props = withDefaults(defineProps<{
     api?: string
     interval?: number
 }>(), {
-    label: ''
+    label: '',
+    yesterday_label: '',
 });
 const value = ref<dataType>({
     today: 0
@@ -104,7 +106,7 @@ defineExpose({
         </el-statistic>
         <div class="statistic-footer" v-if="value.yesterday">
             <div class="footer-item">
-                <span>昨日</span>
+                <span v-if="props.yesterday_label">{{ props.yesterday_label }}</span>
                 <span class="yesterday" :class="growthRateClass">
                     <span>{{ value.yesterday }}</span>
                     <el-divider direction="vertical" border-style="dashed" />

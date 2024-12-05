@@ -224,6 +224,7 @@ const handleHeader = (group: any) => {
 }
 const resetForm = () => {
 	formRef.value?.resetFields();
+	onSubmit();
 }
 const multipleSelection = ref<any[]>([])
 const toggleSelection = (rows?: any[]) => {
