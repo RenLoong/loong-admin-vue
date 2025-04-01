@@ -17,7 +17,7 @@ const rowProps = ref({
 	gutter: 20
 });
 const rows = ref<any[]>([]);
-const getData=()=>{
+const getData = () => {
 	$http.get(`${ApiUrl}`, {
 		params: {
 			...currentRoute.query
@@ -61,25 +61,27 @@ onBeforeMount(() => {
 			<el-skeleton-item style="height: 500px;" />
 		</template>
 		<template #default>
-			<xl-row v-bind="rowProps">
-				<xl-col v-for="(item, index) in rows" :index="index" v-bind="item.props" :row="item.row">
-					<template v-if="item.component.name === 'statistic'">
-						<xl-statistic ref="refs" v-bind="item.component.props" @reload="getData"/>
-					</template>
-					<template v-else-if="item.component.name === 'echarts'">
-						<xl-echarts ref="refs" v-bind="item.component.props" @reload="getData"/>
-					</template>
-					<template v-else-if="item.component.name === 'apply'">
-						<xl-apply ref="refs" v-bind="item.component.props" @reload="getData"/>
-					</template>
-					<template v-else-if="item.component.name === 'domain'">
-						<xl-domain ref="refs" v-bind="item.component.props" @reload="getData"/>
-					</template>
-					<template v-else>
-						<component :is="`${item.component.name}`" v-bind="item.component.props" />
-					</template>
-				</xl-col>
-			</xl-row>
+			<el-scrollbar>
+				<xl-row v-bind="rowProps">
+					<xl-col v-for="(item, index) in rows" :index="index" v-bind="item.props" :row="item.row">
+						<template v-if="item.component.name === 'statistic'">
+							<xl-statistic ref="refs" v-bind="item.component.props" @reload="getData" />
+						</template>
+						<template v-else-if="item.component.name === 'echarts'">
+							<xl-echarts ref="refs" v-bind="item.component.props" @reload="getData" />
+						</template>
+						<template v-else-if="item.component.name === 'apply'">
+							<xl-apply ref="refs" v-bind="item.component.props" @reload="getData" />
+						</template>
+						<template v-else-if="item.component.name === 'domain'">
+							<xl-domain ref="refs" v-bind="item.component.props" @reload="getData" />
+						</template>
+						<template v-else>
+							<component :is="`${item.component.name}`" v-bind="item.component.props" />
+						</template>
+					</xl-col>
+				</xl-row>
+			</el-scrollbar>
 		</template>
 	</el-skeleton>
 </template>

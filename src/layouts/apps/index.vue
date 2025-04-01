@@ -108,73 +108,76 @@ const handleAction = (group: any, row: any) => {
 			<el-skeleton-item style="height: 30px;" />
 		</template>
 		<template #default>
-			<div class="apps-layouts layouts">
-				<div class="flex flex-column search-form flex-center">
-					<el-input v-model="search.keyword" size="large" placeholder="搜索应用名称、标识" class="search-input">
-						<template #suffix>
-							<el-icon color="var(--el-input-border-color)" size="20">
-								<Search />
-							</el-icon>
-						</template>
-					</el-input>
-					<div class="flex flex-wrap w-50 grid-gap-4 mt-6">
-						<el-tag type="success" effect="light" small round>推荐：</el-tag>
-						<el-tag type="info" effect="light" small round>APps</el-tag>
-					</div>
-				</div>
-				<div class="flex mb-6">
-					<div class="flex-1 font-weight-600 h8">{{ currentRoute.meta.title }}</div>
-					<div class="flex grid-gap-4 sort">
-						<div class="item active">推荐</div>
-						<div class="item">最热</div>
-						<div class="item">最新</div>
-					</div>
-				</div>
-				<div class="flex mb-6">
-					<div class="flex-1 flex grid-gap-4 classify flex-wrap" :class="{ 'show-more': showMore }">
-						<div class="item active">全部</div>
-						<div class="item">分类</div>
-					</div>
-					<el-icon color="var(--el-color-primary)" class="more" v-if="showMore" @click="showMore = false">
-						<SemiSelect />
-					</el-icon>
-					<el-icon color="var(--el-color-primary)" class="more" v-else @click="showMore = true">
-						<MoreFilled />
-					</el-icon>
-				</div>
-				<div class="apps-list mb-4">
-					<div class="apps-item flex flex-column" v-for="(item, index) in tableData" :index="index"
-						@click="handleAction(appsProps?.details, item)">
-						<div class="p-2">
-							<el-avatar :src="item.icon" shape="square" class="apps-icon">{{ item.title }}</el-avatar>
+			<el-scrollbar>
+				<div class="apps-layouts layouts">
+					<div class="flex flex-column search-form flex-center">
+						<el-input v-model="search.keyword" size="large" placeholder="搜索应用名称、标识" class="search-input">
+							<template #suffix>
+								<el-icon color="var(--el-input-border-color)" size="20">
+									<Search />
+								</el-icon>
+							</template>
+						</el-input>
+						<div class="flex flex-wrap w-50 grid-gap-4 mt-6">
+							<el-tag type="success" effect="light" small round>推荐：</el-tag>
+							<el-tag type="info" effect="light" small round>APps</el-tag>
 						</div>
-						<div class="p-4">
-							<div class="font-weight-600 pointer apps-title text-ellipsis-2 text-break-all">
-								{{ item.title }}</div>
-							<div class="flex pt-4 flex-wrap">
-								<el-button icon="View" link>{{ item.view }}</el-button>
-								<el-button icon="Download" link>{{ item.use_num }}</el-button>
-								<div class="flex-1"></div>
-								<template v-for="group in action">
-									<permissions :name="group.extra.path">
-										<component :is="`el-${group.extra.component.name}`"
-											v-bind="group.extra.component.props" v-if="hasWhere(group.extra, item)"
-											@click.stop="handleAction(group, item)">
-											{{ group.label }}
-										</component>
-									</permissions>
-								</template>
+					</div>
+					<div class="flex mb-6">
+						<div class="flex-1 font-weight-600 h8">{{ currentRoute.meta.title }}</div>
+						<div class="flex grid-gap-4 sort">
+							<div class="item active">推荐</div>
+							<div class="item">最热</div>
+							<div class="item">最新</div>
+						</div>
+					</div>
+					<div class="flex mb-6">
+						<div class="flex-1 flex grid-gap-4 classify flex-wrap" :class="{ 'show-more': showMore }">
+							<div class="item active">全部</div>
+							<div class="item">分类</div>
+						</div>
+						<el-icon color="var(--el-color-primary)" class="more" v-if="showMore" @click="showMore = false">
+							<SemiSelect />
+						</el-icon>
+						<el-icon color="var(--el-color-primary)" class="more" v-else @click="showMore = true">
+							<MoreFilled />
+						</el-icon>
+					</div>
+					<div class="apps-list mb-4">
+						<div class="apps-item flex flex-column" v-for="(item, index) in tableData" :index="index"
+							@click="handleAction(appsProps?.details, item)">
+							<div class="p-2">
+								<el-avatar :src="item.icon" shape="square" class="apps-icon">{{ item.title
+									}}</el-avatar>
+							</div>
+							<div class="p-4">
+								<div class="font-weight-600 pointer apps-title text-ellipsis-2 text-break-all">
+									{{ item.title }}</div>
+								<div class="flex pt-4 flex-wrap">
+									<el-button icon="View" link>{{ item.view }}</el-button>
+									<el-button icon="Download" link>{{ item.use_num }}</el-button>
+									<div class="flex-1"></div>
+									<template v-for="group in action">
+										<permissions :name="group.extra.path">
+											<component :is="`el-${group.extra.component.name}`"
+												v-bind="group.extra.component.props" v-if="hasWhere(group.extra, item)"
+												@click.stop="handleAction(group, item)">
+												{{ group.label }}
+											</component>
+										</permissions>
+									</template>
+								</div>
 							</div>
 						</div>
 					</div>
+					<div class="flex flex-center" v-if="search.total > 0">
+						<el-pagination background center :page-sizes="[10, 20, 50, 100, 200]"
+							layout="total,sizes,prev, pager, next,jumper" :total="search.total"
+							v-model:page-size="search.limit" v-model:current-page="search.page">
+						</el-pagination>
+					</div>
 				</div>
-				<div class="flex flex-center" v-if="search.total > 0">
-					<el-pagination background center :page-sizes="[10, 20, 50, 100, 200]"
-						layout="total,sizes,prev, pager, next,jumper" :total="search.total"
-						v-model:page-size="search.limit" v-model:current-page="search.page">
-					</el-pagination>
-				</div>
-			</div>
+			</el-scrollbar>
 		</template>
 	</el-skeleton>
 </template>

@@ -30,8 +30,8 @@ if (props.params) {
 	ApiUrl = props.params.api;
 }
 onBeforeMount(() => {
-	$http.get(`${ApiUrl}GetTable`,{
-		params:{
+	$http.get(`${ApiUrl}GetTable`, {
+		params: {
 			...currentRoute.query
 		}
 	}).then((res: any) => {
@@ -138,10 +138,10 @@ const load = (row: any, _treeNode: unknown, resolve: (date: any[]) => void) => {
 		}
 	})
 }
-watch(()=>search.value.page,()=>{
+watch(() => search.value.page, () => {
 	getList()
 })
-watch(()=>search.value.limit,()=>{
+watch(() => search.value.limit, () => {
 	getList()
 })
 const onSubmit = () => {
@@ -277,7 +277,7 @@ const handleSelectionChange = (val: any[]) => {
 						<el-button @click="resetForm">重置</el-button>
 					</el-form-item>
 				</el-form>
-				<el-table ref="tableRef" :data="tableData" v-if="showTable" v-bind="tableProps"
+				<el-table ref="tableRef" :data="tableData" v-if="showTable" v-bind="tableProps" class="flex-1"
 					@selection-change="handleSelectionChange" :load="load">
 					<template v-for="(column, _index) in columns" :index="_index">
 						<columnComponent :column="column" :tableData="tableData" @change="updateTableDataValue" />
@@ -296,35 +296,34 @@ const handleSelectionChange = (val: any[]) => {
 						</template>
 					</el-table-column>
 				</el-table>
-				<el-scrollbar v-if="search.total>0">
-					<div class="pagination">
-						<div class="flex mr-4" v-if="selection">
-							<el-button type="success" @click="toggleSelection(tableData)">全选</el-button>
-							<el-button type="info" @click="toggleSelection()">取消</el-button>
-							<template v-if="footer">
-								<template v-for="(group, _index) in footer.extra.group" :index="_index">
-									<permissions :name="group.extra.path">
-										<component :is="`el-${group.extra.component.name}`"
-											v-bind="group.extra.component.props" @click="handleFooter(group)">
-											{{ group.label }}
-										</component>
-									</permissions>
-								</template>
+				<div v-if="search.total > 0" class="overflow-x-auto">
+				<div class="pagination">
+					<div class="flex mr-4" v-if="selection">
+						<el-button type="success" @click="toggleSelection(tableData)">全选</el-button>
+						<el-button type="info" @click="toggleSelection()">取消</el-button>
+						<template v-if="footer">
+							<template v-for="(group, _index) in footer.extra.group" :index="_index">
+								<permissions :name="group.extra.path">
+									<component :is="`el-${group.extra.component.name}`"
+										v-bind="group.extra.component.props" @click="handleFooter(group)">
+										{{ group.label }}
+									</component>
+								</permissions>
 							</template>
-						</div>
-						<el-pagination background :page-sizes="[10, 20, 50, 100, 200]"
-							layout="total,sizes,prev, pager, next,jumper" :total="search.total"
-							v-model:page-size="search.limit" v-model:current-page="search.page">
-						</el-pagination>
+						</template>
 					</div>
-				</el-scrollbar>
+					<el-pagination background :page-sizes="[10, 20, 50, 100, 200]"
+						layout="total,sizes,prev, pager, next,jumper" :total="search.total"
+						v-model:page-size="search.limit" v-model:current-page="search.page">
+					</el-pagination>
+				</div>
+				</div>
 			</div>
 		</template>
 	</el-skeleton>
 </template>
 
 <style lang="scss">
-
 .pagination {
 	padding: 10px 0;
 	display: flex;

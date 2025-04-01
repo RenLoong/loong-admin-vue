@@ -31,7 +31,7 @@ let ApiUrl = currentRoute.meta.api as string;
 if (props.params) {
 	ApiUrl = props.params.api;
 }
-const submitEvent=ref<string>();
+const submitEvent = ref<string>();
 onBeforeMount(() => {
 	$http.get(ApiUrl, {
 		params: {
@@ -41,7 +41,7 @@ onBeforeMount(() => {
 	}).then((res: any) => {
 		if (res.code === $http.ResponseCode.SUCCESS) {
 			rule.value = res.data.rule;
-			formProps.value={
+			formProps.value = {
 				...formProps.value,
 				...res.data.props
 			}
@@ -61,8 +61,8 @@ onBeforeMount(() => {
 				}
 			}
 			form.value = res.data.form;
-			if(res.data.props.submitEvent){
-				submitEvent.value=res.data.props.submitEvent;
+			if (res.data.props.submitEvent) {
+				submitEvent.value = res.data.props.submitEvent;
 			}
 			nextTick(() => {
 				showForm.value = true;
@@ -88,7 +88,7 @@ const onSubmit = () => {
 					emit('confirm');
 					if (currentRoute.query.back) {
 						router.push(currentRoute.query.back as string);
-					}else{
+					} else {
 						switch (submitEvent.value) {
 							case SubmitEvent.SILENT:
 								break;
@@ -135,30 +135,32 @@ const resetForm = () => {
 			</div>
 		</template>
 		<template #default>
-				<div class="flex flex-wrap bg-white rounded-top-4 p-6 flex-center" v-if="tabs.length > 0">
-					<div class="font-weight-600 p-4 pointer rounded-4 text-nowrap"
-						:class="{ 'text-success bg': selectedGroup === tab.name }" @click="selectedGroup = tab.name"
-						v-for="tab in tabs">{{ tab.title }}</div>
-				</div>
-			<div class="layouts">
-				<el-form ref="formRef" :model="form" :rules="rules"
-					v-if="showForm" :disabled="submitLoading" v-bind="formProps">
-					<template v-if="selectedGroup === basicFormName">
-						<ruleComponent v-model="form" :rule="rule" />
-					</template>
-					<template v-if="group.length > 0">
-						<template v-for="(item, _index) in group" :index="_index">
-							<div v-show="selectedGroup === item.name">
-								<ruleComponent v-model="form[item.name]" :rule="item.rule" :group="item.name" />
-							</div>
-						</template>
-					</template>
-					<el-form-item>
-						<el-button type="primary" @click="onSubmit" :loading="loading">提交</el-button>
-						<el-button @click="resetForm" v-if="rules">重置</el-button>
-					</el-form-item>
-				</el-form>
+			<div class="flex flex-wrap bg-white rounded-top-4 p-6 flex-center" v-if="tabs.length > 0">
+				<div class="font-weight-600 p-4 pointer rounded-4 text-nowrap"
+					:class="{ 'text-success bg': selectedGroup === tab.name }" @click="selectedGroup = tab.name"
+					v-for="tab in tabs">{{ tab.title }}</div>
 			</div>
+			<el-scrollbar>
+				<div class="layouts">
+					<el-form ref="formRef" :model="form" :rules="rules" v-if="showForm" :disabled="submitLoading"
+						v-bind="formProps">
+						<template v-if="selectedGroup === basicFormName">
+							<ruleComponent v-model="form" :rule="rule" />
+						</template>
+						<template v-if="group.length > 0">
+							<template v-for="(item, _index) in group" :index="_index">
+								<div v-show="selectedGroup === item.name">
+									<ruleComponent v-model="form[item.name]" :rule="item.rule" :group="item.name" />
+								</div>
+							</template>
+						</template>
+						<el-form-item>
+							<el-button type="primary" @click="onSubmit" :loading="loading">提交</el-button>
+							<el-button @click="resetForm" v-if="rules">重置</el-button>
+						</el-form-item>
+					</el-form>
+				</div>
+			</el-scrollbar>
 		</template>
 	</el-skeleton>
 </template>

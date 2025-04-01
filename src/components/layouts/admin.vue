@@ -23,7 +23,7 @@ const currentRoute = ref<RouteLocationNormalizedLoaded>({
     meta: {}
 });
 const routerName = ref('');
-const layoutsMainClass=ref('');
+const layoutsMainClass = ref('');
 watchEffect(() => {
     currentRoute.value = router.currentRoute.value;
     if (currentRoute.value.query.routerName) {
@@ -37,10 +37,10 @@ watchEffect(() => {
     if (i[0] !== undefined) {
         TabsSelectedIndex.value = i[0];
     }
-    if(!["databoardComponent"].includes(currentRoute.value.meta.component as string)){
-        layoutsMainClass.value='bg-white rounded-4 p-4 shadow';
-    }else{
-        layoutsMainClass.value='';
+    if (!["databoardComponent"].includes(currentRoute.value.meta.component as string)) {
+        layoutsMainClass.value = 'bg-white rounded-4 p-4 shadow overflow-hidden h-100 flex flex-column';
+    } else {
+        layoutsMainClass.value = '';
     }
 })
 const TabsMenusFind = computed(() => {
@@ -117,14 +117,12 @@ onMounted(() => {
                     </el-breadcrumb-item>
                 </el-breadcrumb>
             </item-header>
-            <el-scrollbar class="layouts-main-scrollbar">
-                <el-main>
-                    <div :class="layoutsMainClass">
-                        <router-view :key="currentRoute.path" />
-                    </div>
-                    <copyright center />
-                </el-main>
-            </el-scrollbar>
+            <el-main class="layouts-main-scrollbar">
+                <div :class="layoutsMainClass">
+                    <router-view :key="currentRoute.path" />
+                </div>
+                <copyright center />
+            </el-main>
         </el-container>
     </el-container>
 </template>
@@ -211,10 +209,6 @@ onMounted(() => {
 
     .layouts-main {
         flex-direction: column;
-    }
-
-    .layouts-main-scrollbar {
-        background-color: var(--el-bg-color-page);
     }
 }
 </style>

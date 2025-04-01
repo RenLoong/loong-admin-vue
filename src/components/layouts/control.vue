@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useRefs,  useMenusStore, useStateStore } from "@/stores";
+import { useRefs, useMenusStore, useStateStore } from "@/stores";
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { $eventBus } from "@/common";
 import ResponseEvent from "@/common/enum/ResponseEvent";
@@ -43,11 +43,9 @@ onMounted(() => {
                 </el-scrollbar>
                 <copyright class="flex-column-reverse layout-aside-width" />
             </el-aside>
-            <el-scrollbar class="layouts-main-scrollbar">
-                <el-main>
-                    <router-view :key="currentRoute.path" />
-                </el-main>
-            </el-scrollbar>
+            <el-main class="layouts-main-scrollbar">
+                <router-view :key="currentRoute.path" />
+            </el-main>
         </el-container>
     </el-container>
 </template>
@@ -63,9 +61,11 @@ onMounted(() => {
     .layout-aside.close {
         width: var(--aside-close-width);
     }
+
     .layout-aside-width {
         width: var(--aside-width);
     }
+
     .layout-aside {
         width: var(--aside-width);
         background-color: var(--el-menu-bg-color);
@@ -100,5 +100,4 @@ onMounted(() => {
         flex: 1;
     }
 }
-
 </style>
