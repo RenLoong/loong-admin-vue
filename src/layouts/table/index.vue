@@ -284,15 +284,17 @@ const handleSelectionChange = (val: any[]) => {
 					</template>
 					<el-table-column v-if="action" :label="action.label" v-bind="action.extra.props">
 						<template #default="scope">
-							<template v-for="(group, _index) in action.extra.group" :index="_index">
-								<permissions :name="group.extra.path">
-									<component :is="`el-${group.extra.component.name}`"
-										v-bind="group.extra.component.props" v-if="hasWhere(group.extra, scope.row)"
-										@click="handleAction(group, scope.row)">
-										{{ group.label }}
-									</component>
-								</permissions>
-							</template>
+							<div class="table-group">
+								<template v-for="(group, _index) in action.extra.group" :index="_index">
+									<permissions :name="group.extra.path">
+										<component :is="`el-${group.extra.component.name}`"
+											v-bind="group.extra.component.props" v-if="hasWhere(group.extra, scope.row)"
+											@click="handleAction(group, scope.row)">
+											{{ group.label }}
+										</component>
+									</permissions>
+								</template>
+							</div>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -337,7 +339,14 @@ const handleSelectionChange = (val: any[]) => {
 		flex: 1;
 	}
 }
-
+.table-group{
+	display: flex;
+	flex-wrap: wrap;
+	gap:10px;
+	.el-button+.el-button{
+		margin: 0;
+	}
+}
 .table-screen {
 	display: grid;
 	grid-template-columns: repeat(24, 1fr);
