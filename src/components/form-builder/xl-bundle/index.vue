@@ -2,6 +2,8 @@
 import { $http } from '@/common';
 import { ElMessage, ElMessageBox, ElInput, ElSelect, ElInputNumber } from 'element-plus'
 import { useWebConfigStore } from "@/stores";
+import { useI18n } from 'vue-i18n';
+const {t} = useI18n();
 const { WEBCONFIG } = useWebConfigStore();
 const props = withDefaults(defineProps<{
     modelValue?: string | string[],
@@ -92,7 +94,7 @@ const handelSelected = (item: any) => {
     }
 }
 const dialogPreview = ref(false);
-const dialogImageUrl = ref('');
+const dialogImageIndex = ref(0);
 const handleRemove = (index: number) => {
     selected.value.splice(index, 1)
     if (props.multiple === 1) {
@@ -102,9 +104,9 @@ const handleRemove = (index: number) => {
     }
 }
 const deleteUploads = () => {
-    ElMessageBox.confirm(`是否删除选中的附件？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+    ElMessageBox.confirm(t('form.bundle.confirmDeleteSelectedContent'), t('message.tips'), {
+        confirmButtonText: t('button.confirmText'),
+        cancelButtonText: t('button.cancelText'),
         type: 'warning'
     }).then(() => {
         $http.post('Uploads/deleteUploads', { ids: selectedEdit.value.map((item: any) => item.id) }).then((res: ResponseInterface) => {
@@ -121,8 +123,8 @@ const deleteUploads = () => {
 const updateUploads = () => {
     const dir_name = ref();
     ElMessageBox({
-        title: '将附件移动到',
-        cancelButtonText: '取消',
+        title: t('form.bundle.moveBundleTitle'),
+        cancelButtonText: t('button.cancelText'),
         showClose: false,
         showCancelButton: true,
         closeOnClickModal: false,
@@ -130,11 +132,11 @@ const updateUploads = () => {
         message: () =>
             h('div', {}, [
                 h('div', { class: 'mb-2 h10' }, [
-                    h('span', { class: 'text-gray' }, '附件分类'),
+                    h('span', { class: 'text-gray' }, t('form.bundle.bundleClassify')),
                 ]),
                 h(ElSelect, {
                     class: 'mb-4',
-                    placeholder: '请选择附件分类',
+                    placeholder: t('form.bundle.selectClassifyPlaceholder'),
                     modelValue: dir_name.value,
                     onChange: (val: string) => {
                         dir_name.value = val
@@ -185,8 +187,8 @@ const submitSelected = () => {
     }
     dialogVisible.value = false;
 }
-const handlePictureCardPreview = (url: string) => {
-    dialogImageUrl.value = url
+const handlePictureCardPreview = (index:number) => {
+    dialogImageIndex.value = index
     dialogPreview.value = true
 }
 interface ClassifyInterface {
@@ -223,9 +225,9 @@ const handleUploadSuccess = (res: ResponseInterface) => {
     }
 }
 const deleteClassify = (item: ClassifyInterface) => {
-    ElMessageBox.confirm(`是否删除《${item.title}》分类？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+    ElMessageBox.confirm(t('form.bundle.confirmDeleteClassifyContent',{title:item.title}), t('message.tips'), {
+        confirmButtonText: t('button.confirmText'),
+        cancelButtonText: t('button.cancelText'),
         type: 'warning'
     }).then(() => {
         $http.post('Uploads/deleteClassify', { dir_name: item.dir_name }).then((res: ResponseInterface) => {
@@ -253,8 +255,9 @@ const saveClassify = (item?: ClassifyInterface) => {
         classifyForm.value.sort = item.sort;
     }
     ElMessageBox({
-        title: '创建分类',
-        cancelButtonText: '取消',
+        title: t('form.bundle.createClassify'),
+        confirmButtonText:t('button.confirmText'),
+        cancelButtonText: t('button.cancelText'),
         showClose: false,
         showCancelButton: true,
         closeOnClickModal: false,
@@ -262,23 +265,25 @@ const saveClassify = (item?: ClassifyInterface) => {
         message: () =>
             h('div', {}, [
                 h('div', { class: 'mb-2 h10' }, [
-                    h('span', { class: 'text-gray' }, '分类名称（50个字符以内）'),
+                    h('span', { class: 'text-gray' }, t('form.bundle.createClassifyLabel')),
                 ]),
                 h(ElInput, {
                     class: 'mb-4',
-                    placeholder: '请输入分类名称',
+                    placeholder: t('form.bundle.createClassifyPlaceholder'),
                     modelValue: classifyForm.value.title,
+                    maxlength:50,
+                    showWordLimit:true,
                     onInput: (val: string) => {
                         classifyForm.value.title = val
                     },
                 }),
                 h('div', { class: 'mb-2 h10' }, [
-                    h('span', { class: 'text-gray' }, '使用储存渠道'),
+                    h('span', { class: 'text-gray' }, t('form.bundle.createClassifyUseChannelLabel')),
                 ]),
                 h(ElSelect, {
                     class: 'mb-4',
-                    placeholder: '请选择储存渠道',
                     modelValue: classifyForm.value.channels,
+                    placeholder:t('form.bundle.createClassifyUseChannelPlaceholder'),
                     onChange: (val: string) => {
                         classifyForm.value.channels = val
                     },
@@ -288,22 +293,22 @@ const saveClassify = (item?: ClassifyInterface) => {
                     })
                 }),
                 h('div', { class: 'mb-2 h10' }, [
-                    h('span', { class: 'text-gray' }, '分类目录名'),
+                    h('span', { class: 'text-gray' }, t('form.bundle.createClassifyDirNameLabel')),
                 ]),
                 h(ElInput, {
                     class: 'mb-4',
-                    placeholder: '请输入分类目录名',
+                    placeholder: t('form.bundle.createClassifyDirNamePlaceholder'),
                     modelValue: classifyForm.value.dir_name,
                     onInput: (val: string) => {
                         classifyForm.value.dir_name = val
                     },
                 }),
                 h('div', { class: 'mb-2 h10' }, [
-                    h('span', { class: 'text-gray' }, '排序'),
+                    h('span', { class: 'text-gray' }, t('form.bundle.createClassifySortLabel')),
                 ]),
                 h(ElInputNumber, {
                     class: 'mb-4',
-                    placeholder: '排序（选填）',
+                    placeholder: t('form.bundle.createClassifySortPlaceholder'),
                     modelValue: classifyForm.value.sort,
                     controls: false,
                     min: 0,
@@ -355,7 +360,7 @@ defineExpose({
                     <Document />
                 </el-icon>
                 <span class="el-upload-list__item-actions">
-                    <span class="el-upload-list__item-preview" @click.stop="handlePictureCardPreview(url)"
+                    <span class="el-upload-list__item-preview" @click.stop="handlePictureCardPreview(index)"
                         v-if="view === 'image'">
                         <el-icon><zoom-in /></el-icon>
                     </span>
@@ -378,14 +383,17 @@ defineExpose({
             </div>
         </slot>
     </div>
-    <el-dialog v-model="dialogPreview" width="500px" center title="图片预览">
-        <img :src="dialogImageUrl" alt="Preview Image"
-            style="max-width: calc(500px - var(--el-dialog-padding-primary) * 2);" />
-    </el-dialog>
+      <el-image-viewer
+        v-if="dialogPreview"
+        :url-list="values"
+        show-progress
+        :initial-index="dialogImageIndex"
+        @close="dialogPreview = false"
+      />
     <el-dialog v-model="dialogVisible" title="Tips" width="70%" class="bundle-dialog" draggable append-to-body>
         <template #header>
             <div class="bundle-name">
-                <div class="flex-1">附件分类</div>
+                <div class="flex-1">{{ t('form.bundle.bundleClassify') }}</div>
                 <permissions name="Uploads/saveClassify">
                     <el-icon :size="20" class="pointer" @click="saveClassify">
                         <FolderAdd />
@@ -393,7 +401,7 @@ defineExpose({
                 </permissions>
             </div>
             <div class="bundle-title">
-                附件管理器
+                {{t('form.bundle.title')}}
             </div>
         </template>
         <div class="categrory">
@@ -424,7 +432,7 @@ defineExpose({
                 </div>
             </div>
             <div class="pagination">
-                <el-pagination small background :page-sizes="[24, 24 * 2, 24 * 3, 24 * 4]"
+                <el-pagination size="small" background :page-sizes="[24, 24 * 2, 24 * 3, 24 * 4]"
                     layout="total,sizes,prev, pager, next,jumper" :total="search.total" :page-size="search.limit"
                     :current-page="search.page" @current-change="pageChange" @size-change="sizeChange" />
             </div>
@@ -434,35 +442,34 @@ defineExpose({
             <template v-if="uploadForm.dir_name != 'all'">
                 <uploads ref="uploadRef" :on-success="handleUploadSuccess" :data="uploadForm" class="mr-4"
                     :multiple="props.multiple > 1" :accept="props.accept" :limit="props.multiple">
-                    <el-button type="success">上传</el-button>
+                    <el-button type="success">{{ t('button.uploadText') }}</el-button>
                 </uploads>
                 <permissions name="Uploads/updateUploads">
-                    <el-button type="primary" v-if="isEdit" @click="isEdit = false">完成</el-button>
-                    <el-button v-else @click="isEdit = true">管理</el-button>
-                    <el-button v-if="isEdit">全选</el-button>
+                    <el-button type="primary" v-if="isEdit" @click="isEdit = false">{{t('button.completeText')}}</el-button>
+                    <el-button v-else @click="isEdit = true">{{ t('button.manageText') }}</el-button>
+                    <el-button v-if="isEdit">{{ t('button.allSelectText') }}</el-button>
                 </permissions>
             </template>
             <div class="flex-1"></div>
             <div class="btn-group" v-if="isEdit">
                 <permissions name="Uploads/updateUploads">
-                    <el-button type="warning" :disabled="selectedEdit.length <= 0" @click="updateUploads">移动</el-button>
+                    <el-button type="warning" :disabled="selectedEdit.length <= 0" @click="updateUploads">{{ t('button.moveText') }}</el-button>
                 </permissions>
                 <permissions name="Uploads/deleteUploads">
                     <el-button type="danger" :disabled="selectedEdit.length <= 0" @click="deleteUploads">
-                        删除({{ selectedEdit.length }})
+                        {{t('button.deleteText')}}({{ selectedEdit.length }})
                     </el-button>
                 </permissions>
             </div>
             <div class="btn-group" v-else>
-                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button @click="dialogVisible = false">{{ t('button.cancelText') }}</el-button>
                 <el-button type="primary" @click="submitSelected" :disabled="selected.length <= 0">
-                    确认选择({{ selected.length }})
+                    {{ t('form.bundle.confirmButtonText',{count:selected.length}) }}
                 </el-button>
             </div>
         </template>
     </el-dialog>
 </template>
-
 <style lang="scss">
-@import './index.scss';
+@use '@/assets/css/index.min.css';
 </style>

@@ -7,7 +7,7 @@ export const getWebConfig = () => {
             if (res.code === $http.ResponseCode.SUCCESS) {
                 const webConfigStore = useWebConfigStore();
                 webConfigStore.setWebConfig(res.data as WebConfigInterface);
-                resolve(true);
+                resolve(res.data);
             } else {
                 showErrorBox(res);
                 reject();
@@ -27,7 +27,7 @@ export const getUserInfo = () => {
                 userStore.setUserInfo(res.data as UserInfoInterface).then(()=>{
                     getMenus()
                 });
-                resolve(true);
+                resolve(res.data);
             } else {
                 showErrorBox(res);
                 reject();
@@ -44,7 +44,7 @@ export const getMenus = async () => {
             if (res.code === $http.ResponseCode.SUCCESS) {
                 const menusStore = useMenusStore();
                 menusStore.setMenus(res.data as MenusInterface[]);
-                resolve(true);
+                resolve(res.data);
             } else {
                 showErrorBox(res);
                 reject();

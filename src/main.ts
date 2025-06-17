@@ -16,9 +16,14 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
 import XlIconsVue from "@/components/xl-icon";
+import { i18n } from './locale';
 for (const [key, component] of Object.entries(XlIconsVue)) {
     app.component(key, component)
 }
 // 全局数字滚动效果指令
 app.use(NumberScrollDirective);
-app.use(ElementPlus, { locale: zhCn }).use(pinia).use(router).mount('#app')
+app.use(ElementPlus, { locale: zhCn });
+app.use(i18n);
+app.use(pinia);
+app.use(router);
+app.mount('#app')

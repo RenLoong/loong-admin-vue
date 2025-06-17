@@ -2,6 +2,8 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import { getWebConfig, getMenus } from "@/common/functions/request";
 import { useUserStore, useWebConfigStore } from "@/stores";
 import { useStorage } from "@/common/config";
+import { i18n } from '@/locale';
+const {t} = i18n.global;
 /**
  * meta.title 页面标题
  * meta.login false：未登录可访问
@@ -15,7 +17,7 @@ const routes = [
         name: 'index',
         component: () => import("@/pages/index/index.vue"),
         meta: {
-            title: '首页',
+            title: t('page.home'),
             login: true,
             show:true,
             clearLock:true
@@ -26,7 +28,7 @@ const routes = [
         name: 'login',
         component: () => import("@/pages/login/index.vue"),
         meta: {
-            title: '登录',
+            title: t('page.login'),
             login: false,
             login_access: true,
             clearLock:true
@@ -37,7 +39,7 @@ const routes = [
         name: 'register',
         component: () => import("@/pages/register/index.vue"),
         meta: {
-            title: '注册',
+            title: t('page.register'),
             login: false,
             login_access: true,
             clearLock:true
@@ -48,7 +50,7 @@ const routes = [
         name: 'error',
         component: () => import('@/fail.vue'),
         meta: {
-            title: '页面错误~',
+            title: t('page.fail'),
             login: false,
             showHeader: false,
             clearLock:true

@@ -1,5 +1,7 @@
 import { ElMessage } from "element-plus";
 import { useWebConfigStore } from "@/stores";
+import { i18n } from '@/locale';
+const {t} = i18n.global;
 /**
  * 节流函数会确保在指定的时间间隔内，函数被调用的次数不超过设定的阈值。
  * @param func 节流函数
@@ -137,31 +139,33 @@ export function timetostr(time: number | undefined): string {
     }
     s = time % 60;
     if (d > 0) {
-        str = d + '天';
+        str = d + t('date.day');
     }
     if (d > 0 || h > 0) {
-        str += h + '小时';
+        str += h + t('date.hour');
     }
     if (d > 0 || h > 0 || m > 0) {
-        str += m + '分';
+        str += m + t('date.minute');
     }
     if (d > 0 || h > 0 || m > 0 || s > 0) {
-        str += s + '秒';
+        str += s + t('date.second');
     }
     return str
 }
 const copyText = (text: string) => {
-    let input = document.createElement('input');
-    input.value = text;
-    document.body.appendChild(input);
-    input.select();
-    input.setSelectionRange(0, input.value.length);
-    if(document.execCommand('Copy')){
-        ElMessage.success('已复制');
-    }else{
-        ElMessage.error('复制失败');
-    }
-    input.remove();
+    return new Promise<void>((resolve,reject)=>{
+        let input = document.createElement('input');
+        input.value = text;
+        document.body.appendChild(input);
+        input.select();
+        input.setSelectionRange(0, input.value.length);
+        if(document.execCommand('Copy')){
+            resolve();
+        }else{
+            reject();
+        }
+        input.remove();
+    })
 }
 /**
  * 设置剪切板内容
@@ -171,12 +175,20 @@ const copyText = (text: string) => {
 export function setClipboard(text: string): void {
     if (navigator.clipboard && globalThis.isSecureContext) {
         navigator.clipboard.writeText(text).then(()=> {
-            ElMessage.success('已复制');
+            ElMessage.success(t('copy.success'));
         }).catch(() => {
-            copyText(text);
+            copyText(text).then(()=> {
+                ElMessage.success(t('copy.success'));
+            }).catch(() => {
+                ElMessage.error(t('copy.fail'));
+            });
         });
     } else {
-        copyText(text);
+        copyText(text).then(()=> {
+            ElMessage.success(t('copy.success'));
+        }).catch(() => {
+            ElMessage.error(t('copy.fail'));
+        });
     }
 }
 /**
@@ -446,7 +458,22 @@ export const parseRules=(rules:any,rule:any,group?:string)=>{
                     trigger = 'change';
                     break;
             }
-            rules.value[field].push({ required: true, message: element.title + '不能为空', trigger })
+            rules.value[field].push({ required: true, message: ()=>{
+                return t('form.rules.required',{field:element.title})
+            }, trigger })
         }
     }
+}
+/**
+ * 截取指定长度字符串
+ * @param str 字符串
+ * @param length 长度
+ * @returns string
+ * @example truncate('1234567890',5) => '12345'
+ * @example truncate('abcdefg',3)=>'abc'
+ * @example truncate('你好，世界！',1)=>'你'
+ */
+export function truncate(str: string, length: number): string {
+    if (!str) return '';
+    return str.slice(0, length);
 }

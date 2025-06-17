@@ -155,7 +155,7 @@ const price = computed(() => {
 			<el-avatar :src="USERINFO?.headimg" :size="30">{{ USERINFO?.nickname }}</el-avatar>
 			<div>Hi {{ USERINFO?.nickname }}</div>
 			<div class="flex-1"></div>
-			<el-link href="#/app/apistore/control/UserIntegralLog/index?scene=recharge" type="info" :underline="false">充值记录</el-link>
+			<el-link href="#/app/apistore/control/UserIntegralLog/index?scene=recharge" type="info" underline="never">充值记录</el-link>
 			<el-icon class="pointer close" @click="close" :size="20">
 				<Close />
 			</el-icon>

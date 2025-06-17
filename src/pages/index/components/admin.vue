@@ -84,7 +84,7 @@ onMounted(() => {
     <el-container class="layout-container">
         <el-aside class="layout-aside" :class="{ 'close': !STATE.AsideState || STATE.NotMenusAsideState }">
             <div class="layout-tabs">
-                <item-logo theme="dark" width="60px" height="60px" />
+                <layouts-logo theme="dark" width="60px" height="60px" />
                 <permissions v-for="(item, index) in ROUTERLIST" :key="index" :name="item.meta.api">
                     <div class="layout-tab" :class="{ 'active': index == TabsSelectedIndex }" @click="clickTab(item)"
                         v-if="item.meta.show">
@@ -102,26 +102,26 @@ onMounted(() => {
                 <el-scrollbar>
                     <el-divider>{{ TabsMenusFind.meta.title }}</el-divider>
                     <el-menu :default-active="currentRoute.path" router class="layouts-menus">
-                        <item-menu-item :menus="MenusData" :level="1" />
+                        <layouts-menu-item :menus="MenusData" :level="1" />
                     </el-menu>
                 </el-scrollbar>
             </div>
         </el-aside>
 
         <el-container class="layouts-main">
-            <item-header>
+            <layouts-header>
                 <el-breadcrumb separator="/" style="--el-text-color-regular:var(--el-color-info)">
                     <el-breadcrumb-item v-for="item in currentRoute.matched"
-                        :to="item.name === routerName ? item.path : ''">
+                        :to="[routerName,'index'].includes(item.name as string) ? item.path : ''">
                         {{ item.meta.title }}
                     </el-breadcrumb-item>
                 </el-breadcrumb>
-            </item-header>
+            </layouts-header>
             <el-main class="layouts-main-scrollbar">
                 <div :class="layoutsMainClass">
                     <router-view :key="currentRoute.path" />
                 </div>
-                <copyright center />
+                <layouts-copyright center />
             </el-main>
         </el-container>
     </el-container>
@@ -131,14 +131,13 @@ onMounted(() => {
 <style scoped lang="scss">
 .layout-container {
     height: 100vh;
-    --aside-close-width: 64px;
 
     .layout-aside.close {
         width: var(--aside-close-width);
     }
 
     .layout-aside {
-        width: 264px;
+        width: var(--aside-width);
         background-color: var(--el-menu-bg-color);
         display: flex;
         transition: width 0.3s;
@@ -203,7 +202,7 @@ onMounted(() => {
 
     .el-menu {
         border-right: none;
-        width: 180px;
+        width: var(--aside-menu-width);
         margin: 0 10px;
     }
 

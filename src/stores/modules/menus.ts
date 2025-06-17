@@ -1,7 +1,9 @@
 import { useStorage } from '@/common/config';
-import type { RouteRecordRaw, RouteRecordName } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 import router from "@/routers";
 import components, {componentsType} from '@/layouts'
+import { i18n } from '@/locale';
+const {t} = i18n.global;
 export default () => {
     const storage = useStorage()
     const MenusStorageKey = 'MENUS'
@@ -110,6 +112,7 @@ export default () => {
             return;
         }
         const list = getRouterList(MENUS.value);
+        
         ROUTERLIST.value = list;
         const firstRouter = getFirstRouter(list);
         // 将"/"路由重定向至第一个有component的路由
@@ -119,7 +122,7 @@ export default () => {
                 name: 'index',
                 component: () => import("@/pages/index/index.vue"),
                 meta: {
-                    title: '首页',
+                    title: t('page.home'),
                     login: true,
                     show: true,
                     clearLock: true
@@ -130,7 +133,7 @@ export default () => {
         }
         // 动态注册路由
         list.forEach((item: RouteRecordRaw) => {
-            if (!router.hasRoute(item.name as RouteRecordName)) {
+            if (item.name && !router.hasRoute(item.name)) {
                 router.addRoute('index', item);
             }
         })

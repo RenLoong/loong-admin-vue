@@ -1,6 +1,8 @@
 import { ElMessage } from "element-plus";
 import { $http } from "..";
 import { useWebConfigStore } from "@/stores";
+import { i18n } from '@/locale';
+const {t} = i18n.global
 
 export const useVcode = (options?: VcodeInterface) => {
     const {WEBCONFIG} = useWebConfigStore();
@@ -15,7 +17,7 @@ export const useVcode = (options?: VcodeInterface) => {
     onUnmounted(() => {
         clear();
     })
-    const vcodeText = ref<string>('获取验证码');
+    const vcodeText = ref<string>(t('form.vcode.vcodeText'));
     const isDisabled = ref<boolean>(false);
     let _timeEr: NodeJS.Timeout | undefined;
     const time = ref<number>(_config.time);
@@ -53,7 +55,7 @@ export const useVcode = (options?: VcodeInterface) => {
         _timeEr = undefined;
         isDisabled.value = false;
         time.value = _config.time;
-        vcodeText.value = '获取验证码';
+        vcodeText.value = t('form.vcode.vcodeText');
     }
     return {
         isDisabled,

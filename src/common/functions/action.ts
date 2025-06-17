@@ -4,6 +4,8 @@ import { $http } from '..';
 import router from '@/routers';
 import { useUserStore, useWebConfigStore } from '@/stores';
 import { RouteRecordNormalized } from 'vue-router';
+import { i18n } from '@/locale';
+const {t} = i18n.global;
 interface UseClickOptionsInterface {
     model: '' | 'redirect'|'link' | 'comfirm' | 'dialog' | 'dialogTable' | 'Lock' | 'Search' | 'Notification' | 'FullScreen' | 'OutLogin';
     path: string;
@@ -26,9 +28,9 @@ export const useClick = (options: UseClickOptionsInterface) => {
         switch (options.model) {
             case 'Lock':
                 ElMessageBox({
-                    title: '设置PIN码锁定',
-                    cancelButtonText: '取消',
-                    confirmButtonText: '锁定',
+                    title: t('lock.title'),
+                    cancelButtonText: t('lock.cancelText'),
+                    confirmButtonText: t('lock.confirmText'),
                     showClose: false,
                     showCancelButton: true,
                     closeOnClickModal: false,
@@ -38,8 +40,8 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     showInput: true,
                     inputType:'number',
                     inputPattern:/^\d{6}$/,
-                    inputPlaceholder:'请输入6位数字PIN码',
-                    inputErrorMessage:'请输入6位数字PIN码',
+                    inputPlaceholder:t('lock.inputPlaceholder'),
+                    inputErrorMessage:t('lock.inputErrorMessage'),
                     beforeClose: (action: string, instance: { confirmButtonLoading: boolean;inputValue:string }, done: () => void) => {
                         if (action === 'confirm') {
                             instance.confirmButtonLoading = true
@@ -88,7 +90,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                             size:'large',
                             prefixIcon:'Search',
                             clearable:true,
-                            placeholder:'输入关键字搜索，按下ESC键关闭',
+                            placeholder:t('form.placeholder.searchMenu'),
                             onInput:(val:string)=>{
                                 keyword.value=val;
                                 if(val){
@@ -122,7 +124,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                                 ])
                             })):
                             h(ElEmpty,{
-                                description:'没有找到相关内容'
+                                description:t('message.searchMenuNotContent')
                             })
                         ])
                     ]),
@@ -135,24 +137,24 @@ export const useClick = (options: UseClickOptionsInterface) => {
                 // 浏览器全屏
                 if (document.fullscreenElement) {
                     document.exitFullscreen().then(() => {}).catch(() => {
-                        ElMessage.error('退出全屏失败，按F11退出全屏');
+                        ElMessage.error(t('message.exitFullscreenError'));
                     });
                 } else {
                     document.documentElement.requestFullscreen().then(() => {}).catch(() => {
-                        ElMessage.error('全屏失败，按F11全屏');
+                        ElMessage.error(t('message.requestFullscreenError'));
                     });
                 }
                 break;
             case 'OutLogin':
                 ElMessageBox({
-                    title: '温馨提示',
-                    cancelButtonText: '取消',
-                    confirmButtonText: '退出登录',
+                    title: t('message.title'),
+                    cancelButtonText: t('button.cancelText'),
+                    confirmButtonText: t('button.logoutText'),
                     showClose: false,
                     showCancelButton: true,
                     closeOnClickModal: false,
                     customClass: 'el-messagebox-width',
-                    message: () => h('div', {}, '确定退出登录吗？'),
+                    message: () => h('div', {}, t('message.confirmLogoutContent')),
                     ...messageProps,
                     beforeClose: (action: string, instance: { confirmButtonLoading: boolean; }, done: () => void) => {
                         if (action === 'confirm') {
@@ -202,13 +204,13 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     }
                 }
                 ElMessageBox({
-                    title: '温馨提示',
-                    cancelButtonText: '取消',
+                    title: t('message.title'),
+                    cancelButtonText: t('button.cancelText'),
                     showClose: false,
                     showCancelButton: true,
                     closeOnClickModal: false,
                     customClass: 'el-messagebox-width',
-                    message: () => h('div', {}, '您确定要执行此操作吗？'),
+                    message: () => h('div', {}, t('message.confirmActionContent')),
                     ...messageProps,
                     beforeClose: (action: string, instance: { confirmButtonLoading: boolean; }, done: () => void) => {
                         if (action === 'confirm') {
@@ -246,8 +248,8 @@ export const useClick = (options: UseClickOptionsInterface) => {
                 const findRouter = router.getRoutes().find((item) => item.path === path);
 
                 ElMessageBox({
-                    title: '温馨提示',
-                    cancelButtonText: '取消',
+                    title: t('message.title'),
+                    cancelButtonText: t('button.cancelText'),
                     showClose: true,
                     draggable: true,
                     showCancelButton: false,

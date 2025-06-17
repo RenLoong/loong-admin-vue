@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { $http } from '@/common';
 import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+const {t} = useI18n();
 
 const props = withDefaults(defineProps<{
     label: string
@@ -111,25 +113,25 @@ defineExpose({
             <Collection v-else />
         </el-icon>
         <div class="h1 font-weight-600">{{ props.label }}</div>
-        <div class="bg p-4 rounded-4" v-if="props.message">驳回理由：{{props.message}}</div>
+        <div class="bg p-4 rounded-4" v-if="props.message">{{ t('message.rejectContent', { message: props.message }) }}</div>
         <div class="h8 font-weight-600 text-grey">{{ props.tips }}</div>
         <div v-if="props.apply">
             <div v-if="props.price && props.price > 0">
                 <el-button type="danger" size="large" @click="submit(item.id)" v-for="(item, index) in props.payment"
-                    :key="index">{{ item.label }}￥{{ props.price }}申请开通</el-button>
+                    :key="index">{{ item.label }}￥{{ props.price }}{{ t('button.applyText') }}</el-button>
             </div>
-            <el-button type="danger" v-else size="large" @click="submit()">立即申请开通</el-button>
+            <el-button type="danger" v-else size="large" @click="submit()">{{ t('button.applyText') }}</el-button>
         </div>
         <div v-else-if="props.state"></div>
-        <div v-else class="text-grey">暂未开通申请通道</div>
+        <div v-else class="text-grey">{{ t('message.noApplyContent') }}</div>
         <div class="text-grey" v-if="props.agreement">
-            <el-link type="primary" :underline="false" :href="props.agreement.url" target="_blank">{{ props.agreement.title
+            <el-link type="primary" underline="never" :href="props.agreement.url" target="_blank">{{ props.agreement.title
             }}</el-link>
         </div>
         <el-dialog v-model="qrcodeDialog" width="500" :show-close="false" class="p-0"
             style="--el-dialog-border-radius:12px;">
             <template #header="{ titleId, titleClass }">
-                <div class="p-4 dialog-header" :id="titleId" :class="titleClass">扫码支付</div>
+                <div class="p-4 dialog-header" :id="titleId" :class="titleClass">{{ t('message.scanPayContent') }}</div>
             </template>
             <div class="p-10 flex flex-center">
                 <div style="width: 200px;height: 200px;">
@@ -138,7 +140,7 @@ defineExpose({
             </div>
             <template #footer>
                 <div class="p-4 flex flex-center">
-                    <el-button type="danger" @click="close" bg text>我已支付</el-button>
+                    <el-button type="danger" @click="close" bg text>{{ t('button.myPayText') }}</el-button>
                 </div>
             </template>
         </el-dialog>

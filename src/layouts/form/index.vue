@@ -6,6 +6,8 @@ import ruleComponent from './component/rule.vue'
 import type { FormInstance } from 'element-plus'
 import { parseRules } from '@/common/functions';
 import SubmitEvent from '@/common/enum/SubmitEvent';
+import { useI18n } from 'vue-i18n';
+const {t} = useI18n();
 const props = withDefaults(defineProps<{
 	params?: any
 }>(), {
@@ -154,9 +156,9 @@ const resetForm = () => {
 								</div>
 							</template>
 						</template>
-						<el-form-item>
-							<el-button type="primary" @click="onSubmit" :loading="loading">提交</el-button>
-							<el-button @click="resetForm" v-if="rules">重置</el-button>
+						<el-form-item class="submit-item">
+							<el-button type="primary" @click="onSubmit" :loading="loading">{{ t('button.confirmText') }}</el-button>
+							<el-button @click="resetForm" v-if="rules" :disabled="loading">{{ t('button.resetText') }}</el-button>
 						</el-form-item>
 					</el-form>
 				</div>
@@ -164,3 +166,11 @@ const resetForm = () => {
 		</template>
 	</el-skeleton>
 </template>
+<style lang="scss" scoped>
+.submit-item {
+	position: sticky;
+	bottom: 0;
+	background-color: #FFFFFF;
+	z-index: 10;
+}
+</style>

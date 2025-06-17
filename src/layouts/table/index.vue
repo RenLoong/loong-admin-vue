@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { $http } from '@/common';
-import { hasWhere } from '@/common/functions';
+import { hasWhere, parseRules } from '@/common/functions';
 import router from '@/routers';
 import { useClick } from '@/common/functions/action';
 import ruleComponent from '@/layouts/form/component/rule.vue'
 import columnComponent from './component/column.vue'
 import { ElForm, ElMessage, ElTable } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const props = withDefaults(defineProps<{
 	params?: any
@@ -30,6 +32,9 @@ if (props.params) {
 	ApiUrl = props.params.api;
 }
 onBeforeMount(() => {
+	if (currentRoute.meta.component != 'tableComponent') {
+		return;
+	}
 	$http.get(`${ApiUrl}GetTable`, {
 		params: {
 			...currentRoute.query
@@ -51,40 +56,7 @@ onBeforeMount(() => {
 					}
 				}
 				rule.value = res.data.screen.rule;
-				for (let i = 0; i < rule.value.length; i++) {
-					const element = rule.value[i];
-					if (element.extra?.required) {
-						if (!rules.value) {
-							rules.value = {};
-						}
-						if (!rules.value[element.field]) {
-							rules.value[element.field] = [];
-						}
-						let trigger = 'blur';
-						switch (element.component) {
-							case 'input':
-							case 'textarea':
-							case 'select':
-							case 'date-picker':
-							case 'time-picker':
-							case 'cascader':
-							case 'rate':
-							case 'color-picker':
-							case 'switch':
-							case 'slider':
-							case 'time-select':
-							case 'date-select':
-							case 'upload':
-								trigger = 'blur';
-								break;
-							case 'radio':
-							case 'checkbox':
-								trigger = 'change';
-								break;
-						}
-						rules.value[element.field].push({ required: true, message: element.title + '不能为空', trigger })
-					}
-				}
+				parseRules(rules, rule.value);
 			}
 			nextTick(() => {
 				showTable.value = true;
@@ -177,7 +149,7 @@ const handleAction = (group: any, row: any) => {
 const handleFooter = (group: any) => {
 	if (!group.extra) return;
 	if (multipleSelection.value.length <= 0) {
-		return ElMessage.warning('请选择数据');
+		return ElMessage.warning(t('table.selectTips'));
 	}
 	let query = {
 		...group.extra.params
@@ -242,87 +214,96 @@ const handleSelectionChange = (val: any[]) => {
 </script>
 
 <template>
-	<el-skeleton :loading="loading" animated>
-		<template #template>
-			<div class="table-screen">
-				<el-skeleton-item />
-				<el-skeleton-item />
-				<el-skeleton-item />
-				<el-skeleton-item style="width:80px;" />
-			</div>
-			<div class="border grid grid-gap-4 p-4 my-4">
-				<el-skeleton-item style="height: 30px;" class="grid-column-6" v-for="item in 40" :index="item" />
-			</div>
-			<el-skeleton-item style="height: 30px;" />
-		</template>
-		<template #default>
-			<div class="flex flex-center p-4 shadow-light rounded-4 mb-6" v-if="header">
-				<div class="font-weight-600">{{ currentRoute.meta.title }}</div>
-				<div class="flex-1"></div>
-				<template v-for="(group, _index) in header.extra.group" :index="_index">
-					<permissions :name="group.extra.path">
-						<component :is="`el-${group.extra.component.name}`" v-bind="group.extra.component.props"
-							@click="handleHeader(group)">
-							{{ group.label }}
-						</component>
-					</permissions>
-				</template>
-			</div>
-			<div class="table-layouts">
-				<el-form ref="formRef" :model="search" :rules="rules" label-width="80px" v-if="showScreen"
-					:disabled="listLoading" class="py-6">
-					<ruleComponent v-model="search" :rule="rule" />
-					<el-form-item>
-						<el-button type="primary" @click="onSubmit" :loading="listLoading">查询</el-button>
-						<el-button @click="resetForm">重置</el-button>
-					</el-form-item>
-				</el-form>
-				<el-table ref="tableRef" :data="tableData" v-if="showTable" v-bind="tableProps" class="flex-1"
-					@selection-change="handleSelectionChange" :load="load">
-					<template v-for="(column, _index) in columns" :index="_index">
-						<columnComponent :column="column" :tableData="tableData" @change="updateTableDataValue" />
+	<template v-if="currentRoute.meta.component === 'tableComponent'">
+		<el-skeleton :loading="loading" animated>
+			<template #template>
+				<div class="table-screen">
+					<el-skeleton-item />
+					<el-skeleton-item />
+					<el-skeleton-item />
+					<el-skeleton-item style="width:80px;" />
+				</div>
+				<div class="border grid grid-gap-4 p-4 my-4">
+					<el-skeleton-item style="height: 30px;" class="grid-column-6" v-for="item in 40" :index="item" />
+				</div>
+				<el-skeleton-item style="height: 30px;" />
+			</template>
+			<template #default>
+				<div class="flex flex-center p-4 shadow-light rounded-4 mb-6" v-if="header">
+					<div class="font-weight-600">{{ currentRoute.meta.title }}</div>
+					<div class="flex-1"></div>
+					<template v-for="(group, _index) in header.extra.group" :index="_index">
+						<permissions :name="group.extra.path">
+							<component :is="`el-${group.extra.component.name}`" v-bind="group.extra.component.props"
+								@click="handleHeader(group)">
+								{{ group.label }}
+							</component>
+						</permissions>
 					</template>
-					<el-table-column v-if="action" :label="action.label" v-bind="action.extra.props">
-						<template #default="scope">
-							<div class="table-group">
-								<template v-for="(group, _index) in action.extra.group" :index="_index">
-									<permissions :name="group.extra.path">
-										<component :is="`el-${group.extra.component.name}`"
-											v-bind="group.extra.component.props" v-if="hasWhere(group.extra, scope.row)"
-											@click="handleAction(group, scope.row)">
-											{{ group.label }}
-										</component>
-									</permissions>
+				</div>
+				<div class="table-layouts">
+					<el-form ref="formRef" :model="search" :rules="rules" label-width="80px" v-if="showScreen"
+						:disabled="listLoading" class="py-6">
+						<ruleComponent v-model="search" :rule="rule" />
+						<el-form-item>
+							<el-button type="primary" @click="onSubmit" :loading="listLoading">{{ t('button.queryText')
+								}}</el-button>
+							<el-button @click="resetForm">{{ t('button.resetText') }}</el-button>
+						</el-form-item>
+					</el-form>
+					<el-table ref="tableRef" :data="tableData" v-if="showTable" v-bind="tableProps" class="flex-1"
+						@selection-change="handleSelectionChange" :load="load">
+						<template v-for="(column, _index) in columns" :index="_index">
+							<columnComponent :column="column" :tableData="tableData" @change="updateTableDataValue" />
+						</template>
+						<el-table-column v-if="action" :label="action.label" v-bind="action.extra.props">
+							<template #default="scope">
+								<div class="table-group">
+									<template v-for="(group, _index) in action.extra.group" :index="_index">
+										<permissions :name="group.extra.path">
+											<component :is="`el-${group.extra.component.name}`"
+												v-bind="group.extra.component.props"
+												v-if="hasWhere(group.extra, scope.row)"
+												@click="handleAction(group, scope.row)">
+												{{ group.label }}
+											</component>
+										</permissions>
+									</template>
+								</div>
+							</template>
+						</el-table-column>
+					</el-table>
+					<div v-if="search.total > 0" class="overflow-x-auto">
+						<div class="pagination">
+							<div class="flex mr-4" v-if="selection">
+								<el-button type="success" @click="toggleSelection(tableData)">{{
+									t('button.allSelectText') }}</el-button>
+								<el-button type="info" @click="toggleSelection()">{{ t('button.cancelText')
+									}}</el-button>
+								<template v-if="footer">
+									<template v-for="(group, _index) in footer.extra.group" :index="_index">
+										<permissions :name="group.extra.path">
+											<component :is="`el-${group.extra.component.name}`"
+												v-bind="group.extra.component.props" @click="handleFooter(group)">
+												{{ group.label }}
+											</component>
+										</permissions>
+									</template>
 								</template>
 							</div>
-						</template>
-					</el-table-column>
-				</el-table>
-				<div v-if="search.total > 0" class="overflow-x-auto">
-				<div class="pagination">
-					<div class="flex mr-4" v-if="selection">
-						<el-button type="success" @click="toggleSelection(tableData)">全选</el-button>
-						<el-button type="info" @click="toggleSelection()">取消</el-button>
-						<template v-if="footer">
-							<template v-for="(group, _index) in footer.extra.group" :index="_index">
-								<permissions :name="group.extra.path">
-									<component :is="`el-${group.extra.component.name}`"
-										v-bind="group.extra.component.props" @click="handleFooter(group)">
-										{{ group.label }}
-									</component>
-								</permissions>
-							</template>
-						</template>
+							<el-pagination background :page-sizes="[10, 20, 50, 100, 200]"
+								layout="total,sizes,prev, pager, next,jumper" :total="search.total"
+								v-model:page-size="search.limit" v-model:current-page="search.page">
+							</el-pagination>
+						</div>
 					</div>
-					<el-pagination background :page-sizes="[10, 20, 50, 100, 200]"
-						layout="total,sizes,prev, pager, next,jumper" :total="search.total"
-						v-model:page-size="search.limit" v-model:current-page="search.page">
-					</el-pagination>
 				</div>
-				</div>
-			</div>
-		</template>
-	</el-skeleton>
+			</template>
+		</el-skeleton>
+	</template>
+	<template v-else>
+		<RouterView />
+	</template>
 </template>
 
 <style lang="scss">
@@ -339,14 +320,17 @@ const handleSelectionChange = (val: any[]) => {
 		flex: 1;
 	}
 }
-.table-group{
+
+.table-group {
 	display: flex;
 	flex-wrap: wrap;
-	gap:10px;
-	.el-button+.el-button{
+	gap: 10px;
+
+	.el-button+.el-button {
 		margin: 0;
 	}
 }
+
 .table-screen {
 	display: grid;
 	grid-template-columns: repeat(24, 1fr);

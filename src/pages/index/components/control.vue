@@ -33,15 +33,15 @@ onMounted(() => {
 
 <template>
     <el-container class="layout-container">
-        <item-header />
+        <layouts-header />
         <el-container class="overflow-hidden">
             <el-aside class="layout-aside" :class="{ 'close': !STATE.AsideState || STATE.NotMenusAsideState }">
                 <el-scrollbar class="flex-1">
                     <el-menu :default-active="currentRoute.path" router class="layouts-menus">
-                        <item-menu-item :menus="ROUTERLIST" :level="1" />
+                        <layouts-menu-item :menus="ROUTERLIST" :level="1" />
                     </el-menu>
                 </el-scrollbar>
-                <copyright class="flex-column-reverse layout-aside-width" />
+                <layouts-copyright class="flex-column-reverse layout-aside-width" />
             </el-aside>
             <el-main class="layouts-main-scrollbar">
                 <router-view :key="currentRoute.path" />

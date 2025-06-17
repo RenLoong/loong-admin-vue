@@ -24,7 +24,7 @@ const { hasSubMenu } = useMenusStore();
                     </el-icon>
                     <span>{{ item.meta.title }}</span>
                 </template>
-                <item-menu-item :menus="item.children" :level="level + 1"></item-menu-item>
+                <layouts-menu-item :menus="item.children" :level="level + 1"></layouts-menu-item>
             </el-sub-menu>
         </permissions>
         <permissions :name="item.meta.api" v-else-if="item.meta.show">

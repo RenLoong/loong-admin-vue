@@ -16,11 +16,11 @@ onMounted(() => {
 <template>
     <footer class="pt-10 bg" ref="footerRef" :class="['theme--' + props.theme]">
         <div class="layouts py-6">
-            <copyright :theme="props.theme" :class="['flex-' + props.direction]">
+            <layouts-copyright :theme="props.theme" :class="['flex-' + props.direction]">
                 <template #center>
                     <slot name="center"></slot>
                 </template>
-            </copyright>
+            </layouts-copyright>
         </div>
     </footer>
 </template>

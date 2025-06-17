@@ -2,7 +2,8 @@
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 // @ts-ignore
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
-
+import { useI18n } from 'vue-i18n';
+const {t} = useI18n();
 type InsertFnType = (url: string, poster?: string, text?: string) => void
 const props = withDefaults(defineProps<{
     modelValue: string,
@@ -30,7 +31,7 @@ const selected = (files:any) => {
 }
 const toolbarConfig = {}
 const editorConfig = {
-    placeholder: '请输入内容...',
+    placeholder: t('form.wangeditor.placeholder'),
     MENU_CONF: {
         uploadImage: {
             // 自定义选择图片

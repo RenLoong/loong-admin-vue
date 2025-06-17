@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import control from '@/components/layouts/control.vue';
-import admin from '@/components/layouts/admin.vue';
+import control from './components/control.vue';
+import admin from './components/admin.vue';
 import { useRefs, useWebConfigStore } from "@/stores";
 const webConfigStore = useWebConfigStore();
 const { WEBCONFIG } = useRefs(webConfigStore);

@@ -2,6 +2,8 @@
 import { $http } from '@/common';
 import { ElMessage, UploadProps, UploadRawFile } from 'element-plus';
 import highlight from 'highlight.js';
+import { useI18n } from 'vue-i18n';
+const {t} = useI18n();
 const props = withDefaults(defineProps<{
     modelValue: string,
     placeholder?: string,
@@ -54,19 +56,19 @@ const insertFontH = (size: number) => {
     })
 }
 const insertBold = () => {
-    appendContent('\n__加粗__', 4, 2);
+    appendContent('\n__'+t('form.markedEditor.bold')+'__', 4, 2);
 };
 const insertItalic = () => {
-    appendContent('\n_斜体_', 3, 1);
+    appendContent('\n_'+t('form.markedEditor.italic')+'_', 3, 1);
 }
 const insertLineThrough = () => {
-    appendContent('\n~~删除线~~', 5, 2);
+    appendContent('\n~~'+t('form.markedEditor.lineThrough')+'~~', 5, 2);
 }
 const insertList = () => {
-    appendContent('\n\n- 列表项', 3, 0);
+    appendContent('\n\n- '+t('form.markedEditor.listItem')+'', 3, 0);
 }
 const insertNumList = () => {
-    appendContent('\n\n1. 列表项', 3, 0);
+    appendContent('\n\n1. '+t('form.markedEditor.listItem')+'', 3, 0);
 }
 const textareaEnter = (e: KeyboardEvent | Event): any => {
     // 获取光标位置，判断光标所在行是否是列表
@@ -100,7 +102,7 @@ const insertTable = (item: any) => {
     // |:-|:-|:-|
     let tableText = '\n\n|';
     for (let i = 0; i < x; i++) {
-        tableText += ' 表头 |';
+        tableText += ' '+t('form.markedEditor.tableHeader')+' |';
     }
     tableText += '\n|';
     for (let i = 0; i < x; i++) {
@@ -109,7 +111,7 @@ const insertTable = (item: any) => {
     for (let i = 0; i < y; i++) {
         tableText += '\n|';
         for (let j = 0; j < x; j++) {
-            tableText += ' 单元格 |';
+            tableText += ' '+t('form.markedEditor.tableCell')+' |';
         }
     }
     appendContent(tableText);
@@ -201,11 +203,11 @@ const handleUploadSuccess: UploadProps['onSuccess'] = (
 }
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile: UploadRawFile) => {
     if (rawFile.type.indexOf('image') === -1) {
-        ElMessage.error('请选择图片')
+        ElMessage.error(t('form.markedEditor.uploadImageError'))
         return false
     }
     if (rawFile.size / 1024 / 1024 > 2) {
-        ElMessage.error('请上传2M以内的图片')
+        ElMessage.error(t('form.markedEditor.uploadImageSizeError',{size:'2M'}))
         return false
     }
     return true
@@ -241,11 +243,11 @@ const hidePopover=()=>{
                 <template #dropdown>
                     <div class="marked-editor-toolbar-h-list">
                         <div v-for="n in 6" :class="'h' + n" class="marked-editor-toolbar-h" @click="insertFontH(n)">H{{ n
-                        }} 字号</div>
+                        }} {{ t('form.markedEditor.fontSize') }}</div>
                     </div>
                 </template>
             </el-dropdown>
-            <el-tooltip effect="dark" content="加粗" placement="bottom-start">
+            <el-tooltip effect="dark" :content="t('form.markedEditor.bold')" placement="bottom-start">
                 <el-icon class="marked-editor-toolbar-icon" @click="insertBold">
                     <svg t="1695807555131" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
                         p-id="2628" width="48" height="48">
@@ -255,7 +257,7 @@ const hidePopover=()=>{
                     </svg>
                 </el-icon>
             </el-tooltip>
-            <el-tooltip effect="dark" content="斜体" placement="bottom-start">
+            <el-tooltip effect="dark" :content="t('form.markedEditor.italic')" placement="bottom-start">
                 <el-icon class="marked-editor-toolbar-icon" @click="insertItalic">
                     <svg t="1695807605947" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
                         p-id="2767" width="48" height="48">
@@ -263,7 +265,7 @@ const hidePopover=()=>{
                     </svg>
                 </el-icon>
             </el-tooltip>
-            <el-tooltip effect="dark" content="删除线" placement="bottom-start">
+            <el-tooltip effect="dark" :content="t('form.markedEditor.lineThrough')" placement="bottom-start">
                 <el-icon class="marked-editor-toolbar-icon" @click="insertLineThrough">
                     <svg t="1695808049082" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
                         p-id="3326" width="48" height="48">
@@ -286,22 +288,22 @@ const hidePopover=()=>{
                 </el-icon>
                 </template>
                 <el-form :model="codeForm" ref="codeFormRef" label-position="top" @submit.prevent="insertCode">
-                    <el-form-item label="语言" prop="language">
-                        <el-select v-model="codeForm.language" placeholder="请选择语言" filterable class="w-100" :teleported="false">
+                    <el-form-item :label="t('form.markedEditor.language')" prop="language">
+                        <el-select v-model="codeForm.language" :placeholder="t('form.markedEditor.selectLanguage')" filterable class="w-100" :teleported="false">
                             <el-option v-for="item in languageList" :key="item" :label="item" :value="item" />
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="代码" prop="code">
-                        <el-input type="textarea" v-model="codeForm.code" placeholder="请输入代码" :autosize="{ minRows: 5, maxRows: 10 }" />
+                    <el-form-item :label="t('form.markedEditor.code')" prop="code">
+                        <el-input type="textarea" v-model="codeForm.code" :placeholder="t('form.markedEditor.inputCode')" :autosize="{ minRows: 5, maxRows: 10 }" />
                     </el-form-item>
                     <div class="flex flex-x-space-between pt-6">
-                        <el-button text bg type="info" @click="groupPopover=null,codeFormRef.resetFields()">取消</el-button>
-                        <el-button native-type="submit" type="primary">插入</el-button>
+                        <el-button text bg type="info" @click="groupPopover=null,codeFormRef.resetFields()">{{ t('button.cancelText') }}</el-button>
+                        <el-button native-type="submit" type="primary">{{ t('button.insertText') }}</el-button>
                     </div>
                 </el-form>
             </el-popover>
             <span class="marked-editor-toolbar-hr" />
-            <el-tooltip effect="dark" content="列表" placement="bottom-start">
+            <el-tooltip effect="dark" :content="t('form.markedEditor.list')" placement="bottom-start">
                 <el-icon class="marked-editor-toolbar-icon" @click="insertList">
                     <svg t="1695809711912" class="icon" viewBox="0 0 1024 1024" version="1.1"
                         xmlns="http://www.w3.org/2000/svg" p-id="26497" width="48" height="48">
@@ -311,7 +313,7 @@ const hidePopover=()=>{
                     </svg>
                 </el-icon>
             </el-tooltip>
-            <el-tooltip effect="dark" content="有序列表" placement="bottom-start">
+            <el-tooltip effect="dark" :content="t('form.markedEditor.numList')" placement="bottom-start">
                 <el-icon class="marked-editor-toolbar-icon" @click="insertNumList">
                     <svg t="1695809760748" class="icon" viewBox="0 0 1024 1024" version="1.1"
                         xmlns="http://www.w3.org/2000/svg" p-id="29693" width="48" height="48">
@@ -354,21 +356,21 @@ const hidePopover=()=>{
                     </el-icon>
                 </template>
                 <el-form :model="linkForm" ref="linkFormRef" label-position="top" @submit.prevent="insertUrl">
-                    <el-form-item label="链接" prop="url">
-                        <el-input v-model="linkForm.url" placeholder="请输入链接" />
+                    <el-form-item :label="t('form.markedEditor.link')" prop="url">
+                        <el-input v-model="linkForm.url" :placeholder="t('form.markedEditor.linkPlaceholder')" />
                     </el-form-item>
-                    <el-form-item label="标题" prop="text">
-                        <el-input v-model="linkForm.text" placeholder="请输入文字描述" />
+                    <el-form-item :label="t('form.markedEditor.title')" prop="text">
+                        <el-input v-model="linkForm.text" :placeholder="t('form.markedEditor.titlePlaceholder')" />
                     </el-form-item>
-                    <el-form-item label="CSS样式" prop="style">
-                        <el-input v-model="linkForm.style" placeholder="color:red;font-size:20px;" />
+                    <el-form-item :label="t('form.markedEditor.cssStyle')" prop="style">
+                        <el-input v-model="linkForm.style" :placeholder="t('form.markedEditor.cssStylePlaceholder')" />
                         <div class="line-height-2 pt-2 text-grey h10 w-100">
-                            <div>格式：color:red;font-size:20px;</div>
+                            <div>{{ t('form.markedEditor.cssStyleFormat') }}</div>
                         </div>
                     </el-form-item>
                     <div class="flex flex-x-space-between pt-6">
-                        <el-button text bg type="info" @click="groupPopover=null,linkFormRef.resetFields()">取消</el-button>
-                        <el-button native-type="submit" type="primary">插入</el-button>
+                        <el-button text bg type="info" @click="groupPopover=null,linkFormRef.resetFields()">{{ t('button.cancelText') }}</el-button>
+                        <el-button native-type="submit" type="primary">{{ t('button.insertText') }}</el-button>
                     </div>
                 </el-form>
             </el-popover>
@@ -384,45 +386,45 @@ const hidePopover=()=>{
                 </el-icon>
                 </template>
                 <el-form :model="imageForm" ref="imageFormRef" label-position="top" @submit.prevent="insertImage">
-                    <el-form-item label="标题" prop="text">
-                        <el-input v-model="imageForm.text" placeholder="请输入文字描述" />
+                    <el-form-item :label="t('form.markedEditor.imageTitle')" prop="text">
+                        <el-input v-model="imageForm.text" :placeholder="t('form.markedEditor.imageTitle')" />
                     </el-form-item>
-                    <el-form-item label="图片链接" prop="url">
-                        <el-input v-model="imageForm.url" placeholder="图片链接" />
-                        <uploads :data="{ dir_name: 'uploads/marked',dir_title:'MD编辑器' }"
+                    <el-form-item :label="t('form.markedEditor.imageLink')" prop="url">
+                        <el-input v-model="imageForm.url" :placeholder="t('form.markedEditor.imageLinkPlaceholder')" />
+                        <uploads :data="{ dir_name: 'uploads/marked',dir_title:t('form.markedEditor.imageDirTitle') }"
                             :show-file-list="false" accept="image/*" :on-success="handleUploadSuccess"
                             :before-upload="beforeUpload">
-                            <el-button type="primary" size="small">上传</el-button>
+                            <el-button type="primary" size="small">{{ t('button.uploadText') }}</el-button>
                         </uploads>
                     </el-form-item>
-                    <el-form-item label="宽高">
+                    <el-form-item :label="t('form.markedEditor.widthHeight')">
                         <div class="flex flex-center">
                         <el-form-item prop="width">
-                            <el-input v-model="imageForm.width" placeholder="宽" />
+                            <el-input v-model="imageForm.width" :placeholder="t('form.markedEditor.widthPlaceholder')" />
                         </el-form-item>
                         <div class="mx-2">-</div>
                         <el-form-item prop="height">
-                            <el-input v-model="imageForm.height" placeholder="高" />
+                            <el-input v-model="imageForm.height" :placeholder="t('form.markedEditor.heightPlaceholder')" />
                         </el-form-item>
                         </div>
                         <div class="line-height-2 pt-2 text-grey h10 w-100">
-                            <div>需指定单位：px,%</div>
+                            <div>{{ t('form.markedEditor.widthHeightFormat') }}</div>
                         </div>
                     </el-form-item>
-                    <el-form-item label="CSS样式" prop="style">
-                        <el-input v-model="imageForm.style" placeholder="color:red;font-size:20px;" />
+                    <el-form-item :label="t('form.markedEditor.cssStyle')" prop="style">
+                        <el-input v-model="imageForm.style" :placeholder="t('form.markedEditor.cssStylePlaceholder')" />
                         <div class="line-height-2 pt-2 text-grey h10 w-100">
-                            <div>格式：color:red;font-size:20px;</div>
+                            <div>{{ t('form.markedEditor.cssStyleFormat') }}</div>
                         </div>
                     </el-form-item>
                     <div class="flex flex-x-space-between pt-6">
-                        <el-button text bg type="info" @click="groupPopover=null,imageFormRef.resetFields()">取消</el-button>
-                        <el-button native-type="submit" type="primary">插入</el-button>
+                        <el-button text bg type="info" @click="groupPopover=null,imageFormRef.resetFields()">{{ t('button.cancelText') }}</el-button>
+                        <el-button native-type="submit" type="primary">{{ t('button.insertText') }}</el-button>
                     </div>
                 </el-form>
             </el-popover>
             <span class="marked-editor-toolbar-hr" />
-            <el-tooltip effect="dark" content="退出全屏编辑" placement="bottom-start" v-if="isFullScreen">
+            <el-tooltip effect="dark" :content="t('form.markedEditor.exitFullScreen')" placement="bottom-start" v-if="isFullScreen">
                 <el-icon class="marked-editor-toolbar-icon" @click="hidePopover(),isFullScreen = !isFullScreen">
                     <svg t="1695874407576" class="icon" viewBox="0 0 1024 1024" version="1.1"
                         xmlns="http://www.w3.org/2000/svg" p-id="32743" width="48" height="48">
@@ -432,7 +434,7 @@ const hidePopover=()=>{
                     </svg>
                 </el-icon>
             </el-tooltip>
-            <el-tooltip effect="dark" content="全屏编辑" placement="bottom-start" v-else>
+            <el-tooltip effect="dark" :content="t('form.markedEditor.fullScreen')" placement="bottom-start" v-else>
                 <el-icon class="marked-editor-toolbar-icon" @click="hidePopover(),isFullScreen = !isFullScreen">
                     <svg t="1695808522219" class="icon" viewBox="0 0 1024 1024" version="1.1"
                         xmlns="http://www.w3.org/2000/svg" p-id="23661" width="48" height="48">

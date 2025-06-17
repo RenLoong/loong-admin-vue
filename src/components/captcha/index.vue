@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { $http } from '@/common';
+import { useI18n } from 'vue-i18n';
+const {t} = useI18n();
 const props = withDefaults(defineProps<{
     bg?: string,
 }>(), {
@@ -26,7 +28,7 @@ const getCaptcha = () => {
 </script>
 
 <template>
-    <img :src="imgBase64Data" v-if="imgBase64Data" title="点击切换验证码" @click="getCaptcha" class="pointer">
+    <img :src="imgBase64Data" v-if="imgBase64Data" :title="t('form.captcha.tips')" @click="getCaptcha" class="pointer">
 </template>
 
 <style scoped></style>

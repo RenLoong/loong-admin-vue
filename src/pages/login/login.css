@@ -28,7 +28,7 @@
 .login-form {
     background-color: rgba(255, 255, 255, .45);
     border-radius: 20px;
-    width: 500px;
+    width: var(--login-form-width);
     display: flex;
     flex-direction: column;
 }

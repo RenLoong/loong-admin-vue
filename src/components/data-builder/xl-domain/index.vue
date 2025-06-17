@@ -57,7 +57,7 @@ defineExpose({
     <div class="h-100 flex flex-column flex-x-space-between">
         <div class="flex flex-x-center grid-gap-2 domain-link border-bottom pb-2 mb-2">
             <el-link icon="Paperclip" :href="props.domain" target="_blank" class="flex-1 h10 text-ellipsis-2"
-                :underline="false" type="danger"> {{ props.domain }} </el-link>
+                underline="never" type="danger"> {{ props.domain }} </el-link>
             <el-button type="success" @click="copy">{{props.label}}</el-button>
         </div>
         <div class="flex flex-center mb-2">
@@ -68,7 +68,7 @@ defineExpose({
         <div class="flex">
             <div class="text-grey h9 flex-1 text-ellipsis-2">{{props.tips}}</div>
             <div class="text-grey" v-if="props.agreement">
-                <el-link type="primary" :underline="false" :href="props.agreement.url" target="_blank">{{ props.agreement.title
+                <el-link type="primary" underline="never" :href="props.agreement.url" target="_blank">{{ props.agreement.title
                 }}</el-link>
             </div>
         </div>
@@ -86,4 +86,3 @@ defineExpose({
     }
 }
 </style>
-<style lang="scss" scoped></style>

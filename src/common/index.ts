@@ -1,19 +1,23 @@
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import config, { useStorage } from "./config";
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { useRefs, useUserStore, useWebConfigStore } from "@/stores";
+import { useRefs, useStateStore, useUserStore, useWebConfigStore } from "@/stores";
 import { getRoundImage } from "@/common/functions";
 import { useClick } from '@/common/functions/action';
+import { i18n } from '@/locale';
+const {t} = i18n.global;
 let baseURL = globalThis.location.origin + '/'
 if (import.meta.env.DEV) {
     baseURL = baseURL + 'local/'
+} else if (import.meta.env.VITE_REQUEST_BASE_URL) {
+    baseURL = import.meta.env.VITE_REQUEST_BASE_URL
 }
-const getCompleteUrl = (url: string) => {
+const getCompleteUrl = (path: string) => {
     // 判断url是否不以“/”开头
-    if (url.startsWith('/')) {
-        return `${baseURL}${url}`;
+    if (path?.startsWith('/')) {
+        return `${baseURL}${path}`;
     } else {
-        return `${baseURL}${config.URLModule}/${url}`;
+        return `${baseURL}${config.URLModule}/${path}`;
     }
 }
 axios.interceptors.request.use((_config) => {
@@ -26,6 +30,11 @@ axios.interceptors.request.use((_config) => {
         _config.headers.set('X-ICODE', storage.get('ICODE') as string);
     }
     _config.headers.set('X-Platform', 'pc');
+    const stateStore = useStateStore();
+    const { STATE } = useRefs(stateStore);
+    const lang=STATE.value.language;
+    _config.headers.set('Accept-Language', lang);
+    _config.headers.set('lang', lang);
     // 判断url是否不以“/”开头
     if (!_config.url?.startsWith('/')) {
         _config.baseURL = (baseURL + config.URLModule);
@@ -43,7 +52,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
             case $http.ResponseCode.NEED_LOGIN:
                 userStore.clearUserInfo();
                 ElNotification({
-                    title: '提示',
+                    title: t('message.tips'),
                     message: `[${response.data.code}]${response.data.msg}`,
                     type: 'error',
                 })
@@ -66,7 +75,6 @@ axios.interceptors.response.use((response: AxiosResponse) => {
             case $http.ResponseCode.LOCK:
                 showUnlockBox();
                 throw new AxiosError(`[${response.data.code}]${response.data.msg}`, 'ERR_CANCELED');
-                break;
         }
         return response.data;
     }
@@ -123,12 +131,12 @@ export const showErrorBox = (res: any) => {
     const content = [];
     if (res.code) {
         content.push(h('div', { class: 'flex py-2' }, [
-            h('div', { class: 'text-grey text-right mr-2', style: { width: '100px' } }, '错误码'),
+            h('div', { class: 'text-grey text-right mr-2', style: { width: '100px' } }, t('message.error_code')),
             h('div', {}, res.code)
         ]))
     }
     content.push(h('div', { class: 'flex py-2' }, [
-        h('div', { class: 'text-grey text-right mr-2', style: { width: '100px' } }, '错误信息'),
+        h('div', { class: 'text-grey text-right mr-2', style: { width: '100px' } }, t('message.error_text')),
         h('div', {}, res.msg)
     ]))
     if (res.data) {
@@ -143,17 +151,17 @@ export const showErrorBox = (res: any) => {
         }
     }
     ElMessageBox({
-        title: '错误',
+        title: t('message.error'),
         message: h('div', {}, content),
     })
 }
 export const showUnlockBox = () => {
     const { WEBCONFIG } = useWebConfigStore();
     ElMessageBox({
-        title: '输入PIN码解锁',
-        confirmButtonText: '解锁',
+        title: t('unlock.title'),
+        confirmButtonText: t('unlock.confirmText'),
         confirmButtonClass: 'el-button--success is-text is-has-bg',
-        cancelButtonText: '退出登录',
+        cancelButtonText: t('unlock.cancelText'),
         cancelButtonClass: 'el-button--danger is-text is-has-bg',
         showClose: false,
         showCancelButton: true,
@@ -163,8 +171,8 @@ export const showUnlockBox = () => {
         showInput: true,
         inputType: 'number',
         inputPattern: /^\d{6}$/,
-        inputPlaceholder: '请输入6位数字PIN码',
-        inputErrorMessage: '请输入6位数字PIN码',
+        inputPlaceholder: t('unlock.inputPlaceholder'),
+        inputErrorMessage: t('unlock.inputErrorMessage'),
         beforeClose: (action: string, instance: { confirmButtonLoading: boolean; inputValue: string }, done: () => void) => {
             if (action === 'confirm') {
                 instance.confirmButtonLoading = true

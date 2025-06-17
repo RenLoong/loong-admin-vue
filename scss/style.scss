@@ -1,7 +1,21 @@
 :root {
     --layouts-width: 1140px;
+    --aside-width:264px;
+    --aside-menu-width:180px;
+    --aside-close-width: 64px;
+    --login-form-width: 500px;
 }
-
+html[lang="en"] {
+    --aside-width:324px;
+    --aside-menu-width:240px;
+    --aside-close-width: 84px;
+    --login-form-width: 700px;
+    @media only screen and (min-width: 1468px) {
+        .admin-rule{
+            --el-transfer-panel-width:356px;
+        }
+    }
+}
 html,
 body {
     padding: 0;
@@ -154,4 +168,16 @@ a {
     .recharge{
         .close{display: block !important;}
     }
+}
+.languare-list{
+    .languare-item{
+        padding:6px;
+        border-radius: 6px;
+        cursor: pointer;
+        &:hover{
+            color: var(--el-menu-hover-text-color);
+            background-color: var(--el-menu-hover-bg-color);
+        }
+    }
+
 }

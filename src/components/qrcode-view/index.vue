@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { $http, showErrorBox } from '@/common';
 import { CancelTokenSource } from 'axios';
-
+import { useI18n } from 'vue-i18n';
+const {t} = useI18n();
 const props = withDefaults(defineProps<{
     url: string,
     check:string,
@@ -34,7 +35,7 @@ const getQrcode=()=>{
                 Inter=setInterval(()=>{
                     expire.value--;
                     if(!expire.value){
-                        setQrcodeExpire('二维码已过期');
+                        setQrcodeExpire(t('message.qrcodeExpireContent'));
                     }
                 },1000);
             }
@@ -42,7 +43,7 @@ const getQrcode=()=>{
             setQrcodeExpire(res.msg);
         }
     }).catch(()=>{
-        setQrcodeExpire('获取二维码失败');
+        setQrcodeExpire(t('message.getQrcodeFail'));
     });
 }
 let timer:NodeJS.Timeout|undefined;
@@ -52,7 +53,7 @@ const checkLogin=()=>{
     if(timer){
         clearTimeout(timer);
         if(source){
-            source.cancel('用户取消');
+            source.cancel(t('message.userCannel'));
         }
     }
     timer=undefined;
@@ -100,7 +101,7 @@ onUnmounted(()=>{
         clearInterval(Inter);
     }
     if(source){
-        source.cancel('用户取消');
+        source.cancel(t('message.userCannel'));
     }
 });
 </script>
@@ -113,10 +114,10 @@ onUnmounted(()=>{
                     <CircleClose/>
                 </el-icon>
                 <div class="text-white">{{showError}}</div>
-                <el-link type="primary" @click="getQrcode" :underline="false">点击重试</el-link>
+                <el-link type="primary" @click="getQrcode" underline="never">{{ t('button.retryText') }}</el-link>
             </div>
         </div>
-        <div v-if="expire" class="h10 text-grey text-center mt-2">二维码将在{{expire}}秒后过期</div>
+        <div v-if="expire" class="h10 text-grey text-center mt-2">{{ t('message.qrcodeWillExpireContent',{time:expire}) }}</div>
     </div>
 </template>
 <style lang="scss" scoped>

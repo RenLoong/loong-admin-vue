@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { TransferKey } from 'element-plus';
+import { useI18n } from 'vue-i18n';
+const {t} = useI18n();
 
 const props = withDefaults(defineProps<{
     modelValue: string[],
@@ -37,8 +39,8 @@ const filterMethod = (query: string, item: any) => {
 </script>
 
 <template>
-    <el-transfer v-model="value" :titles="['未授权', '已授权']" :button-texts="['取消授权', '添加授权']" filterable
-        :right-default-checked="props.rightDefaultChecked" :filter-method="filterMethod" filter-placeholder="搜索权限"
+    <el-transfer v-model="value" :titles="[t('form.adminRule.title.unauthorized'), t('form.adminRule.title.authorized')]" :button-texts="[t('button.cancelAuthorizationText'), t('button.addAuthorizationText')]" filterable
+        :right-default-checked="props.rightDefaultChecked" :filter-method="filterMethod" :filter-placeholder="t('form.placeholder.searchAuthorized')"
         :data="data" class="admin-rule" @change="updateValue" />
 </template>
 
