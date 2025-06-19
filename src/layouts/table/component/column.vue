@@ -54,7 +54,7 @@ const getComponentValue = (component: any, value: any) => {
 				<xl-table-times :data="scope.row" v-bind="column.extra?.component.props" />
 			</template>
 			<template v-else-if="column.extra?.component.name === 'copy'">
-				<xl-copy :text="scope.row[column.prop]" v-bind="column.extra?.component.props" />
+				<xl-copy :content="scope.row[column.prop]" v-bind="column.extra?.component.props" />
 			</template>
 			<template v-else-if="column.extra?.component.name === 'image'">
 				<template v-if="Array.isArray(scope.row[column.prop])">

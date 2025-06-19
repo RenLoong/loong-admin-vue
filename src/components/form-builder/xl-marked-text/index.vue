@@ -65,6 +65,7 @@ onObserve(markedTextRef, (e: IntersectionObserverEntry[], done: Function) => {
 </template>
 <style lang="scss">
 .marked-text {
+    word-break:break-all;
     img {
         width: 100%;
         max-width: 100%;

@@ -35,32 +35,32 @@ const prop = (field: string) => {
     }
     return field;
 }
-const handleAction = (group: any, field: any,_e:any) => {
+const handleAction = (group: any, field: any, _e: any) => {
     console.log(group, field)
-	if (!group.extra) return;
-	let query = {
-		...group.extra.params,
+    if (!group.extra) return;
+    let query = {
+        ...group.extra.params,
         field
-	};
-	if (group.extra.field) {
-		for (let key in group.extra.field) {
-			query[group.extra.field[key]] = form.value[key];
-		}
-	} else {
-		query.id = form.value.id;
-	}
-	const options = {
-		model: group.extra.model,
-		props: group.extra.props,
-		path: group.extra.path,
-		query,
-		data: form.value
-	};
-	useClick(options).then((data:any) => {
-        if(data[field]){
+    };
+    if (group.extra.field) {
+        for (let key in group.extra.field) {
+            query[group.extra.field[key]] = form.value[key];
+        }
+    } else {
+        query.id = form.value.id;
+    }
+    const options = {
+        model: group.extra.model,
+        props: group.extra.props,
+        path: group.extra.path,
+        query,
+        data: form.value
+    };
+    useClick(options).then((data: any) => {
+        if (data[field]) {
             form.value[field] = data[field]
         }
-	}).catch(() => { })
+    }).catch(() => { })
 }
 </script>
 
@@ -71,13 +71,26 @@ const handleAction = (group: any, field: any,_e:any) => {
                 <el-form-item :index="index" :label="item.title" :prop="prop(item.field)"
                     v-if="hasWhere(item.extra, form)">
                     <div class="w-100 overflow-hidden">
-                        <template v-if="item.component === 'select'">
+                        <!-- 信息展示类 -->
+                        <template v-if="item.component === 'copy'">
+                            <xl-copy :content="form[item.field]" v-bind="item.extra.props" />
+                        </template>
+                        <template v-else-if="item.component === 'marked-text'">
+                            <xl-marked-text :content="form[item.field]" v-bind="item.extra.props" />
+                        </template>
+                        <template v-else-if="['text', 'link'].includes(item.component)">
+                            <component :is="'el-' + item.component" v-bind="item.extra.props">{{ form[item.field] }}
+                            </component>
+                        </template>
+                        <!-- 信息展示类 -->
+
+                        <!-- 自定义表单类 -->
+                        <template v-else-if="item.component === 'select'">
                             <el-select v-model="form[item.field]" v-bind="item.extra.props">
                                 <el-option v-for="(sub, subIndex) in item.extra.options" :key="subIndex"
                                     :label="sub.label" :value="sub.value" v-bind="item.extra.subProps" />
                             </el-select>
                         </template>
-
                         <template v-else-if="item.component === 'bundle'">
                             <xl-bundle v-model="form[item.field]" v-bind="item.extra.props" />
                         </template>
@@ -91,22 +104,24 @@ const handleAction = (group: any, field: any,_e:any) => {
                         <template v-else-if="item.component === 'wangeditor'">
                             <xl-wangeditor v-model="form[item.field]" v-bind="item.extra.props" />
                         </template>
-
                         <template v-else-if="['radio', 'checkbox'].includes(item.component)">
-                            <component :is="'el-'+item.component+'-group'" v-model="form[item.field]"
+                            <component :is="'el-' + item.component + '-group'" v-model="form[item.field]"
                                 v-bind="item.extra.props" class="el-group">
-                                <component :is="'el-'+item.component" v-for="(sub, subIndex) in item.extra.options"
+                                <component :is="'el-' + item.component" v-for="(sub, subIndex) in item.extra.options"
                                     :key="subIndex" :value="sub.value" v-bind="item.extra.subProps">{{ sub.label }}
                                 </component>
                             </component>
                         </template>
-
+                        <!-- 自定义表单类 -->
+                        <!-- 常规表单类 -->
                         <template v-else>
-                            <component :is="'el-'+item.component" v-model="form[item.field]" v-bind="item.extra.props">
+                            <component :is="'el-' + item.component" v-model="form[item.field]"
+                                v-bind="item.extra.props">
                                 <template v-for="(child, name) in item.extra.children" :index="name" v-slot:[name]>
                                     <permissions :name="child.extra?.path">
                                         <component :is="child.component" v-if="typeof child === 'object'"
-                                            v-bind="child.props" @click="handleAction(child,item.field,$event)" @change="handleAction(child,item.field,$event)">
+                                            v-bind="child.props" @click="handleAction(child, item.field, $event)"
+                                            @change="handleAction(child, item.field, $event)">
                                             <template v-for="(subChild, subName) in child.children" :index="subName"
                                                 v-slot:[subName]>
                                                 <component :is="subChild.component" v-if="typeof subChild === 'object'"
@@ -119,6 +134,7 @@ const handleAction = (group: any, field: any,_e:any) => {
                                 </template>
                             </component>
                         </template>
+                        <!-- 常规表单类 -->
                         <xl-prompt v-if="item.extra.prompt" :prompt="item.extra.prompt"></xl-prompt>
                     </div>
                 </el-form-item>
@@ -132,6 +148,7 @@ const handleAction = (group: any, field: any,_e:any) => {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+
     .el-radio {
         margin-right: 0 !important;
     }

@@ -47,10 +47,10 @@ a {
     min-height: calc(100vh - var(--header-height) - var(--footer-height));
 }
 
-.layouts-main-scrollbar {
+.el-main.layouts-main-scrollbar {
     display: flex !important;
     flex-direction: column;
-    background-color: var(--el-bg-color-page);
+    overflow: hidden;
 }
 .table-layouts{
     overflow: hidden;

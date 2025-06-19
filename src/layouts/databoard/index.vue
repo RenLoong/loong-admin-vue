@@ -62,7 +62,7 @@ onBeforeMount(() => {
 		</template>
 		<template #default>
 			<el-scrollbar>
-				<xl-row v-bind="rowProps">
+				<xl-row class="p-6" v-bind="rowProps">
 					<xl-col v-for="(item, index) in rows" :index="index" v-bind="item.props" :row="item.row">
 						<template v-if="item.component.name === 'statistic'">
 							<xl-statistic ref="refs" v-bind="item.component.props" @reload="getData" />

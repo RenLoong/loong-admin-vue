@@ -118,7 +118,7 @@ onMounted(() => {
                 </el-breadcrumb>
             </layouts-header>
             <el-main class="layouts-main-scrollbar">
-                <div :class="layoutsMainClass">
+                <div :class="layoutsMainClass" class="overflow-hidden">
                     <router-view :key="currentRoute.path" />
                 </div>
                 <layouts-copyright center />

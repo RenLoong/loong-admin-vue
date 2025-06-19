@@ -41,7 +41,8 @@ const { hasSubMenu } = useMenusStore();
     </template>
 </template>
 
-<style>
+<style lang="scss">
+.layouts-menus{
 .el-menu-item,
 .el-sub-menu__title {
     border-radius: 6px;
@@ -51,5 +52,6 @@ const { hasSubMenu } = useMenusStore();
 .el-menu-item.is-active {
     color: var(--el-color-primary-light-3);
     background-color: var(--el-color-primary-light-9);
+}
 }
 </style>

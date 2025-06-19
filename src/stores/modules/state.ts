@@ -23,9 +23,12 @@ export default () => {
         deep: true
     })
     const initState = () => {
-        const data = storage.get('STATE');
+        const data = storage.get('STATE') as StateInterface;
         if (data) {
-            STATE.value = data as StateInterface;
+            if(!data.language){
+                data.language=LANGUARE[0].value;
+            }
+            STATE.value = data;
         }
     }
     const toggle = (key: 'AsideState' | 'NotMenusAsideState') => {

@@ -3,18 +3,18 @@ import { setClipboard } from '@/common/functions';
 import { useI18n } from 'vue-i18n';
 const {t} = useI18n();
 const props = withDefaults(defineProps<{
-    text: string,
+    content: string,
 }>(), {
-    text:''
+    content:''
 });
 const copy=()=>{
-    setClipboard(props.text);
+    setClipboard(props.content);
 }
 </script>
 
 <template>
     <div class="flex grid-gap-4 flex-wrap">
-        <div class="text-wrap text-keep-all max-w-100">{{props.text}}</div>
+        <div class="text-wrap text-keep-all max-w-100">{{props.content}}</div>
         <el-link type="success" underline="never" @click="copy">{{ t('button.copyText') }}</el-link>
     </div>
 </template>

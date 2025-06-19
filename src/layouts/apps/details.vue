@@ -83,10 +83,28 @@ const handleAction = (group: any, row: any) => {
         getDetails();
     }).catch(() => { })
 }
+const contentScrollTop=ref(0);
+const contentScrollRef=ref();
+const handelScroll=(e:any)=>{
+    if(contentScrollTop.value<=0){
+        contentScrollTop.value=e.scrollTop;
+    }
+}
+const selectTabs=(item:any)=>{
+    selecedTabs.value = item.name;
+    const len=contentScrollRef.value.length;
+    if(len){
+        for (let i = 0; i < len; i++) {
+            const element = contentScrollRef.value[i];
+            element.setScrollTop(0);
+        }
+    }
+    contentScrollTop.value=0;
+}
 </script>
 
 <template>
-    <el-scrollbar class="layouts-main-scrollbar">
+    <el-main class="layouts-main-scrollbar">
         <el-skeleton :loading="loading" animated>
             <template #template>
                 <div class="table-screen">
@@ -101,9 +119,9 @@ const handleAction = (group: any, row: any) => {
                 <el-skeleton-item style="height: 30px;" />
             </template>
             <template #default>
-                <el-scrollbar>
-                    <div class="layouts pb-10">
-                        <div class="py-10 flex">
+                <el-main class="layouts-main-scrollbar">
+                    <div class="layouts">
+                        <div class="py-10 flex find-info" :class="{'find-hide':contentScrollTop>0}">
                             <el-avatar :src="Find.icon" :size="200" shape="square">{{ Find.title }}</el-avatar>
                             <div class="flex-1 pl-10">
                                 <div class="h3">{{ Find.title }}</div>
@@ -112,18 +130,24 @@ const handleAction = (group: any, row: any) => {
                         </div>
                         <div class="flex mb-4 tabs grid-gap-4">
                             <div v-for="item in tabs" class="item" :class="{ 'active': selecedTabs === item.name }"
-                                @click="selecedTabs = item.name">
+                                @click="selectTabs(item)">
                                 {{ item.label }}
                             </div>
                         </div>
-                        <div class="flex grid-gap-10">
-                            <div class="flex-1 border-top">
-                                <template v-for="item in tabs">
-                                    <div v-show="selecedTabs === item.name">
-                                        <component :is="components[item.extra.view as componentsType]" :data="Find" />
-                                    </div>
-                                </template>
-                            </div>
+                        <div class="flex grid-gap-10 overflow-hidden">
+                            <template v-for="item in tabs">
+                                <div class="flex-1 border-top flex flex-column overflow-hidden" v-show="selecedTabs === item.name">
+                                    <template v-if="item.extra.view === 'marked'">
+                                        <el-scrollbar ref="contentScrollRef" @scroll="handelScroll">
+                                            <component :is="components[item.extra.view as componentsType]"
+                                                :data="Find" />
+                                        </el-scrollbar>
+                                    </template>
+                                    <template v-else>
+                                        <component ref="contentScrollRef" @scroll="handelScroll" :is="components[item.extra.view as componentsType]" :data="Find" />
+                                    </template>
+                                </div>
+                            </template>
                             <div class="flex action flex-wrap grid-gap-4">
                                 <div class="w-100 bg rounded-4 p-4 flex" v-if="Find.author">
                                     <el-avatar :src="Find.author.headimg" :size="60">{{ Find.author.nickname
@@ -149,15 +173,29 @@ const handleAction = (group: any, row: any) => {
                             </div>
                         </div>
                     </div>
-                </el-scrollbar>
+                </el-main>
             </template>
         </el-skeleton>
-    </el-scrollbar>
+    </el-main>
 </template>
 
 <style lang="scss" scoped>
 .layouts {
     --layouts-width: 1300px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    .find-info{
+        height: 260px;
+        overflow: hidden;
+        flex-shrink:0;
+        transition: all .3s;
+        &.find-hide{
+            padding-bottom: 0px !important;
+            padding-top: 0px !important;
+            height: 0px;
+        }
+    }
 }
 
 .action {
