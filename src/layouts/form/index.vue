@@ -3,11 +3,12 @@ import { $http } from '@/common';
 import router from '@/routers';
 import { ElMessage } from 'element-plus'
 import ruleComponent from './component/rule.vue'
+import inlineRuleComponent from './component/inline-rule.vue'
 import type { FormInstance } from 'element-plus'
 import { parseRules } from '@/common/functions';
 import SubmitEvent from '@/common/enum/SubmitEvent';
 import { useI18n } from 'vue-i18n';
-const {t} = useI18n();
+const { t } = useI18n();
 const props = withDefaults(defineProps<{
 	params?: any
 }>(), {
@@ -146,19 +147,35 @@ const resetForm = () => {
 				<div class="layouts">
 					<el-form ref="formRef" :model="form" :rules="rules" v-if="showForm" :disabled="submitLoading"
 						v-bind="formProps">
-						<template v-if="selectedGroup === basicFormName">
-							<ruleComponent v-model="form" :rule="rule" />
+						<template v-if="formProps.inline">
+							<template v-if="selectedGroup === basicFormName">
+								<inlineRuleComponent v-model="form" :rule="rule" />
+							</template>
+							<template v-if="group.length > 0">
+								<template v-for="(item, _index) in group" :index="_index">
+									<div v-show="selectedGroup === item.name">
+										<inlineRuleComponent v-model="form[item.name]" :rule="item.rule" :group="item.name" />
+									</div>
+								</template>
+							</template>
 						</template>
-						<template v-if="group.length > 0">
-							<template v-for="(item, _index) in group" :index="_index">
-								<div v-show="selectedGroup === item.name">
-									<ruleComponent v-model="form[item.name]" :rule="item.rule" :group="item.name" />
-								</div>
+						<template v-else>
+							<template v-if="selectedGroup === basicFormName">
+								<ruleComponent v-model="form" :rule="rule" />
+							</template>
+							<template v-if="group.length > 0">
+								<template v-for="(item, _index) in group" :index="_index">
+									<div v-show="selectedGroup === item.name">
+										<ruleComponent v-model="form[item.name]" :rule="item.rule" :group="item.name" />
+									</div>
+								</template>
 							</template>
 						</template>
 						<el-form-item class="submit-item">
-							<el-button type="primary" @click="onSubmit" :loading="loading">{{ t('button.confirmText') }}</el-button>
-							<el-button @click="resetForm" v-if="rules" :disabled="loading">{{ t('button.resetText') }}</el-button>
+							<el-button type="primary" @click="onSubmit" :loading="loading">{{ t('button.confirmText')
+								}}</el-button>
+							<el-button @click="resetForm" v-if="rules" :disabled="loading">{{ t('button.resetText')
+								}}</el-button>
 						</el-form-item>
 					</el-form>
 				</div>

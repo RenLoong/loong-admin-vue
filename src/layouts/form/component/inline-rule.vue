@@ -58,14 +58,29 @@ const handleAction = (group: any, field: any, _e: any) => {
 </script>
 
 <template>
-    <el-row :gutter="20">
-        <template v-for="(item, index) in rule">
-            <el-col v-bind="item.extra?.col">
-                <form-item :item="item" v-model="form" :group="props.group" :key="index" @action="handleAction"/>
-            </el-col>
-        </template>
-    </el-row>
+    <template v-for="(item) in rule">
+        <form-item :item="item" v-model="form" :group="props.group" @action="handleAction"/>
+    </template>
 </template>
 
 <style lang="scss" scoped>
+.el-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    .el-radio {
+        margin-right: 0 !important;
+    }
+
+    .el-checkbox {
+        margin-right: 0 !important;
+    }
+}
+</style>
+<style lang="scss">
+.el-form.el-form--inline .el-select{
+    --el-select-width: 220px;
+}
+
 </style>

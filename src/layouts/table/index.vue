@@ -4,6 +4,7 @@ import { hasWhere, parseRules } from '@/common/functions';
 import router from '@/routers';
 import { useClick } from '@/common/functions/action';
 import ruleComponent from '@/layouts/form/component/rule.vue'
+import inlineRuleComponent from '@/layouts/form/component/inline-rule.vue'
 import columnComponent from './component/column.vue'
 import { ElForm, ElMessage, ElTable } from 'element-plus';
 import { useI18n } from 'vue-i18n';
@@ -25,6 +26,7 @@ const header = ref<any>();
 const tableProps = ref<any>({});
 const rule = ref<RuleInterface[]>([]);
 const rules = ref<any>()
+const screen = ref<any>();
 const showScreen = ref(false);
 const selection = ref(false);
 let ApiUrl = currentRoute.meta.api;
@@ -47,6 +49,7 @@ onBeforeMount(() => {
 			action.value = res.data.action;
 			header.value = res.data.header;
 			footer.value = res.data.footer;
+			screen.value = res.data.screen;
 			if (res.data.screen) {
 				showScreen.value = true;
 				for (const key in res.data.screen.form) {
@@ -243,11 +246,17 @@ const handleSelectionChange = (val: any[]) => {
 				</div>
 				<div class="table-layouts">
 					<el-form ref="formRef" :model="search" :rules="rules" label-width="80px" v-if="showScreen"
+						v-bind="screen.props"
 						:disabled="listLoading" class="py-6">
-						<ruleComponent v-model="search" :rule="rule" />
+						<template v-if="screen.props.inline">
+							<inlineRuleComponent v-model="search" :rule="rule" />
+						</template>
+						<template v-else>
+							<ruleComponent v-model="search" :rule="rule" />
+						</template>
 						<el-form-item>
 							<el-button type="primary" @click="onSubmit" :loading="listLoading">{{ t('button.queryText')
-								}}</el-button>
+							}}</el-button>
 							<el-button @click="resetForm">{{ t('button.resetText') }}</el-button>
 						</el-form-item>
 					</el-form>
@@ -279,7 +288,7 @@ const handleSelectionChange = (val: any[]) => {
 								<el-button type="success" @click="toggleSelection(tableData)">{{
 									t('button.allSelectText') }}</el-button>
 								<el-button type="info" @click="toggleSelection()">{{ t('button.cancelText')
-									}}</el-button>
+								}}</el-button>
 								<template v-if="footer">
 									<template v-for="(group, _index) in footer.extra.group" :index="_index">
 										<permissions :name="group.extra.path">
