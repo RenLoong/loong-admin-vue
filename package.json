@@ -1,7 +1,7 @@
 {
   "name": "cloud-vue",
   "private": true,
-  "version": "0.0.66",
+  "version": "0.0.67",
   "type": "module",
   "scripts": {
     "dev": "vite --mode development --host 0.0.0.0",

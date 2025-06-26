@@ -33,9 +33,9 @@ const prop = (field: string) => {
     }
     return field;
 }
-const emit=defineEmits(['action']);
+const emit = defineEmits(['action']);
 const handleAction = (group: any, field: any, _e: any) => {
-    emit('action',{
+    emit('action', {
         group,
         field,
         _e

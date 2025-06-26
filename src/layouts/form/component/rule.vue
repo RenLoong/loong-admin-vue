@@ -29,7 +29,7 @@ watchEffect(() => {
         rule.value = props.rule;
     }
 });
-const handleAction = (group: any, field: any, _e: any) => {
+const handleAction = ({group, field}:{group: any, field: any}) => {
     if (!group.extra) return;
     let query = {
         ...group.extra.params,
