@@ -171,10 +171,10 @@ const resetForm = () => {
 								</template>
 							</template>
 						</template>
-						<el-form-item class="submit-item">
-							<el-button type="primary" @click="onSubmit" :loading="loading">{{ t('button.confirmText')
+						<el-form-item class="submit-item py-4">
+							<el-button type="primary" @click="onSubmit" :loading="loading" size="large">{{ t('button.confirmText')
 								}}</el-button>
-							<el-button @click="resetForm" v-if="rules" :disabled="loading">{{ t('button.resetText')
+							<el-button @click="resetForm" v-if="rules" :disabled="loading" size="large">{{ t('button.resetText')
 								}}</el-button>
 						</el-form-item>
 					</el-form>
@@ -189,5 +189,8 @@ const resetForm = () => {
 	bottom: 0;
 	background-color: #FFFFFF;
 	z-index: 10;
+	:deep(.el-button.el-button--large){
+		padding: 12px 60px;
+	}
 }
 </style>
