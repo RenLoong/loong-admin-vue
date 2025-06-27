@@ -72,6 +72,21 @@ html[data-theme="dark"] {
   --el-fill-color-blank: transparent;
   --el-mask-color: rgba(0, 0, 0, .8);
   --el-mask-color-extra-light: rgba(0, 0, 0, .3);
+  // WangEditor
+  --w-e-textarea-bg-color: var(--el-bg-color);
+  --w-e-textarea-color: var(--el-text-color-regular);
+  --w-e-textarea-border-color: var(--el-border-color);
+  --w-e-textarea-slight-border-color: var(--el-bg-color-page);
+  --w-e-textarea-slight-color: var(--el-text-color-regular);
+  --w-e-textarea-slight-bg-color: var(--el-bg-color-page);
+  --w-e-textarea-selected-border-color: #B4D5FF;
+  --w-e-textarea-handler-bg-color: var(--el-color-primary);
+  --w-e-modal-button-bg-color: var(--el-color-primary);
+  --w-e-modal-button-border-color: var(--el-color-primary);
+  --w-e-toolbar-color: var(--el-color-white);
+  --w-e-toolbar-bg-color: var(--el-bg-color);
+  --w-e-toolbar-active-color: var(--el-text-color-regular);
+  --w-e-toolbar-active-bg-color: var(--el-bg-color-page);
 }
 
 html[data-theme="dark"] .el-button {

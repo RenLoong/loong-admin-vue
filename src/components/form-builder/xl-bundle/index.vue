@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<{
     multiple: 1,
     view: 'image'
 });
-const emit = defineEmits(['update:modelValue','change'])
+const emit = defineEmits(['update:modelValue','change','closed'])
 const uploadRef = ref();
 const dialogVisible = ref(false);
 const open = () => {
@@ -345,6 +345,9 @@ const clear=()=>{
     selectedEdit.value = [];
     values.value = [];
 }
+const closed=()=>{
+    emit('closed')
+}
 defineExpose({
     open,
     clear
@@ -390,7 +393,7 @@ defineExpose({
         :initial-index="dialogImageIndex"
         @close="dialogPreview = false"
       />
-    <el-dialog v-model="dialogVisible" title="Tips" width="70%" class="bundle-dialog" draggable append-to-body>
+    <el-dialog v-model="dialogVisible" title="Tips" width="70%" class="bundle-dialog" draggable append-to-body @closed="closed">
         <template #header>
             <div class="bundle-name">
                 <div class="flex-1">{{ t('form.bundle.bundleClassify') }}</div>

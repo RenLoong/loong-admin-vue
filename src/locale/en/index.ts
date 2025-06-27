@@ -23,7 +23,8 @@ const en={
         moveText:'Move',
         deleteText:'Delete',
         copyText:'Copy',
-        insertText:'Insert'
+        insertText:'Insert',
+        byBundleSelectText:'Select from the gallery'
     },
     form:{
         placeholder:{

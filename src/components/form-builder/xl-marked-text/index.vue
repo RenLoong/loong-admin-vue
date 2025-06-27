@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Marked,Renderer } from 'marked';
+import { Marked, Renderer } from 'marked';
 import DOMPurify from 'isomorphic-dompurify';
 import { markedHighlight } from "marked-highlight";
 import highlight from 'highlight.js';
@@ -16,10 +16,10 @@ renderer.link = function (href: string, title: string, text: string) {
     // 正则匹配style
     const styleReg = /{style\s(.*?)}/;
     const styleArr = text.match(styleReg);
-    let newText=text;
+    let newText = text;
     if (styleArr) {
         style = styleArr[1];
-        newText=text.replace(styleReg,'');
+        newText = text.replace(styleReg, '');
     }
     return `<a href="${href}" title="${title || newText}" target="_blank" style="${style}">${newText}</a>`
 }
@@ -29,12 +29,18 @@ renderer.image = function (src: string, title: string, text: string) {
     // 正则匹配style
     const styleReg = /{style\s(.*?)}/;
     const styleArr = text.match(styleReg);
-    let newText=text;
+    let newText = text;
     if (styleArr) {
         style = styleArr[1];
-        newText=text.replace(styleReg,'');
+        newText = text.replace(styleReg, '');
     }
     return `<img src="${src}" alt="${newText}" title="${title || newText}" style="${style}">`
+}
+renderer.checkbox = function (checked: boolean) {
+    if (checked) {
+        return `<label class="el-checkbox el-checkbox--large"><span class="el-checkbox__input is-checked"><span class="el-checkbox__inner"></span></span></label>`;
+    }
+    return `<label class="el-checkbox el-checkbox--large"><span class="el-checkbox__input is-disabled"><span class="el-checkbox__inner"></span></span></label>`;
 }
 const marked = new Marked(
     {
@@ -65,11 +71,13 @@ onObserve(markedTextRef, (e: IntersectionObserverEntry[], done: Function) => {
 </template>
 <style lang="scss">
 .marked-text {
-    word-break:break-all;
+    word-break: break-all;
+
     img {
         width: 100%;
         max-width: 100%;
     }
+
     table {
         width: 100%;
         border-collapse: collapse;
@@ -78,15 +86,49 @@ onObserve(markedTextRef, (e: IntersectionObserverEntry[], done: Function) => {
         font-size: 14px;
         line-height: 1.6;
         border: var(--el-border);
+
         th {
             padding: 10px 15px;
             background-color: var(--el-bg-color-page);
             border: var(--el-border);
         }
+
         td {
             padding: 10px 15px;
             border: var(--el-border);
         }
+    }
+
+    code {
+        background-color: var(--el-bg-color-page);
+        border-radius: 4px;
+        padding: 0 4px;
+    }
+
+    li:has(.el-checkbox) {
+        list-style-type: none;
+    }
+    h1,h2,h3,h4,h5,h6{
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+    }
+    h1{
+        font-size: 2em;
+    }
+    h2{
+        font-size: 1.8em;
+    }
+    h3{
+        font-size: 1.6em;
+    }
+    h4{
+        font-size: 1.4em;
+    }
+    h5{
+        font-size: 1.2em;
+    }
+    h6{
+        font-size: 1em;
     }
 }
 </style>

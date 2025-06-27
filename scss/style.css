@@ -203,4 +203,8 @@ a {
   color: var(--el-menu-hover-text-color);
   background-color: var(--el-menu-hover-bg-color);
 }
+
+.w-e-text-container [data-slate-editor] pre > code {
+  text-shadow: none !important;
+}
 /*# sourceMappingURL=style.css.map */

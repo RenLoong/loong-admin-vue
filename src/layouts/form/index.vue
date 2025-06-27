@@ -187,8 +187,8 @@ const resetForm = () => {
 .submit-item {
 	position: sticky;
 	bottom: 0;
-	background-color: #FFFFFF;
-	z-index: 10;
+	background-color: var(--el-bg-color);
+	z-index: 1000;
 	:deep(.el-button.el-button--large){
 		padding: 12px 60px;
 	}

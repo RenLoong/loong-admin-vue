@@ -23,7 +23,8 @@ const zhCn={
         moveText:'移动',
         deleteText:'删除',
         copyText:'复制',
-        insertText:'插入'
+        insertText:'插入',
+        byBundleSelectText:'从图库中选择'
     },
     form:{
         placeholder:{

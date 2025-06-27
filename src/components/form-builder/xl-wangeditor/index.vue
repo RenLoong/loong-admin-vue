@@ -76,7 +76,7 @@ const handleCreated = (editor: any) => {
 
 <style lang="scss" scoped>
 .wangeditor-body {
-    z-index: 1000;
+    z-index: 9000;
     display: flex;
     flex-direction: column;
 
