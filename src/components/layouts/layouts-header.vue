@@ -119,7 +119,6 @@ const setLanguare = (lang: LanguageInterface) => {
     align-items: center;
     gap: 10px;
     color: var(--el-text-color-regular);
-    border-bottom: 1px solid var(--el-bg-color-page);
 
     .header-item {
         padding: var(--el-header-padding);
