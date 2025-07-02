@@ -8,6 +8,7 @@ import appsDetailsComponent from './apps/details.vue';
 import paymentComponent from './payment/index.vue';
 import rechargeComponent from './payment/recharge.vue';
 import databoardComponent from './databoard/index.vue';
+import infoComponent from './info/index.vue';
 const components = {
     defaultComponent,
     formComponent,
@@ -18,7 +19,8 @@ const components = {
     appsDetailsComponent,
     paymentComponent,
     rechargeComponent,
-    databoardComponent
+    databoardComponent,
+    infoComponent
 }
 export type componentsType = keyof typeof components;
 export default components;

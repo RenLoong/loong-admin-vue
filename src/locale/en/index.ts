@@ -128,7 +128,8 @@ const en={
         getQrcodeFail:'Failed to get QR code',
         userCannel:'User cancelled',
         qrcodeWillExpireContent:'QR code will expire in {time} seconds',
-        searchMenuNotContent:'No related content found'
+        searchMenuNotContent:'No related content found',
+        uploadSizeError:'File size cannot exceed {size}MB'
     },
     lock:{
         title:'Set PIN Lock',

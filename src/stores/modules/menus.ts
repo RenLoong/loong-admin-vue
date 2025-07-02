@@ -64,7 +64,7 @@ export default () => {
             const find: RouteRecordRaw = {
                 path: path,
                 name: item.path,
-                component: components[component as componentsType],
+                component: components[component as componentsType]??components['defaultComponent'],
                 meta: {
                     component,
                     routerKey: key,

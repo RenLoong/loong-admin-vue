@@ -256,9 +256,10 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     showConfirmButton: false,
                     closeOnClickModal: false,
                     customStyle: {
-                        '--el-messagebox-width': '60%'
+                        '--el-messagebox-width': '60%',
+                        '--el-dialog-border-radius':'10px'
                     },
-                    customClass: 'el-messagebox-width',
+                    customClass: 'el-messagebox-width action-dialog',
                     ...messageProps,
                     message: () => h(findRouter ? components[findRouter.meta.component as componentsType] : components.defaultComponent, {
                         params: {

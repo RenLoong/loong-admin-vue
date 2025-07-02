@@ -20,6 +20,8 @@ import { i18n } from './locale';
 for (const [key, component] of Object.entries(XlIconsVue)) {
     app.component(key, component)
 }
+import XlPrompt from "@/components/form-builder/xl-prompt/index.vue";
+app.component('xl-prompt',XlPrompt);
 // 全局数字滚动效果指令
 app.use(NumberScrollDirective);
 app.use(ElementPlus, { locale: zhCn });

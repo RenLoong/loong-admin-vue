@@ -22,7 +22,7 @@ const form = ref<any>({})
 const formProps = ref<any>({
 	labelWidth: '200px',
 	labelPosition: 'top',
-	class: 'pt-10'
+	class: 'py-10'
 })
 const rules = ref<any>()
 const showForm = ref(false);
@@ -44,11 +44,12 @@ onBeforeMount(() => {
 	}).then((res: any) => {
 		if (res.code === $http.ResponseCode.SUCCESS) {
 			rule.value = res.data.rule;
+			form.value = res.data.form;
 			formProps.value = {
 				...formProps.value,
 				...res.data.props
 			}
-			parseRules(rules, rule.value);
+			parseRules(rules, rule.value,undefined,form);
 			if (res.data.url) {
 				ApiUrl = res.data.url;
 			}
@@ -60,10 +61,9 @@ onBeforeMount(() => {
 				for (let i = 0; i < res.data.group.length; i++) {
 					const element = res.data.group[i];
 					tabs.value.push({ name: element.name, title: element.title });
-					parseRules(rules, element.rule, element.name);
+					parseRules(rules, element.rule, element.name,form);
 				}
 			}
-			form.value = res.data.form;
 			if (res.data.props.submitEvent) {
 				submitEvent.value = res.data.props.submitEvent;
 			}
@@ -154,7 +154,8 @@ const resetForm = () => {
 							<template v-if="group.length > 0">
 								<template v-for="(item, _index) in group" :index="_index">
 									<div v-show="selectedGroup === item.name">
-										<inlineRuleComponent v-model="form[item.name]" :rule="item.rule" :group="item.name" />
+										<inlineRuleComponent v-model="form[item.name]" :rule="item.rule"
+											:group="item.name" />
 									</div>
 								</template>
 							</template>
@@ -172,10 +173,14 @@ const resetForm = () => {
 							</template>
 						</template>
 						<el-form-item class="submit-item py-4">
-							<el-button type="primary" @click="onSubmit" :loading="loading" size="large">{{ t('button.confirmText')
-								}}</el-button>
-							<el-button @click="resetForm" v-if="rules" :disabled="loading" size="large">{{ t('button.resetText')
-								}}</el-button>
+							<el-button type="primary" @click="onSubmit" :loading="loading" size="large">
+								<template v-if="formProps.submitButtonText">{{ formProps.submitButtonText }}</template>
+								<template v-else>{{ t('button.confirmText') }}</template>
+							</el-button>
+							<el-button @click="resetForm" v-if="rules" :disabled="loading" size="large">
+								<template v-if="formProps.resetButtonText">{{ formProps.resetButtonText }}</template>
+								<template v-else>{{ t('button.resetText') }}</template>
+							</el-button>
 						</el-form-item>
 					</el-form>
 				</div>
@@ -189,7 +194,8 @@ const resetForm = () => {
 	bottom: 0;
 	background-color: var(--el-bg-color);
 	z-index: 1000;
-	:deep(.el-button.el-button--large){
+
+	:deep(.el-button.el-button--large) {
 		padding: 12px 60px;
 	}
 }

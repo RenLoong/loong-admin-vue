@@ -9,7 +9,8 @@ const props = withDefaults(defineProps<{
     modelValue?: string | string[],
     accept?: string,
     multiple?: number,
-    view?: string
+    view?: string,
+    size?: number
 }>(), {
     modelValue: '',
     accept: '',
@@ -443,8 +444,8 @@ defineExpose({
 
         <template #footer>
             <template v-if="uploadForm.dir_name != 'all'">
-                <uploads ref="uploadRef" :on-success="handleUploadSuccess" :data="uploadForm" class="mr-4"
-                    :multiple="props.multiple > 1" :accept="props.accept" :limit="props.multiple">
+                <uploads ref="uploadRef" :on-success="handleUploadSuccess" :data="uploadForm" class="mr-4" 
+                    :multiple="props.multiple > 1" :accept="props.accept" :limit="props.multiple" :size="props.size">
                     <el-button type="success">{{ t('button.uploadText') }}</el-button>
                 </uploads>
                 <permissions name="Uploads/updateUploads">

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { $http } from '@/common';
 import { hasWhere } from '@/common/functions';
 interface RuleInterface {
     title: string;
@@ -41,76 +42,182 @@ const handleAction = (group: any, field: any, _e: any) => {
         _e
     })
 }
+const loading = ref(false)
+const options = ref(item.value?.extra.options);
+let timer: NodeJS.Timeout;
+const remoteMethod = (query: string) => {
+    if (timer) clearTimeout(timer)
+    timer = setTimeout(() => {
+        loading.value = true;
+        options.value = [];
+        $http.post(item.value?.extra.remote.url, {
+            query: query,
+            form: form.value
+        }).then((res: any) => {
+            if (res.code === $http.ResponseCode.SUCCESS) {
+                options.value = res.data;
+            } else {
+                options.value = [];
+            }
+        }).catch(() => {
+            options.value = [];
+        }).finally(() => {
+            loading.value = false
+        })
+    }, 300);
+}
+const autocompleteRemoteMethod = (query: string, cb: (arg: any) => void) => {
+    if (timer) clearTimeout(timer)
+    timer = setTimeout(() => {
+        loading.value = true;
+        options.value = [];
+        $http.post(item.value?.extra.remote.url, {
+            query: query,
+            form: form.value
+        }).then((res: any) => {
+            if (res.code === $http.ResponseCode.SUCCESS) {
+                cb(res.data);
+            } else {
+                cb([]);
+            }
+        }).catch(() => {
+            cb([]);
+        }).finally(() => {
+            loading.value = false
+        })
+    }, 300);
+}
+const elProps = computed(() => {
+    if (!item.value) {
+        return {};
+    }
+    if (item.value.extra.remote) {
+        switch (item.value.component) {
+            case 'select':
+                return {
+                    ...item.value.extra.props,
+                    remote: true,
+                    filterable: true,
+                    remoteMethod: remoteMethod,
+                    loading: loading.value
+                };
+            case 'mention':
+                return {
+                    ...item.value.extra.props,
+                    options: options.value,
+                    onSearch: remoteMethod,
+                    loading: loading.value
+                };
+            case 'autocomplete':
+                return {
+                    ...item.value.extra.props,
+                    options: options.value,
+                    fetchSuggestions: autocompleteRemoteMethod,
+                    loading: loading.value
+                };
+        }
+    }
+    return item.value.extra.props;
+})
+onUnmounted(() => {
+    if (timer) clearTimeout(timer)
+})
 </script>
 
 <template>
     <template v-if="item">
-        <el-form-item :label="item.title" :prop="prop(item.field)" v-if="hasWhere(item.extra, form)">
-            <div class="w-100 overflow-hidden">
-                <!-- 信息展示类 -->
-                <template v-if="item.component === 'copy'">
-                    <xl-copy :content="form[item.field]" v-bind="item.extra.props" />
-                </template>
-                <template v-else-if="item.component === 'marked-text'">
-                    <xl-marked-text :content="form[item.field]" v-bind="item.extra.props" />
-                </template>
-                <template v-else-if="['text', 'link'].includes(item.component)">
-                    <component :is="'el-' + item.component" v-bind="item.extra.props">{{ form[item.field] }}
-                    </component>
-                </template>
-                <!-- 信息展示类 -->
+        <el-form-item :label="item.title" :prop="prop(item.field)" v-if="hasWhere(item.extra, form)"
+            :class="{ 'none-label': item.title === 'none-label' }">
+            <!-- <div class="" v-bind="item.extra.divProps"> -->
+            <!-- 信息展示类 -->
+            <template v-if="item.component === 'copy'">
+                <xl-copy :content="form[item.field]" v-bind="item.extra.props" />
+            </template>
+            <template v-else-if="item.component === 'marked-text'">
+                <xl-marked-text :content="form[item.field]" v-bind="item.extra.props" />
+            </template>
+            <template v-else-if="['text', 'link'].includes(item.component)">
+                <component :is="'el-' + item.component" v-bind="item.extra.props">{{ form[item.field] }}
+                </component>
+            </template>
+            <!-- 信息展示类 -->
 
-                <!-- 自定义表单类 -->
-                <template v-else-if="item.component === 'select'">
-                    <el-select v-model="form[item.field]" v-bind="item.extra.props">
-                        <el-option v-for="(sub, subIndex) in item.extra.options" :key="subIndex" :label="sub.label"
-                            :value="sub.value" v-bind="item.extra.subProps" />
-                    </el-select>
-                </template>
-                <template v-else-if="item.component === 'bundle'">
-                    <xl-bundle v-model="form[item.field]" v-bind="item.extra.props" />
-                </template>
-                <template v-else-if="item.component === 'marked-editor'">
-                    <xl-marked-editor v-model="form[item.field]" v-bind="item.extra.props" />
-                </template>
-                <template v-else-if="item.component === 'admin-rule'">
-                    <xl-admin-rule v-model="form[item.field]" v-bind="item.extra.props" :options="item.extra.options" />
-                </template>
-                <template v-else-if="item.component === 'wangeditor'">
-                    <xl-wangeditor v-model="form[item.field]" v-bind="item.extra.props" />
-                </template>
-                <template v-else-if="['radio', 'checkbox'].includes(item.component)">
-                    <component :is="'el-' + item.component + '-group'" v-model="form[item.field]"
-                        v-bind="item.extra.props" class="el-group">
-                        <component :is="'el-' + item.component" v-for="(sub, subIndex) in item.extra.options"
-                            :key="subIndex" :value="sub.value" v-bind="item.extra.subProps">{{ sub.label }}
-                        </component>
+            <!-- 自定义表单类 -->
+            <template v-else-if="item.component === 'select'">
+                <el-select v-model="form[item.field]" v-bind="elProps" class="select-item">
+                    <template v-if="item.extra.group">
+                        <el-option-group v-for="(groupItem, index) in options" :key="index" :label="groupItem.label"
+                            v-bind="groupItem.props">
+                            <el-option v-for="(sub, subIndex) in groupItem.options" :key="subIndex" :label="sub.label"
+                                :value="sub.value" v-bind="item.extra.subProps">
+                                <div class="flex grid-gap-6">
+                                    <div class="flex-1 flex flex-column gir-dgap-1">
+                                        <span>{{ sub.label }}</span>
+                                    </div>
+                                    <span class="h10 text-grey" v-if="sub.tips">{{ sub.tips }}</span>
+                                </div>
+                            </el-option>
+                        </el-option-group>
+                    </template>
+                    <template v-else>
+                        <el-option v-for="(sub, subIndex) in options" :key="subIndex" :label="sub.label"
+                            :value="sub.value" v-bind="item.extra.subProps">
+                            <div class="flex grid-gap-6">
+                                <div class="flex-1 flex flex-column gir-dgap-1">
+                                    <span>{{ sub.label }}</span>
+                                </div>
+                                <span class="h10 text-grey" v-if="sub.tips">{{ sub.tips }}</span>
+                            </div>
+                        </el-option>
+                    </template>
+                </el-select>
+            </template>
+            <template v-else-if="item.component === 'bundle'">
+                <xl-bundle v-model="form[item.field]" v-bind="item.extra.props" />
+            </template>
+            <template v-else-if="item.component === 'marked-editor'">
+                <xl-marked-editor v-model="form[item.field]" v-bind="item.extra.props" />
+            </template>
+            <template v-else-if="item.component === 'admin-rule'">
+                <xl-admin-rule v-model="form[item.field]" v-bind="item.extra.props" :options="item.extra.options" />
+            </template>
+            <template v-else-if="item.component === 'wangeditor'">
+                <xl-wangeditor v-model="form[item.field]" v-bind="item.extra.props" />
+            </template>
+            <template v-else-if="['radio', 'checkbox'].includes(item.component)">
+                <component :is="'el-' + item.component + '-group'" v-model="form[item.field]" v-bind="item.extra.props"
+                    class="el-group">
+                    <component :is="'el-' + item.component" v-for="(sub, subIndex) in item.extra.options"
+                        :key="subIndex" :value="sub.value" v-bind="item.extra.subProps">{{ sub.label }}
                     </component>
-                </template>
-                <!-- 自定义表单类 -->
-                <!-- 常规表单类 -->
-                <template v-else>
-                    <component :is="'el-' + item.component" v-model="form[item.field]" v-bind="item.extra.props">
-                        <template v-for="(child, name) in item.extra.children" :index="name" v-slot:[name]>
-                            <permissions :name="child.extra?.path">
-                                <component :is="child.component" v-if="typeof child === 'object'" v-bind="child.props"
-                                    @click="handleAction(child, item.field, $event)"
-                                    @change="handleAction(child, item.field, $event)">
-                                    <template v-for="(subChild, subName) in child.children" :index="subName"
-                                        v-slot:[subName]>
-                                        <component :is="subChild.component" v-if="typeof subChild === 'object'"
-                                            v-bind="subChild.props" />
-                                        <template v-else>{{ subChild }}</template>
-                                    </template>
-                                </component>
-                                <template v-else>{{ child }}</template>
-                            </permissions>
-                        </template>
-                    </component>
-                </template>
-                <!-- 常规表单类 -->
-                <xl-prompt v-if="item.extra.prompt" :prompt="item.extra.prompt"></xl-prompt>
+                </component>
+            </template>
+            <!-- 自定义表单类 -->
+            <!-- 常规表单类 -->
+            <template v-else>
+                <component :is="'el-' + item.component" v-model="form[item.field]" v-bind="elProps">
+                    <template v-for="(child, name) in item.extra.children" :index="name" v-slot:[name]>
+                        <permissions :name="child.extra?.path">
+                            <component :is="child.component" v-if="typeof child === 'object'" v-bind="child.props"
+                                @click="handleAction(child, item.field, $event)"
+                                @change="handleAction(child, item.field, $event)">
+                                <template v-for="(subChild, subName) in child.children" :index="subName"
+                                    v-slot:[subName]>
+                                    <component :is="subChild.component" v-if="typeof subChild === 'object'"
+                                        v-bind="subChild.props" />
+                                    <template v-else>{{ subChild }}</template>
+                                </template>
+                            </component>
+                            <template v-else>{{ child }}</template>
+                        </permissions>
+                    </template>
+                </component>
+            </template>
+            <!-- 常规表单类 -->
+            <div class="flex flex-column grid-gap-2 line-height-1 mt-4" v-if="item.extra.prompt">
+                <xl-prompt :prompt="item.extra.prompt"></xl-prompt>
             </div>
+            <!-- </div> -->
         </el-form-item>
     </template>
 </template>

@@ -6,6 +6,7 @@ import { useClick } from '@/common/functions/action';
 import ruleComponent from '@/layouts/form/component/rule.vue'
 import inlineRuleComponent from '@/layouts/form/component/inline-rule.vue'
 import columnComponent from './component/column.vue'
+import columnExpand from "./component/column-expand.vue";
 import { ElForm, ElMessage, ElTable } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
@@ -59,7 +60,7 @@ onBeforeMount(() => {
 					}
 				}
 				rule.value = res.data.screen.rule;
-				parseRules(rules, rule.value);
+				parseRules(rules, rule.value,undefined,search);
 			}
 			nextTick(() => {
 				showTable.value = true;
@@ -246,15 +247,14 @@ const handleSelectionChange = (val: any[]) => {
 				</div>
 				<div class="table-layouts">
 					<el-form ref="formRef" :model="search" :rules="rules" label-width="80px" v-if="showScreen"
-						v-bind="screen.props"
-						:disabled="listLoading" class="py-6">
+						v-bind="screen.props" :disabled="listLoading" class="py-6">
 						<template v-if="screen.props.inline">
 							<inlineRuleComponent v-model="search" :rule="rule" />
 						</template>
 						<template v-else>
 							<ruleComponent v-model="search" :rule="rule" />
 						</template>
-						<el-form-item>
+						<el-form-item class="submit-item">
 							<el-button type="primary" @click="onSubmit" :loading="listLoading">{{ t('button.queryText')
 							}}</el-button>
 							<el-button @click="resetForm">{{ t('button.resetText') }}</el-button>
@@ -263,7 +263,14 @@ const handleSelectionChange = (val: any[]) => {
 					<el-table ref="tableRef" :data="tableData" v-if="showTable" v-bind="tableProps" class="flex-1"
 						@selection-change="handleSelectionChange" :load="load">
 						<template v-for="(column, _index) in columns" :index="_index">
-							<columnComponent :column="column" :tableData="tableData" @change="updateTableDataValue" />
+								<el-table-column v-if="column.extra?.props.type === 'expand'" v-bind="column.extra.props">
+									<template #default="scope">
+										<column-expand :components="column.extra?.components" :row="scope.row"
+											:prop="column.prop"></column-expand>
+									</template>
+								</el-table-column>
+							<columnComponent v-else :column="column" :tableData="tableData"
+								@change="updateTableDataValue" />
 						</template>
 						<el-table-column v-if="action" :label="action.label" v-bind="action.extra.props">
 							<template #default="scope">

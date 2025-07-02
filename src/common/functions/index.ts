@@ -1,7 +1,8 @@
 import { ElMessage } from "element-plus";
 import { useWebConfigStore } from "@/stores";
 import { i18n } from '@/locale';
-const {t} = i18n.global;
+import { $http } from "..";
+const { t } = i18n.global;
 /**
  * 节流函数会确保在指定的时间间隔内，函数被调用的次数不超过设定的阈值。
  * @param func 节流函数
@@ -153,15 +154,15 @@ export function timetostr(time: number | undefined): string {
     return str
 }
 const copyText = (text: string) => {
-    return new Promise<void>((resolve,reject)=>{
+    return new Promise<void>((resolve, reject) => {
         let input = document.createElement('input');
         input.value = text;
         document.body.appendChild(input);
         input.select();
         input.setSelectionRange(0, input.value.length);
-        if(document.execCommand('Copy')){
+        if (document.execCommand('Copy')) {
             resolve();
-        }else{
+        } else {
             reject();
         }
         input.remove();
@@ -174,17 +175,17 @@ const copyText = (text: string) => {
  */
 export function setClipboard(text: string): void {
     if (navigator.clipboard && globalThis.isSecureContext) {
-        navigator.clipboard.writeText(text).then(()=> {
+        navigator.clipboard.writeText(text).then(() => {
             ElMessage.success(t('copy.success'));
         }).catch(() => {
-            copyText(text).then(()=> {
+            copyText(text).then(() => {
                 ElMessage.success(t('copy.success'));
             }).catch(() => {
                 ElMessage.error(t('copy.fail'));
             });
         });
     } else {
-        copyText(text).then(()=> {
+        copyText(text).then(() => {
             ElMessage.success(t('copy.success'));
         }).catch(() => {
             ElMessage.error(t('copy.fail'));
@@ -323,112 +324,134 @@ export function toChineseNumeral(num: number): string {
         .replace(/(零.)+/g, '零')
         .replace(/^整$/, '零元整');
 }
-export const getRoundImage=()=>{
-    return new Promise((resolve,reject)=>{
-        try{
+export const getRoundImage = () => {
+    return new Promise((resolve, reject) => {
+        try {
             const xhr = new XMLHttpRequest();
             xhr.open('GET', 'https://picsum.photos/1920/1080?random', true);
             xhr.responseType = 'blob';
             xhr.onload = function () {
                 if (this.status === 200) {
                     const blob = this.response;
-                    return resolve({blob:URL.createObjectURL(blob)});
+                    return resolve({ blob: URL.createObjectURL(blob) });
                 }
                 reject();
             }
             xhr.send();
-        }catch(e){
+        } catch (e) {
             reject();
         }
     });
 }
-export const hasWhere = (extra:any,form:any) => {
-	if(extra?.where){
-		const where = extra.where;
-		for (let i = 0; i < where.length; i++) {
-			const [field,exp,value] = where[i];
-            const formValue=form[field];
-			switch(exp){
-				case '=':
-					if(formValue!==value){
-						return false;
-					}
-					break;
-				case '!=':
-					if(formValue===value){
-						return false;
-					}
-					break;
-				case '>':
-					if(formValue<=value){
-						return false;
-					}
-					break;
-				case '>=':
-					if(formValue<value){
-						return false;
-					}
-					break;
-				case '<':
-					if(formValue>=value){
-						return false;
-					}
-					break;
-				case '<=':
-					if(formValue>value){
-						return false;
-					}
-					break;
-				case 'in':
-					if(!value.includes(formValue)){
-						return false;
-					}
-					break;
-				case 'not in':
-					if(value.includes(formValue)){
-						return false;
-					}
-					break;
-				case 'like':
-					if(!formValue.includes(value)){
-						return false;
-					}
-					break;
-				case 'not like':
-					if(formValue.includes(value)){
-						return false;
-					}
-					break;
-				case 'between':
-					if(formValue<value[0]||formValue>value[1]){
-						return false;
-					}
-					break;
-				case 'not between':
-					if(formValue>=value[0]&&formValue<=value[1]){
-						return false;
-					}
-					break;
-				case 'null':
-					if(formValue!==null){
-						return false;
-					}
-					break;
-				case 'not null':
-					if(formValue===null){
-						return false;
-					}
-					break;
-			}
-		}
-	}
-	return true;
+export const hasWhere = (extra: any, form: any) => {
+    if (extra?.where) {
+        const where = extra.where;
+        for (let i = 0; i < where.length; i++) {
+            const [field, exp, value] = where[i];
+            const formValue = getTableValue(form, field);
+            switch (exp) {
+                case '=':
+                    if (formValue !== value) {
+                        return false;
+                    }
+                    break;
+                case '!=':
+                    if (formValue === value) {
+                        return false;
+                    }
+                    break;
+                case '>':
+                    if (formValue <= value) {
+                        return false;
+                    }
+                    break;
+                case '>=':
+                    if (formValue < value) {
+                        return false;
+                    }
+                    break;
+                case '<':
+                    if (formValue >= value) {
+                        return false;
+                    }
+                    break;
+                case '<=':
+                    if (formValue > value) {
+                        return false;
+                    }
+                    break;
+                case 'in':
+                    if (!value.includes(formValue)) {
+                        return false;
+                    }
+                    break;
+                case 'not in':
+                    if (value.includes(formValue)) {
+                        return false;
+                    }
+                    break;
+                case 'like':
+                    if (!formValue.includes(value)) {
+                        return false;
+                    }
+                    break;
+                case 'not like':
+                    if (formValue.includes(value)) {
+                        return false;
+                    }
+                    break;
+                case 'between':
+                    if (formValue < value[0] || formValue > value[1]) {
+                        return false;
+                    }
+                    break;
+                case 'not between':
+                    if (formValue >= value[0] && formValue <= value[1]) {
+                        return false;
+                    }
+                    break;
+                case 'null':
+                    if (formValue !== null) {
+                        return false;
+                    }
+                    break;
+                case 'not null':
+                    if (formValue === null) {
+                        return false;
+                    }
+                    break;
+            }
+        }
+    }
+    return true;
 }
-export const parseRules=(rules:any,rule:any,group?:string)=>{
-    if(!rule)return;
+export const parseRules = (rules: any, rule: any, group?: string, form?: any) => {
+    if (!rule) return;
     for (let i = 0; i < rule.length; i++) {
         const element = rule[i];
-        const field=group?`${group}.${element.field}`:element.field;
+        const field = group ? `${group}.${element.field}` : element.field;
+        let trigger = 'blur';
+        switch (element.component) {
+            case 'input':
+            case 'textarea':
+            case 'select':
+            case 'date-picker':
+            case 'time-picker':
+            case 'cascader':
+            case 'rate':
+            case 'color-picker':
+            case 'switch':
+            case 'slider':
+            case 'time-select':
+            case 'date-select':
+            case 'upload':
+                trigger = 'blur';
+                break;
+            case 'radio':
+            case 'checkbox':
+                trigger = 'change';
+                break;
+        }
         if (element.extra?.required) {
             if (!rules.value) {
                 rules.value = {};
@@ -436,31 +459,49 @@ export const parseRules=(rules:any,rule:any,group?:string)=>{
             if (!rules.value[field]) {
                 rules.value[field] = [];
             }
-            let trigger = 'blur';
-            switch (element.component) {
-                case 'input':
-                case 'textarea':
-                case 'select':
-                case 'date-picker':
-                case 'time-picker':
-                case 'cascader':
-                case 'rate':
-                case 'color-picker':
-                case 'switch':
-                case 'slider':
-                case 'time-select':
-                case 'date-select':
-                case 'upload':
-                    trigger = 'blur';
-                    break;
-                case 'radio':
-                case 'checkbox':
-                    trigger = 'change';
-                    break;
+            rules.value[field].push({
+                required: true, message: () => {
+                    return t('form.rules.required', { field: element.title })
+                }, trigger
+            })
+        }
+        if (element.extra?.rules) {
+            const len = element.extra.rules.length;
+            for (let n = 0; n < len; n++) {
+                const rule = element.extra.rules[n];
+                if (!rules.value) {
+                    rules.value = {};
+                }
+                if (!rules.value[field]) {
+                    rules.value[field] = [];
+                }
+                rules.value[field].push(rule)
             }
-            rules.value[field].push({ required: true, message: ()=>{
-                return t('form.rules.required',{field:element.title})
-            }, trigger })
+        }
+        if (element.extra?.rules_api) {
+            if (!rules.value) {
+                rules.value = {};
+            }
+            if (!rules.value[field]) {
+                rules.value[field] = [];
+            }
+            rules.value[field].push({
+                validator: (_rule: any, value: any, callback: any) => {
+                    $http.post(element.extra.rules_api.url, {
+                        field:field,
+                        value:value,
+                        form: form?.value
+                    }).then((res: any) => {
+                        if (res.code === $http.ResponseCode.SUCCESS) {
+                            callback();
+                        } else {
+                            callback(new Error(res.msg));
+                        }
+                    }).catch((err: any) => {
+                        callback(new Error(err.message));
+                    })
+                }, trigger
+            })
         }
     }
 }
@@ -476,4 +517,54 @@ export const parseRules=(rules:any,rule:any,group?:string)=>{
 export function truncate(str: string, length: number): string {
     if (!str) return '';
     return str.slice(0, length);
+}
+/**
+ * 递归取值
+ * @param data 数据集（可以是任意层级的对象 / 数组）
+ * @param keys 键数组——按顺序描述要深入的属性/索引路径
+ * @returns 对应层级上的值；若路径不存在则返回 undefined | null
+ */
+export function deepGet<
+    T = any,
+    K extends ReadonlyArray<string | number | symbol> = Array<string | number | symbol>
+>(data: any, keys: K): T | undefined | null {
+    // ① 递归出口：keys 已取完，直接返回当前 data
+    if (keys.length === 0) {
+        return data as T;
+    }
+
+    // ② 安全判空：中途遇到 null / undefined 立即返回 undefined
+    if (data === null) {
+        return null;
+    }
+    if (data === undefined) {
+        return undefined;
+    }
+
+    // ③ 递归深入：取出首键，继续在剩余子集上查找
+    const [firstKey, ...restKeys] = keys;
+    // 使用 `as any` 避免 TS “索引类型” 报错
+    return deepGet<T>((data as any)[firstKey], restKeys);
+}
+/**
+ * 根据点路径/下标递归取值
+ * @param obj  任意对象/数组
+ * @param path 如 'apps.title' | 'tags[0]'
+ * @returns    对应值，路径不存在返 undefined
+ */
+export function getTableValue<T = any>(obj: any, path: string): T | undefined {
+    if (!path) return obj as T;
+
+    // 先把 tags[0] 这类写法转成 tags.0，便于统一 split
+    const segments = path
+        .replace(/\[(\d+)\]/g, '.$1')    // 把 [index] 转成 .index
+        .split('.')
+        .filter(Boolean);                // 过滤空串，防止连点
+
+    let cur: any = obj;
+    for (const key of segments) {
+        if (cur == null) return undefined; // 短路判空
+        cur = cur[key as keyof typeof cur];
+    }
+    return cur as T;
 }

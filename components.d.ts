@@ -9,7 +9,9 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    BarCode: typeof import('./src/components/xl-icon/BarCode.vue')['default']
     Captcha: typeof import('./src/components/captcha/index.vue')['default']
+    Coupon: typeof import('./src/components/xl-icon/Coupon.vue')['default']
     DragView: typeof import('./src/components/drag-view/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -40,6 +42,7 @@ declare module '@vue/runtime-core' {
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElOption: typeof import('element-plus/es')['ElOption']
+    ElOptionGroup: typeof import('element-plus/es')['ElOptionGroup']
     ElPagination: typeof import('element-plus/es')['ElPagination']
     ElPopover: typeof import('element-plus/es')['ElPopover']
     ElRadio: typeof import('element-plus/es')['ElRadio']
@@ -74,6 +77,7 @@ declare module '@vue/runtime-core' {
     XlAdminRule: typeof import('./src/components/form-builder/xl-admin-rule/index.vue')['default']
     XlApply: typeof import('./src/components/data-builder/xl-apply/index.vue')['default']
     XlBundle: typeof import('./src/components/form-builder/xl-bundle/index.vue')['default']
+    XlCode: typeof import('./src/components/form-builder/xl-code/index.vue')['default']
     XlCol: typeof import('./src/components/xl-col/index.vue')['default']
     XlCopy: typeof import('./src/components/form-builder/xl-copy/index.vue')['default']
     XlCountdown: typeof import('./src/components/form-builder/xl-countdown/index.vue')['default']
@@ -85,9 +89,9 @@ declare module '@vue/runtime-core' {
     XlQrcode: typeof import('./src/components/form-builder/xl-qrcode/index.vue')['default']
     XlRow: typeof import('./src/components/xl-row/index.vue')['default']
     XlStatistic: typeof import('./src/components/data-builder/xl-statistic/index.vue')['default']
-    XlTableColumnForm: typeof import('./src/components/form-builder/xl-table-column-form/index.vue')['default']
-    XlTableTimes: typeof import('./src/components/form-builder/xl-table-times/index.vue')['default']
-    XlTableUserinfo: typeof import('./src/components/form-builder/xl-table-userinfo/index.vue')['default']
+    XlTableColumnForm: typeof import('./src/components/table-builder/xl-table-column-form/index.vue')['default']
+    XlTableTimes: typeof import('./src/components/table-builder/xl-table-times/index.vue')['default']
+    XlTableUserinfo: typeof import('./src/components/table-builder/xl-table-userinfo/index.vue')['default']
     XlWangeditor: typeof import('./src/components/form-builder/xl-wangeditor/index.vue')['default']
   }
   export interface ComponentCustomProperties {

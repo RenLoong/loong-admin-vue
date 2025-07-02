@@ -124,7 +124,8 @@ const zhCn={
         getQrcodeFail:'获取二维码失败',
         userCannel:'用户取消',
         qrcodeWillExpireContent:'二维码将在{time}秒后过期',
-        searchMenuNotContent:'没有找到相关内容'
+        searchMenuNotContent:'没有找到相关内容',
+        uploadSizeError:'文件大小不能超过{size}MB'
     },
     lock:{
         title:'设置PIN码锁定',

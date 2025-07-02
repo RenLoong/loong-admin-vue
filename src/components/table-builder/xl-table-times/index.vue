@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getTableValue } from '@/common/functions';
+
 const props = withDefaults(defineProps<{
     data: any
     group: any
@@ -8,7 +10,7 @@ const props = withDefaults(defineProps<{
 const group = ref<{
     component: string
     label: string
-    value: string
+    value: any
     props: any
 }[]>([]);
 onMounted(() => {
@@ -18,7 +20,7 @@ onMounted(() => {
             if (!element.field) continue
             group.value.push({
                 component: element.component,
-                value: props.data[element.field],
+                value: getTableValue(props.data,element.field),
                 label: element.label,
                 props: element.props
             })

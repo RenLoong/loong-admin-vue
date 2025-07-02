@@ -22,6 +22,7 @@ const props = withDefaults(defineProps<{
     label: '',
     yesterday_label: '',
 });
+console.log(props);
 const value = ref<dataType>({
     today: 0
 });
@@ -120,7 +121,7 @@ defineExpose({
                 </span>
             </div>
         </div>
-        <div class="statistic-footer" v-else-if="props.footer_text">
+        <div class="statistic-footer" v-if="props.footer_text">
             <div class="footer-item">
                 <span>{{props.footer_text}}</span>
                 <span class="yesterday">
