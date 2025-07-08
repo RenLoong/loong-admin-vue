@@ -4,7 +4,8 @@ const props = withDefaults(defineProps<{
     data: any
     nickname: string
     avatar?: any
-    nicknameTags?:any
+    preview?: boolean
+    nicknameTags?: any
     info?: string
     copy?: string
     tags?: any
@@ -13,7 +14,7 @@ const props = withDefaults(defineProps<{
     nickname: '',
     avatar: '',
 });
-const nicknameTags= ref<{
+const nicknameTags = ref<{
     value: any
     props: any
 }[]>([]);
@@ -25,7 +26,7 @@ onMounted(() => {
     if (props.tags) {
         for (let i in props.tags) {
             if (!props.tags[i].field) continue
-            const value=getTableValue(props.data,props.tags[i].field);
+            const value = getTableValue(props.data, props.tags[i].field);
             if (!value) continue
             tags.value.push({
                 value: value,
@@ -36,7 +37,7 @@ onMounted(() => {
     if (props.nicknameTags) {
         for (let i in props.nicknameTags) {
             if (!props.nicknameTags[i].field) continue
-            const value=getTableValue(props.data,props.nicknameTags[i].field);
+            const value = getTableValue(props.data, props.nicknameTags[i].field);
             if (!value) continue
             nicknameTags.value.push({
                 value: value,
@@ -45,49 +46,59 @@ onMounted(() => {
         }
     }
 })
-const avatarProps=computed(()=>{
-    if(!props.avatar){
+const avatarProps = computed(() => {
+    if (!props.avatar) {
         return {};
     }
-    let result:any={
+    let result: any = {
         shape: 'square',
         size: 60
     };
-    if(typeof props.avatar==='string'){
-        result.src=getTableValue(props.data,props.avatar);
-    }else{
-        result={
+    if (typeof props.avatar === 'string') {
+        result.src = getTableValue(props.data, props.avatar);
+    } else {
+        result = {
             ...result,
             ...props.avatar
         };
-        result.src=getTableValue(props.data,result.field);
+        result.src = getTableValue(props.data, result.field);
+    }
+    if (props.preview && result.src) {
+        result.class = 'pointer';
     }
     return result
 })
+const showPreview = ref();
+const preview = () => {
+    if (props.preview && avatarProps.value.src) {
+        showPreview.value=true;
+    }
+}
 </script>
 
 <template>
-    <div class="flex flex-y-center grid-gap-2">
-        <el-avatar v-bind="avatarProps" v-if="props.avatar" style="--el-avatar-text-size:10px;">{{ getTableValue(props.data,props.nickname) }}</el-avatar>
+    <div class="flex flex-y-center grid-gap-2 flex-1">
+        <el-avatar v-bind="avatarProps" v-if="props.avatar" style="--el-avatar-text-size:10px;" @click="preview">{{
+            getTableValue(props.data, props.nickname) }}</el-avatar>
         <div class="flex-1">
             <div class="flex flex-y-center">
-                <div class="tags mr-1" v-if="nicknameTags.length>0">
+                <div class="tags mr-1" v-if="nicknameTags.length > 0">
                     <el-tag v-for="tag in nicknameTags" v-bind="tag.props">{{ tag.value }}</el-tag>
                 </div>
-                <div class="nickname">{{ getTableValue(props.data,props.nickname) }}</div>
+                <div class="nickname">{{ getTableValue(props.data, props.nickname) }}</div>
             </div>
-            <div class="info" v-if="props.info">{{ getTableValue(props.data,props.info) }}</div>
-            <xl-copy v-if="props.copy" :content="getTableValue(props.data,props.copy)"></xl-copy>
-            <div class="tags" v-if="tags.length>0">
+            <div class="info" v-if="props.info">{{ getTableValue(props.data, props.info) }}</div>
+            <xl-copy v-if="props.copy" :content="getTableValue(props.data, props.copy)"></xl-copy>
+            <div class="tags" v-if="tags.length > 0">
                 <el-tag v-for="tag in tags" v-bind="tag.props">{{ tag.value }}</el-tag>
             </div>
         </div>
+        <el-image-viewer v-if="showPreview" :url-list="[avatarProps.src]" show-progress @close="showPreview = false" teleported/>
     </div>
 </template>
 
 <style scoped lang="scss">
-.nickname {
-}
+.nickname {}
 
 .info {
     font-size: 12px;

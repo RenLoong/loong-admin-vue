@@ -31,7 +31,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="flex flex-column xl-table-times">
+    <div class="flex flex-column xl-table-times grid-gap-1">
         <div  v-for="(item, index) in group" :index="index">
             <component v-if="item.component" :is="`el-${item.component}`" v-bind="item.props">
                 {{ item.label }}：{{ item.value }}

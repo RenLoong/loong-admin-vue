@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { $http } from '@/common';
+import { hasWhere } from '@/common/functions';
 import { useClick } from '@/common/functions/action';
 
 type dataType = {
@@ -42,48 +43,48 @@ watchEffect(() => {
         setValue(props.data);
     }
 })
-onMounted(()=>{
+onMounted(() => {
     getData();
 })
-const search=ref({})
-const createInterval=()=>{
-    if(props.interval&&props.interval>500){
-        setInterval(()=>{
+const search = ref({})
+const createInterval = () => {
+    if (props.interval && props.interval > 500) {
+        setInterval(() => {
             getData();
-        },props.interval)
+        }, props.interval)
     }
 }
-const getData=()=>{
-    if(!props.api){
+const getData = () => {
+    if (!props.api) {
         return;
     }
-    $http.get(`${props.api}`,{
-        params:search.value
+    $http.get(`${props.api}`, {
+        params: search.value
     }).then((res: any) => {
         if (res.code === $http.ResponseCode.SUCCESS) {
             setValue(res.data);
             createInterval();
         }
-    }).catch(() => {})
+    }).catch(() => { })
 }
-const update=(query?:any)=>{
-    search.value=query;
+const update = (query?: any) => {
+    search.value = query;
     getData();
 }
 const handleAction = () => {
-	if (!props.action) return;
-	let query = {
-		...props.action.params
-	};
-	const options = {
-		model: props.action.model,
-		props: props.action.props,
-		path: props.action.path,
-		query,
-		data: {}
-	};
-	useClick(options).then(() => {
-	}).catch(() => { })
+    if (!props.action) return;
+    let query = {
+        ...props.action.params
+    };
+    const options = {
+        model: props.action.model,
+        props: props.action.props,
+        path: props.action.path,
+        query,
+        data: {}
+    };
+    useClick(options).then(() => {
+    }).catch(() => { })
 }
 defineExpose({
     update
@@ -110,28 +111,29 @@ defineExpose({
                 <span v-if="props.yesterday_label">{{ props.yesterday_label }}</span>
                 <span class="yesterday" :class="growthRateClass">
                     <span>{{ value.yesterday }}</span>
-                    <el-divider direction="vertical" border-style="dashed" />
-                    <span>{{ value.growth_rate }}%</span>
+                    <template v-if="![null, undefined].includes(value.growth_rate as any)">
+                        <el-divider direction="vertical" border-style="dashed" />
+                        <span>{{ value.growth_rate }}%</span>
+                    </template>
                     <el-icon class="up-icon" :size="14">
-                        <CaretTop/>
+                        <CaretTop />
                     </el-icon>
                     <el-icon class="down-icon" :size="14">
-                        <CaretBottom/>
+                        <CaretBottom />
                     </el-icon>
                 </span>
             </div>
         </div>
-        <div class="statistic-footer" v-if="props.footer_text">
+        <div class="statistic-footer" v-if="props.footer_text && hasWhere(props.action,value)">
             <div class="footer-item">
-                <span>{{props.footer_text}}</span>
+                <span>{{ props.footer_text }}</span>
                 <span class="yesterday">
                     <span>{{ value.footer }}</span>
                 </span>
             </div>
             <div v-if="props.action">
                 <permissions :name="props.action.path">
-                    <component :is="`el-${props.action.component.name}`"
-                        v-bind="props.action.component.props"
+                    <component :is="`el-${props.action.component.name}`" v-bind="props.action.component.props"
                         @click="handleAction()">
                         {{ props.action.component.label }}
                     </component>

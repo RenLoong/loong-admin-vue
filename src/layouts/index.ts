@@ -9,6 +9,7 @@ import paymentComponent from './payment/index.vue';
 import rechargeComponent from './payment/recharge.vue';
 import databoardComponent from './databoard/index.vue';
 import infoComponent from './info/index.vue';
+import examineComponent from './examine/index.vue';
 const components = {
     defaultComponent,
     formComponent,
@@ -20,7 +21,8 @@ const components = {
     paymentComponent,
     rechargeComponent,
     databoardComponent,
-    infoComponent
+    infoComponent,
+    examineComponent
 }
 export type componentsType = keyof typeof components;
 export default components;

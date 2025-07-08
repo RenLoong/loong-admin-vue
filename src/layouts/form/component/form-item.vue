@@ -47,45 +47,55 @@ const options = ref(item.value?.extra.options);
 let timer: NodeJS.Timeout;
 const remoteMethod = (query: string) => {
     if (timer) clearTimeout(timer)
-    timer = setTimeout(() => {
-        loading.value = true;
-        options.value = [];
-        $http.post(item.value?.extra.remote.url, {
-            query: query,
-            form: form.value
-        }).then((res: any) => {
-            if (res.code === $http.ResponseCode.SUCCESS) {
-                options.value = res.data;
-            } else {
-                options.value = [];
-            }
-        }).catch(() => {
+    if (query) {
+        timer = setTimeout(() => {
+            loading.value = true;
             options.value = [];
-        }).finally(() => {
-            loading.value = false
-        })
-    }, 300);
+            $http.post(item.value?.extra.remote.url, {
+                query: query,
+                form: form.value
+            }).then((res: any) => {
+                if (res.code === $http.ResponseCode.SUCCESS) {
+                    options.value = res.data;
+                } else {
+                    options.value = [];
+                }
+            }).catch(() => {
+                options.value = [];
+            }).finally(() => {
+                loading.value = false
+            })
+        }, 300);
+    } else {
+        loading.value = false
+        options.value = [];
+    }
 }
 const autocompleteRemoteMethod = (query: string, cb: (arg: any) => void) => {
     if (timer) clearTimeout(timer)
-    timer = setTimeout(() => {
-        loading.value = true;
-        options.value = [];
-        $http.post(item.value?.extra.remote.url, {
-            query: query,
-            form: form.value
-        }).then((res: any) => {
-            if (res.code === $http.ResponseCode.SUCCESS) {
-                cb(res.data);
-            } else {
+    if (query) {
+        timer = setTimeout(() => {
+            loading.value = true;
+            options.value = [];
+            $http.post(item.value?.extra.remote.url, {
+                query: query,
+                form: form.value
+            }).then((res: any) => {
+                if (res.code === $http.ResponseCode.SUCCESS) {
+                    cb(res.data);
+                } else {
+                    cb([]);
+                }
+            }).catch(() => {
                 cb([]);
-            }
-        }).catch(() => {
-            cb([]);
-        }).finally(() => {
-            loading.value = false
-        })
-    }, 300);
+            }).finally(() => {
+                loading.value = false
+            })
+        }, 300);
+    } else {
+        loading.value = false
+        cb([]);
+    }
 }
 const elProps = computed(() => {
     if (!item.value) {
@@ -137,19 +147,30 @@ onUnmounted(() => {
                 <xl-marked-text :content="form[item.field]" v-bind="item.extra.props" />
             </template>
             <template v-else-if="['text', 'link'].includes(item.component)">
-                <component :is="'el-' + item.component" v-bind="item.extra.props">{{ form[item.field] }}
-                </component>
+                <div>
+                    <component :is="'el-' + item.component" v-bind="item.extra.props">{{ form[item.field] }}
+                    </component>
+                </div>
+            </template>
+            <template v-else-if="['image', 'avatar'].includes(item.component)">
+                <div>
+                    <component :is="'el-' + item.component" v-bind="item.extra.props" :src="form[item.field]">
+                    </component>
+                </div>
             </template>
             <!-- 信息展示类 -->
 
             <!-- 自定义表单类 -->
+            <template v-else-if="item.component === 'cascader'">
+                <el-cascader v-model="form[item.field]" :options="item.extra.options" v-bind="item.extra.props" />
+            </template>
             <template v-else-if="item.component === 'select'">
                 <el-select v-model="form[item.field]" v-bind="elProps" class="select-item">
                     <template v-if="item.extra.group">
                         <el-option-group v-for="(groupItem, index) in options" :key="index" :label="groupItem.label"
                             v-bind="groupItem.props">
                             <el-option v-for="(sub, subIndex) in groupItem.options" :key="subIndex" :label="sub.label"
-                                :value="sub.value" v-bind="item.extra.subProps">
+                                :value="sub.value" v-bind="{ ...item.extra.subProps, ...sub.props }">
                                 <div class="flex grid-gap-6">
                                     <div class="flex-1 flex flex-column gir-dgap-1">
                                         <span>{{ sub.label }}</span>
@@ -161,7 +182,7 @@ onUnmounted(() => {
                     </template>
                     <template v-else>
                         <el-option v-for="(sub, subIndex) in options" :key="subIndex" :label="sub.label"
-                            :value="sub.value" v-bind="item.extra.subProps">
+                            :value="sub.value" v-bind="{ ...item.extra.subProps, ...sub.props }">
                             <div class="flex grid-gap-6">
                                 <div class="flex-1 flex flex-column gir-dgap-1">
                                     <span>{{ sub.label }}</span>

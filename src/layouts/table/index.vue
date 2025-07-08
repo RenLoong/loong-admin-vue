@@ -34,17 +34,22 @@ let ApiUrl = currentRoute.meta.api;
 if (props.params) {
 	ApiUrl = props.params.api;
 }
+const resFail = ref();
 onBeforeMount(() => {
 	if (currentRoute.meta.component != 'tableComponent') {
 		return;
 	}
 	$http.get(`${ApiUrl}GetTable`, {
 		params: {
+			...props.params?.query,
 			...currentRoute.query
 		}
 	}).then((res: any) => {
 		if (res.code === $http.ResponseCode.SUCCESS) {
 			tableProps.value = res.data.props;
+			if (res.data.props.api) {
+				tableProps.value.load = load;
+			}
 			selection.value = res.data.selection;
 			columns.value = res.data.columns;
 			action.value = res.data.action;
@@ -60,13 +65,15 @@ onBeforeMount(() => {
 					}
 				}
 				rule.value = res.data.screen.rule;
-				parseRules(rules, rule.value,undefined,search);
+				parseRules(rules, rule.value, undefined, search);
 			}
 			nextTick(() => {
 				showTable.value = true;
 				loading.value = false;
 				getList();
 			})
+		} else {
+			resFail.value = res;
 		}
 	}).finally(() => {
 		loading.value = false;
@@ -79,6 +86,7 @@ const search = ref<{
 	limit: number;
 	[key: string]: any;
 }>({
+	...props.params?.query,
 	...currentRoute.query,
 	page: 1,
 	total: 0,
@@ -218,7 +226,19 @@ const handleSelectionChange = (val: any[]) => {
 </script>
 
 <template>
-	<template v-if="currentRoute.meta.component === 'tableComponent'">
+	<main class="layouts flex flex-center layouts-empty flex-1" v-if="resFail">
+		<el-empty>
+			<template #description>
+				<div class="flex flex-column">
+					<span>{{ resFail.msg }}</span>
+					<xl-code lang="json" height="400px">{{ resFail.data }}</xl-code>
+				</div>
+			</template>
+			<el-button type="primary" @click="router.go(-1)">上一页</el-button>
+			<el-button type="default" @click="router.push('/')">返回首页</el-button>
+		</el-empty>
+	</main>
+	<template v-else-if="currentRoute.meta.component === 'tableComponent'">
 		<el-skeleton :loading="loading" animated>
 			<template #template>
 				<div class="table-screen">
@@ -261,14 +281,14 @@ const handleSelectionChange = (val: any[]) => {
 						</el-form-item>
 					</el-form>
 					<el-table ref="tableRef" :data="tableData" v-if="showTable" v-bind="tableProps" class="flex-1"
-						@selection-change="handleSelectionChange" :load="load">
+						@selection-change="handleSelectionChange">
 						<template v-for="(column, _index) in columns" :index="_index">
-								<el-table-column v-if="column.extra?.props.type === 'expand'" v-bind="column.extra.props">
-									<template #default="scope">
-										<column-expand :components="column.extra?.components" :row="scope.row"
-											:prop="column.prop"></column-expand>
-									</template>
-								</el-table-column>
+							<el-table-column v-if="column.extra?.props?.type === 'expand'" v-bind="column.extra.props">
+								<template #default="scope">
+									<column-expand :components="column.extra?.components" :row="scope.row"
+										:prop="column.prop"></column-expand>
+								</template>
+							</el-table-column>
 							<columnComponent v-else :column="column" :tableData="tableData"
 								@change="updateTableDataValue" />
 						</template>

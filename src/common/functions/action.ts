@@ -5,9 +5,10 @@ import router from '@/routers';
 import { useUserStore, useWebConfigStore } from '@/stores';
 import { RouteRecordNormalized } from 'vue-router';
 import { i18n } from '@/locale';
-const {t} = i18n.global;
+import { getTableValue } from '.';
+const { t } = i18n.global;
 interface UseClickOptionsInterface {
-    model: '' | 'redirect'|'link' | 'comfirm' | 'dialog' | 'dialogTable' | 'Lock' | 'Search' | 'Notification' | 'FullScreen' | 'OutLogin';
+    model: '' | 'redirect' | 'link' | 'comfirm' | 'dialog' | 'dialogTable' | 'Lock' | 'Search' | 'Notification' | 'FullScreen' | 'OutLogin';
     path: string;
     props?: any;
     data?: any;
@@ -34,18 +35,18 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     showClose: false,
                     showCancelButton: true,
                     closeOnClickModal: false,
-                    buttonSize:'small',
+                    buttonSize: 'small',
                     customClass: 'el-messagebox-width',
                     ...messageProps,
                     showInput: true,
-                    inputType:'number',
-                    inputPattern:/^\d{6}$/,
-                    inputPlaceholder:t('lock.inputPlaceholder'),
-                    inputErrorMessage:t('lock.inputErrorMessage'),
-                    beforeClose: (action: string, instance: { confirmButtonLoading: boolean;inputValue:string }, done: () => void) => {
+                    inputType: 'number',
+                    inputPattern: /^\d{6}$/,
+                    inputPlaceholder: t('lock.inputPlaceholder'),
+                    inputErrorMessage: t('lock.inputErrorMessage'),
+                    beforeClose: (action: string, instance: { confirmButtonLoading: boolean; inputValue: string }, done: () => void) => {
                         if (action === 'confirm') {
                             instance.confirmButtonLoading = true
-                            $http.post(WEBCONFIG.apis.lock, {password:instance.inputValue}).then((res: any) => {
+                            $http.post(WEBCONFIG.apis.lock, { password: instance.inputValue }).then((res: any) => {
                                 if (res.code === $http.ResponseCode.SUCCESS) {
                                     done()
                                     resolve(true);
@@ -67,8 +68,8 @@ export const useClick = (options: UseClickOptionsInterface) => {
                 break;
             case 'Search':
                 const list = router.getRoutes();
-                const result=ref<RouteRecordNormalized[]>([]);
-                const keyword=ref('');
+                const result = ref<RouteRecordNormalized[]>([]);
+                const keyword = ref('');
                 const { hasPermission } = useUserStore()
                 ElMessageBox({
                     showConfirmButton: false,
@@ -83,49 +84,49 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     customClass: 'el-messagebox-width rounded-6',
                     ...messageProps,
                     message: () => h('div', {
-                        class:'flex flex-column'
+                        class: 'flex flex-column'
                     }, [
-                        h(ElInput,{
-                            modelValue:keyword.value,
-                            size:'large',
-                            prefixIcon:'Search',
-                            clearable:true,
-                            placeholder:t('form.placeholder.searchMenu'),
-                            onInput:(val:string)=>{
-                                keyword.value=val;
-                                if(val){
-                                    val=val.toLocaleLowerCase();
-                                    result.value=list.filter((item:any)=>{
-                                        return item.meta.title.toLocaleLowerCase().includes(val)&&hasPermission(item.path)
+                        h(ElInput, {
+                            modelValue: keyword.value,
+                            size: 'large',
+                            prefixIcon: 'Search',
+                            clearable: true,
+                            placeholder: t('form.placeholder.searchMenu'),
+                            onInput: (val: string) => {
+                                keyword.value = val;
+                                if (val) {
+                                    val = val.toLocaleLowerCase();
+                                    result.value = list.filter((item: any) => {
+                                        return item.meta.title.toLocaleLowerCase().includes(val) && hasPermission(item.path)
                                     });
-                                }else{
-                                    result.value=[];
+                                } else {
+                                    result.value = [];
                                 }
                             }
                         }),
-                        h('div',{},[
-                            result.value.length>0?
-                            h('div',{
-                                class:'p-4 flex flex-column'
-                            },result.value.map((item:any)=>{
-                                return h('div',{
-                                    class:'shadow-lighter rounded-6 pointer p-4 mt-4 hover-bg-primary-light-9',
-                                    onClick:()=>{
-                                        ElMessageBox.close();
-                                        router.push(item);
-                                    }
-                                },[
-                                    h('div',{
-                                        class:'font-weight-600 mb-2'
-                                    },item.meta.title),
-                                    h('div',{
-                                        class:'text-info h9'
-                                    },item.path),
-                                ])
-                            })):
-                            h(ElEmpty,{
-                                description:t('message.searchMenuNotContent')
-                            })
+                        h('div', {}, [
+                            result.value.length > 0 ?
+                                h('div', {
+                                    class: 'p-4 flex flex-column'
+                                }, result.value.map((item: any) => {
+                                    return h('div', {
+                                        class: 'shadow-lighter rounded-6 pointer p-4 mt-4 hover-bg-primary-light-9',
+                                        onClick: () => {
+                                            ElMessageBox.close();
+                                            router.push(item);
+                                        }
+                                    }, [
+                                        h('div', {
+                                            class: 'font-weight-600 mb-2'
+                                        }, item.meta.title),
+                                        h('div', {
+                                            class: 'text-info h9'
+                                        }, item.path),
+                                    ])
+                                })) :
+                                h(ElEmpty, {
+                                    description: t('message.searchMenuNotContent')
+                                })
                         ])
                     ]),
                 }).then(() => {
@@ -136,11 +137,11 @@ export const useClick = (options: UseClickOptionsInterface) => {
             case 'FullScreen':
                 // 浏览器全屏
                 if (document.fullscreenElement) {
-                    document.exitFullscreen().then(() => {}).catch(() => {
+                    document.exitFullscreen().then(() => { }).catch(() => {
                         ElMessage.error(t('message.exitFullscreenError'));
                     });
                 } else {
-                    document.documentElement.requestFullscreen().then(() => {}).catch(() => {
+                    document.documentElement.requestFullscreen().then(() => { }).catch(() => {
                         ElMessage.error(t('message.requestFullscreenError'));
                     });
                 }
@@ -190,16 +191,28 @@ export const useClick = (options: UseClickOptionsInterface) => {
                 break;
             case 'comfirm':
                 if (messageProps.title) {
-                    if (!Array.isArray(options.data)) {
-                        for (let key in options.data) {
-                            messageProps.title = messageProps.title.replace(new RegExp(`{${key}}`, 'g'), options.data[key]);
+                    const matches = [...messageProps.title.matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
+                    if (matches.length) {
+                        let d: any = {};
+                        for (let i = 0; i < matches.length; i++) {
+                            const key = matches[i];
+                            d[key] = getTableValue(options.data, key) ?? key;
+                        }
+                        for (let key in d) {
+                            messageProps.title = messageProps.title.replace(new RegExp(`{${key}}`, 'g'), d[key]);
                         }
                     }
                 }
                 if (messageProps.message) {
-                    if (!Array.isArray(options.data)) {
-                        for (let key in options.data) {
-                            messageProps.message = messageProps.message.replace(new RegExp(`{${key}}`, 'g'), options.data[key]);
+                    const matches = [...messageProps.message.matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
+                    if (matches.length) {
+                        let d: any = {};
+                        for (let i = 0; i < matches.length; i++) {
+                            const key = matches[i];
+                            d[key] = getTableValue(options.data, key) ?? key;
+                        }
+                        for (let key in d) {
+                            messageProps.message = messageProps.message.replace(new RegExp(`{${key}}`, 'g'), d[key]);
                         }
                     }
                 }
@@ -239,25 +252,31 @@ export const useClick = (options: UseClickOptionsInterface) => {
                 break;
             case 'dialog':
                 if (messageProps.title) {
-                    if (!Array.isArray(options.data)) {
-                        for (let key in options.data) {
-                            messageProps.title = messageProps.title.replace(new RegExp(`{${key}}`, 'g'), options.data[key]);
+                    const matches = [...messageProps.title.matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
+                    if (matches.length) {
+                        let d: any = {};
+                        for (let i = 0; i < matches.length; i++) {
+                            const key = matches[i];
+                            d[key] = getTableValue(options.data, key) ?? key;
+                        }
+                        for (let key in d) {
+                            messageProps.title = messageProps.title.replace(new RegExp(`{${key}}`, 'g'), d[key]);
                         }
                     }
                 }
                 const findRouter = router.getRoutes().find((item) => item.path === path);
-
-                ElMessageBox({
+                const loading=ref();
+                const ElMessageBoxOptions = {
                     title: t('message.title'),
                     cancelButtonText: t('button.cancelText'),
-                    showClose: true,
                     draggable: true,
                     showCancelButton: false,
                     showConfirmButton: false,
                     closeOnClickModal: false,
+                    showClose: !['formComponent'].includes(findRouter?.meta.component as string),
                     customStyle: {
                         '--el-messagebox-width': '60%',
-                        '--el-dialog-border-radius':'10px'
+                        '--el-dialog-border-radius': '10px'
                     },
                     customClass: 'el-messagebox-width action-dialog',
                     ...messageProps,
@@ -267,16 +286,29 @@ export const useClick = (options: UseClickOptionsInterface) => {
                             query: options.query,
                             params: options.props.params,
                         },
+                        showSubmitItem: false,
+                        showDialogSubmit: true,
                         onConfirm: () => {
                             resolve(true);
-                            ElMessageBox.close();
+                            // ElMessageBox.close();
+                            ElMessageBoxOptions.onVanish?.()
+                        },
+                        onCannel: () => {
+                            reject();
+                            // ElMessageBox.close();
+                            ElMessageBoxOptions.onVanish?.()
+                        },
+                        onLoading:(val:boolean)=>{
+                            loading.value=val;
                         }
                     }),
-                    beforeClose: (_action, _instance, done) => {
+                    beforeClose: (_action: any, _instance: any, done: any) => {
+                        if(loading.value)return;
                         done();
                         reject();
                     }
-                }).then(() => { }).catch(() => { })
+                };
+                ElMessageBox(ElMessageBoxOptions).then(() => { }).catch(() => { })
                 break;
             case 'redirect':
                 if (!options.path) {
@@ -290,7 +322,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
             case 'link':
                 console.log(options);
                 if (options.props?.url) {
-                    window.open(options.props?.url, options.props?.target || '_self',options.props?.features);
+                    window.open(options.props?.url, options.props?.target || '_self', options.props?.features);
                 }
                 break;
             default:

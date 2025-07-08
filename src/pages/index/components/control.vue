@@ -20,8 +20,20 @@ const currentRoute = ref<RouteLocationNormalizedLoaded>({
     meta: {}
 });
 const routerName = ref('');
+const menuDefaultActive=ref();
 watchEffect(() => {
     currentRoute.value = router.currentRoute.value;
+    menuDefaultActive.value=currentRoute.value.path;
+    if(!currentRoute.value.meta?.show){
+        let i = currentRoute.value.matched.length-1;
+        for (; i >= 0; i--) {
+            const element = currentRoute.value.matched[i];
+            if(element.meta?.show){
+                menuDefaultActive.value=element.path;
+                break;
+            }
+        }
+    }
     if (currentRoute.value.query.routerName) {
         routerName.value = currentRoute.value.query.routerName as string;
     }
@@ -37,7 +49,7 @@ onMounted(() => {
         <el-container class="overflow-hidden">
             <el-aside class="layout-aside" :class="{ 'close': !STATE.AsideState || STATE.NotMenusAsideState }">
                 <el-scrollbar class="flex-1">
-                    <el-menu :default-active="currentRoute.path" router class="layouts-menus">
+                    <el-menu :default-active="menuDefaultActive" router class="layouts-menus">
                         <layouts-menu-item :menus="ROUTERLIST" :level="1" />
                     </el-menu>
                 </el-scrollbar>

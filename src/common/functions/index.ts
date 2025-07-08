@@ -343,88 +343,55 @@ export const getRoundImage = () => {
         }
     });
 }
-export const hasWhere = (extra: any, form: any) => {
-    if (extra?.where) {
-        const where = extra.where;
-        for (let i = 0; i < where.length; i++) {
-            const [field, exp, value] = where[i];
-            const formValue = getTableValue(form, field);
-            switch (exp) {
-                case '=':
-                    if (formValue !== value) {
-                        return false;
-                    }
-                    break;
-                case '!=':
-                    if (formValue === value) {
-                        return false;
-                    }
-                    break;
-                case '>':
-                    if (formValue <= value) {
-                        return false;
-                    }
-                    break;
-                case '>=':
-                    if (formValue < value) {
-                        return false;
-                    }
-                    break;
-                case '<':
-                    if (formValue >= value) {
-                        return false;
-                    }
-                    break;
-                case '<=':
-                    if (formValue > value) {
-                        return false;
-                    }
-                    break;
-                case 'in':
-                    if (!value.includes(formValue)) {
-                        return false;
-                    }
-                    break;
-                case 'not in':
-                    if (value.includes(formValue)) {
-                        return false;
-                    }
-                    break;
-                case 'like':
-                    if (!formValue.includes(value)) {
-                        return false;
-                    }
-                    break;
-                case 'not like':
-                    if (formValue.includes(value)) {
-                        return false;
-                    }
-                    break;
-                case 'between':
-                    if (formValue < value[0] || formValue > value[1]) {
-                        return false;
-                    }
-                    break;
-                case 'not between':
-                    if (formValue >= value[0] && formValue <= value[1]) {
-                        return false;
-                    }
-                    break;
-                case 'null':
-                    if (formValue !== null) {
-                        return false;
-                    }
-                    break;
-                case 'not null':
-                    if (formValue === null) {
-                        return false;
-                    }
-                    break;
+export const hasWhere = (extra: any, form: any): boolean => {
+    if (!extra?.where) return true;
+    // 把每一种比较集中到一个函数里，便于复用
+    const match = (field: string, exp: string, value: any): boolean => {
+        const formValue = getTableValue(form, field);
+
+        switch (exp) {
+            case '=':          return formValue === value;
+            case '!=':         return formValue !== value;
+            case '>':          return formValue >  value;
+            case '>=':         return formValue >= value;
+            case '<':          return formValue <  value;
+            case '<=':         return formValue <= value;
+            case 'in':         return Array.isArray(value) && value.includes(formValue);
+            case 'not in':     return Array.isArray(value) && !value.includes(formValue);
+            case 'like':       return typeof formValue === 'string' && formValue.includes(value);
+            case 'not like':   return typeof formValue === 'string' && !formValue.includes(value);
+            case 'between':    return formValue >= value[0] && formValue <= value[1];
+            case 'not between':return formValue <  value[0] ||  formValue >  value[1];
+            case 'null':       return formValue === null;
+            case 'not null':   return formValue !== null;
+            default:           return false;
+        }
+    };
+
+    for (const condition of extra.where) {
+        const [field] = condition;
+
+        // --- AND 情况（field 是字符串） ---
+        if (typeof field === 'string') {
+            if (!match(field, condition[1], condition[2])) return false;
+            continue;
+        }
+
+        // --- OR 情况（field 不是字符串）---
+        // condition 形如：[[f1, op1, v1], [f2, op2, v2], ...]
+        let anyPassed = false;
+        for (const [subField, subExp, subVal] of condition as Array<[string, string, any]>) {
+            if (match(subField, subExp, subVal)) {
+                anyPassed = true;
+                break;
             }
         }
+        if (!anyPassed) return false;   // 整组 OR 都未命中
     }
-    return true;
-}
+
+    return true;  // 所有 AND/OR 条件全部满足
+};
+
 export const parseRules = (rules: any, rule: any, group?: string, form?: any) => {
     if (!rule) return;
     for (let i = 0; i < rule.length; i++) {

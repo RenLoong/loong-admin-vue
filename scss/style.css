@@ -250,8 +250,24 @@ a {
           flex-direction: column;
 }
 
+.action-dialog .el-message-box__message .el-scrollbar .el-form.layouts {
+  padding-top: 0px;
+}
+
 .action-dialog .el-dialog__body .item-label {
   width: 140px;
+}
+
+.action-dialog .el-message-box__btns {
+  display: none;
+}
+
+.full-action-dialog {
+  height: var(--max-height);
+}
+
+.full-action-dialog .el-message-box__message {
+  height: calc(var(--max-height) - 24px - 64px);
 }
 
 .el-form .none-label .el-form-item__label {
@@ -286,5 +302,14 @@ a {
 
 .el-select .el-select-dropdown__item {
   height: auto;
+}
+
+.el-table td.el-table__cell .cell {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 /*# sourceMappingURL=style.css.map */

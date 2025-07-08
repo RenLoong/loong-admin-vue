@@ -34,7 +34,7 @@ const updateValue = (value: TransferKey[]) => {
 }
 const filterMethod = (query: string, item: any) => {
     if (!query) return true;
-    return item.title.toLowerCase().includes(query.toLowerCase()) || item.path.toLowerCase().includes(query.toLowerCase())
+    return item.label.toLowerCase().includes(query.toLowerCase()) || item.key.toLowerCase().includes(query.toLowerCase())
 }
 </script>
 

@@ -223,11 +223,24 @@ a {
         .el-scrollbar{
             display: flex;
             flex-direction: column;
+            .el-form.layouts{
+                padding-top: 0px;
+            }
         }
     }
 
     .el-dialog__body .item-label {
         width: 140px;
+    }
+    .el-message-box__btns{
+        display: none;
+    }
+}
+.full-action-dialog {
+    height: var(--max-height);
+
+    .el-message-box__message {
+        height: calc(var(--max-height) - 24px - 64px);
     }
 }
 .el-form{
@@ -253,4 +266,8 @@ a {
     .el-select-dropdown__item{
         height: auto;
     }
+}
+.el-table td.el-table__cell .cell{
+    display: flex;
+    align-items: center;
 }

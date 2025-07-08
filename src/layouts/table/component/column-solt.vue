@@ -57,7 +57,7 @@ const getComponentValue = (component: any, value: any) => {
             <xl-copy :content="getTableValue(scope.row, column.prop)" v-bind="column.extra?.component.props" />
         </template>
         <template v-else-if="column.extra?.component.name === 'statistic'">
-            <div class="flex grid-gap-4 text-center">
+            <div class="flex grid-gap-4 text-center flex-1">
                 <el-statistic class="flex-1 min-w-100px" v-for="(item, index) in column.extra?.component.options"
                     :key="index" :title="item.label" :value="getTableValue(scope.row, item.value)"
                     v-bind="{ ...column.extra?.component, ...item.props }">

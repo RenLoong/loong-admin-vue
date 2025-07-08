@@ -10,6 +10,7 @@ interface Props {
     lang?: string;
     /** 是否启用自动语言检测（当 lang 未注册或失败时） */
     autoDetect?: boolean;
+    height?:string|number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -20,7 +21,17 @@ const props = withDefaults(defineProps<Props>(), {
 
 const slots = useSlots();
 const html = ref('');
-
+const codeTextStyle=computed(()=>{
+    let style:any={};
+    if(props.height){
+        if(typeof props.height==='string'){
+            style.height=props.height;
+        }else if(typeof props.height==='number'){
+            style.header=props.height+'px';
+        }
+    }
+    return style;
+})
 /**
  * 按需异步加载 highlight.js 语言模块，减小打包体积
  */
@@ -43,7 +54,6 @@ async function ensureLanguage(language?: string) {
 const codeSource = computed(() => {
     if (props.content != null) return props.content;
     const vnodes = slots.default?.() ?? [];
-    console.log(vnodes);
     return vnodes
         .map(v => (typeof v.children === 'string' ? v.children : ''))
         .join('');
@@ -77,7 +87,7 @@ watch([codeSource, () => props.lang], ([code]) => {
 </script>
 
 <template>
-    <pre class="code-text">
+    <pre class="code-text" :style="codeTextStyle">
       <code :class="`language-${props.lang}`" v-html="html" />
     </pre>
 </template>
@@ -88,6 +98,8 @@ watch([codeSource, () => props.lang], ([code]) => {
     border-radius: 6px;
     background: var(--el-bg-color-page);
     word-break: break-all;
+    text-align: left;
+    overflow: auto;
 
     code {
         background: unset;

@@ -80,7 +80,7 @@ const handleAction = ({group, field}:{group: any, field: any}) => {
 </style>
 <style lang="scss">
 .el-form.el-form--inline .el-select{
-    --el-select-width: 220px;
+    --el-select-width: 200px;
 }
 
 </style>

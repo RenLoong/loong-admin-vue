@@ -24,8 +24,20 @@ const currentRoute = ref<RouteLocationNormalizedLoaded>({
 });
 const routerName = ref('');
 const layoutsMainClass = ref('');
+const menuDefaultActive=ref();
 watchEffect(() => {
     currentRoute.value = router.currentRoute.value;
+    menuDefaultActive.value=currentRoute.value.path;
+    if(!currentRoute.value.meta?.show){
+        let i = currentRoute.value.matched.length-1;
+        for (; i >= 0; i--) {
+            const element = currentRoute.value.matched[i];
+            if(element.meta?.show){
+                menuDefaultActive.value=element.path;
+                break;
+            }
+        }
+    }
     if (currentRoute.value.query.routerName) {
         routerName.value = currentRoute.value.query.routerName as string;
     }
@@ -101,7 +113,7 @@ onMounted(() => {
                 </div>
                 <el-scrollbar>
                     <el-divider>{{ TabsMenusFind.meta.title }}</el-divider>
-                    <el-menu :default-active="currentRoute.path" router class="layouts-menus">
+                    <el-menu :default-active="menuDefaultActive" router class="layouts-menus">
                         <layouts-menu-item :menus="MenusData" :level="1" />
                     </el-menu>
                 </el-scrollbar>

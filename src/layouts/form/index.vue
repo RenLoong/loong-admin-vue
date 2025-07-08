@@ -11,9 +11,13 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const props = withDefaults(defineProps<{
 	params?: any
+	showSubmitItem?: boolean
+	showDialogSubmit?: boolean
 }>(), {
+	showSubmitItem: true,
+	showDialogSubmit: false
 });
-const emit = defineEmits(['confirm']);
+const emit = defineEmits(['confirm','cannel','loading']);
 const formRef = ref<FormInstance>();
 const loading = ref(true);
 const currentRoute = router.currentRoute.value;
@@ -35,6 +39,11 @@ if (props.params) {
 	ApiUrl = props.params.api;
 }
 const submitEvent = ref<string>();
+const resFail = ref();
+const showSubmitItem = ref(props.showSubmitItem);
+if (currentRoute.query.back) {
+	showSubmitItem.value = false;
+}
 onBeforeMount(() => {
 	$http.get(ApiUrl, {
 		params: {
@@ -49,7 +58,7 @@ onBeforeMount(() => {
 				...formProps.value,
 				...res.data.props
 			}
-			parseRules(rules, rule.value,undefined,form);
+			parseRules(rules, rule.value, undefined, form);
 			if (res.data.url) {
 				ApiUrl = res.data.url;
 			}
@@ -61,7 +70,7 @@ onBeforeMount(() => {
 				for (let i = 0; i < res.data.group.length; i++) {
 					const element = res.data.group[i];
 					tabs.value.push({ name: element.name, title: element.title });
-					parseRules(rules, element.rule, element.name,form);
+					parseRules(rules, element.rule, element.name, form);
 				}
 			}
 			if (res.data.props.submitEvent) {
@@ -70,12 +79,17 @@ onBeforeMount(() => {
 			nextTick(() => {
 				showForm.value = true;
 			})
+		} else {
+			resFail.value = res;
 		}
 	}).finally(() => {
 		loading.value = false;
 	})
 })
 const submitLoading = ref(false)
+watchEffect(()=>{
+	emit('loading',loading.value||submitLoading.value)
+})
 const onSubmit = () => {
 	if (!formRef.value) return;
 	formRef.value.validate((valid, fields) => {
@@ -121,10 +135,34 @@ const onSubmit = () => {
 const resetForm = () => {
 	formRef.value?.resetFields();
 }
+const emitConfirm=()=>{
+	emit('confirm');
+}
+const emitCannel=()=>{
+	emit('cannel');
+}
+defineExpose({
+	onSubmit,
+	resetForm,
+	emitConfirm,
+	emitCannel
+})
 </script>
 
 <template>
-	<el-skeleton :loading="loading" animated>
+	<main class="layouts flex flex-center layouts-empty flex-1" v-if="resFail">
+		<el-empty>
+			<template #description>
+				<div class="flex flex-column">
+					<span>{{ resFail.msg }}</span>
+					<xl-code lang="json" height="400px">{{ resFail.data }}</xl-code>
+				</div>
+			</template>
+			<el-button type="primary" @click="router.go(-1)">上一页</el-button>
+			<el-button type="default" @click="router.push('/')">返回首页</el-button>
+		</el-empty>
+	</main>
+	<el-skeleton :loading="loading" animated v-else>
 		<template #template>
 			<div class="layouts">
 				<div class="grid grid-gap-4 mb-4" v-for="item in 10" :index="item">
@@ -138,53 +176,85 @@ const resetForm = () => {
 			</div>
 		</template>
 		<template #default>
-			<div class="flex flex-wrap bg-white rounded-top-4 p-6 flex-center" v-if="tabs.length > 0">
+			<div class="flex submit-item flex-center mb-6" v-if="currentRoute.query.back">
+				<el-button bg text @click="router.push(currentRoute.query.back as string)" :disabled="loading||submitLoading" size="large">
+					返回
+				</el-button>
+				<div class="flex-1">
+					<div class="flex flex-wrap bg-white rounded-top-4 flex-center" v-if="tabs.length > 0">
+						<div class="font-weight-600 p-4 pointer rounded-4 text-nowrap"
+							:class="{ 'text-success bg': selectedGroup === tab.name }" @click="selectedGroup = tab.name"
+							v-for="tab in tabs">{{ tab.title }}</div>
+					</div>
+				</div>
+				<el-button @click="resetForm" v-if="rules" :disabled="loading||submitLoading" size="large">
+					<template v-if="formProps.resetButtonText">{{ formProps.resetButtonText }}</template>
+					<template v-else>{{ t('button.resetText') }}</template>
+				</el-button>
+				<el-button type="primary" @click="onSubmit" :loading="loading||submitLoading" size="large">
+					<template v-if="formProps.submitButtonText">{{ formProps.submitButtonText }}</template>
+					<template v-else>{{ t('button.confirmText') }}</template>
+				</el-button>
+			</div>
+			<div class="flex flex-wrap bg-white rounded-top-4 p-6 flex-center" v-else-if="tabs.length > 0">
 				<div class="font-weight-600 p-4 pointer rounded-4 text-nowrap"
 					:class="{ 'text-success bg': selectedGroup === tab.name }" @click="selectedGroup = tab.name"
 					v-for="tab in tabs">{{ tab.title }}</div>
 			</div>
 			<el-scrollbar>
-				<div class="layouts">
-					<el-form ref="formRef" :model="form" :rules="rules" v-if="showForm" :disabled="submitLoading"
-						v-bind="formProps">
-						<template v-if="formProps.inline">
-							<template v-if="selectedGroup === basicFormName">
-								<inlineRuleComponent v-model="form" :rule="rule" />
-							</template>
-							<template v-if="group.length > 0">
-								<template v-for="(item, _index) in group" :index="_index">
-									<div v-show="selectedGroup === item.name">
-										<inlineRuleComponent v-model="form[item.name]" :rule="item.rule"
-											:group="item.name" />
-									</div>
-								</template>
+				<el-form ref="formRef" :model="form" :rules="rules" v-if="showForm" :disabled="submitLoading"
+					class="layouts" v-bind="formProps">
+					<template v-if="formProps.inline">
+						<template v-if="selectedGroup === basicFormName">
+							<inlineRuleComponent v-model="form" :rule="rule" />
+						</template>
+						<template v-if="group.length > 0">
+							<template v-for="(item, _index) in group" :index="_index">
+								<div v-show="selectedGroup === item.name">
+									<inlineRuleComponent v-model="form[item.name]" :rule="item.rule"
+										:group="item.name" />
+								</div>
 							</template>
 						</template>
-						<template v-else>
-							<template v-if="selectedGroup === basicFormName">
-								<ruleComponent v-model="form" :rule="rule" />
-							</template>
-							<template v-if="group.length > 0">
-								<template v-for="(item, _index) in group" :index="_index">
-									<div v-show="selectedGroup === item.name">
-										<ruleComponent v-model="form[item.name]" :rule="item.rule" :group="item.name" />
-									</div>
-								</template>
+					</template>
+					<template v-else>
+						<template v-if="selectedGroup === basicFormName">
+							<ruleComponent v-model="form" :rule="rule" />
+						</template>
+						<template v-if="group.length > 0">
+							<template v-for="(item, _index) in group" :index="_index">
+								<div v-show="selectedGroup === item.name">
+									<ruleComponent v-model="form[item.name]" :rule="item.rule" :group="item.name" />
+								</div>
 							</template>
 						</template>
-						<el-form-item class="submit-item py-4">
-							<el-button type="primary" @click="onSubmit" :loading="loading" size="large">
-								<template v-if="formProps.submitButtonText">{{ formProps.submitButtonText }}</template>
-								<template v-else>{{ t('button.confirmText') }}</template>
-							</el-button>
-							<el-button @click="resetForm" v-if="rules" :disabled="loading" size="large">
-								<template v-if="formProps.resetButtonText">{{ formProps.resetButtonText }}</template>
-								<template v-else>{{ t('button.resetText') }}</template>
-							</el-button>
-						</el-form-item>
-					</el-form>
-				</div>
+					</template>
+					<el-form-item class="submit-item py-4" v-if="showSubmitItem">
+						<el-button type="primary" @click="onSubmit" :loading="loading||submitLoading" size="large">
+							<template v-if="formProps.submitButtonText">{{ formProps.submitButtonText }}</template>
+							<template v-else>{{ t('button.confirmText') }}</template>
+						</el-button>
+						<el-button @click="resetForm" v-if="rules" :disabled="loading||submitLoading" size="large">
+							<template v-if="formProps.resetButtonText">{{ formProps.resetButtonText }}</template>
+							<template v-else>{{ t('button.resetText') }}</template>
+						</el-button>
+					</el-form-item>
+				</el-form>
 			</el-scrollbar>
+			<div class="flex submit-item pt-10" v-if="showDialogSubmit">
+				<el-button bg text @click="emitCannel" size="large" :disabled="loading||submitLoading">
+					{{ t('button.cancelText') }}
+				</el-button>
+				<div class="flex-1"></div>
+				<el-button @click="resetForm" v-if="rules" :disabled="loading||submitLoading" size="large">
+					<template v-if="formProps.resetButtonText">{{ formProps.resetButtonText }}</template>
+					<template v-else>{{ t('button.resetText') }}</template>
+				</el-button>
+				<el-button type="primary" @click="onSubmit" :loading="loading||submitLoading" size="large">
+					<template v-if="formProps.submitButtonText">{{ formProps.submitButtonText }}</template>
+					<template v-else>{{ t('button.confirmText') }}</template>
+				</el-button>
+			</div>
 		</template>
 	</el-skeleton>
 </template>
@@ -198,5 +268,9 @@ const resetForm = () => {
 	:deep(.el-button.el-button--large) {
 		padding: 12px 60px;
 	}
+}
+
+.el-form.layouts {
+	padding-top: 30px;
 }
 </style>
