@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import tableComponent from './expand-component/table.vue'
+import infoComponent from './expand-component/info.vue'
 import defaultComponent from './expand-component/default.vue'
 const props = withDefaults(defineProps<{
     components: any,
@@ -10,6 +11,7 @@ const props = withDefaults(defineProps<{
 });
 const layouts = new Map();
 layouts.set('table', tableComponent);
+layouts.set('info', infoComponent);
 </script>
 <template>
     <el-row :gutter="20" class="mx-0">

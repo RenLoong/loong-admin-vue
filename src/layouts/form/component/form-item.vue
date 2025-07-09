@@ -146,11 +146,17 @@ onUnmounted(() => {
             <template v-else-if="item.component === 'marked-text'">
                 <xl-marked-text :content="form[item.field]" v-bind="item.extra.props" />
             </template>
-            <template v-else-if="['text', 'link'].includes(item.component)">
+            <template v-else-if="['text', 'link', 'tag'].includes(item.component)">
                 <div>
                     <component :is="'el-' + item.component" v-bind="item.extra.props">{{ form[item.field] }}
                     </component>
                 </div>
+            </template>
+            <template v-else-if="['tags'].includes(item.component)">
+                <template v-for="(tag, tagIndex) in item.extra.options" :key="tagIndex">
+                    <el-tag v-if="form[item.field] === tag.value" v-bind="{...item.extra.props, ...tag.props}">{{ tag.label }}
+                    </el-tag>
+                </template>
             </template>
             <template v-else-if="['image', 'avatar'].includes(item.component)">
                 <div>

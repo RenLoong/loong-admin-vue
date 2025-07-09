@@ -10,7 +10,7 @@ import columnExpand from "./component/column-expand.vue";
 import { ElForm, ElMessage, ElTable } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
-
+const emit = defineEmits(['confirm','cannel','loading']);
 const props = withDefaults(defineProps<{
 	params?: any
 }>(), {
@@ -36,7 +36,7 @@ if (props.params) {
 }
 const resFail = ref();
 onBeforeMount(() => {
-	if (currentRoute.meta.component != 'tableComponent') {
+	if (!['tableComponent', 'imagesComponent'].includes(currentRoute.meta.component as string)) {
 		return;
 	}
 	$http.get(`${ApiUrl}GetTable`, {
@@ -156,7 +156,9 @@ const handleAction = (group: any, row: any) => {
 	};
 	useClick(options).then(() => {
 		getList();
-	}).catch(() => { })
+	}).catch(() => {
+		emit('cannel');
+	})
 }
 const handleFooter = (group: any) => {
 	if (!group.extra) return;
@@ -238,7 +240,7 @@ const handleSelectionChange = (val: any[]) => {
 			<el-button type="default" @click="router.push('/')">返回首页</el-button>
 		</el-empty>
 	</main>
-	<template v-else-if="currentRoute.meta.component === 'tableComponent'">
+	<template v-else-if="['tableComponent', 'imagesComponent'].includes(currentRoute.meta.component as string)">
 		<el-skeleton :loading="loading" animated>
 			<template #template>
 				<div class="table-screen">
@@ -309,7 +311,7 @@ const handleSelectionChange = (val: any[]) => {
 							</template>
 						</el-table-column>
 					</el-table>
-					<div v-if="search.total > 0" class="overflow-x-auto">
+					<div v-if="search.total > 0" class="overflow-x-auto flex-shrink-0">
 						<div class="pagination">
 							<div class="flex mr-4" v-if="selection">
 								<el-button type="success" @click="toggleSelection(tableData)">{{

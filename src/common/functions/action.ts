@@ -318,6 +318,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     path,
                     query: options.query
                 });
+                reject();
                 break;
             case 'link':
                 console.log(options);
@@ -335,6 +336,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     path,
                     query: options.query
                 });
+                reject();
                 break;
         }
     });

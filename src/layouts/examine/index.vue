@@ -194,21 +194,23 @@ defineExpose({
 				</el-button>
 			</div>
 			<el-splitter class="flex h-auto overflow-hidden">
-				<el-splitter-panel class="flex flex-column grid-gap-4 overflow-hidden">
+				<el-splitter-panel class="flex flex-column grid-gap-4 overflow-hidden" :min="200">
 					<div class="flex flex-center">
 						<el-text v-bind="examineProps.old">{{ examineProps.old?.label??'原始数据' }}</el-text>
 					</div>
-					<el-scrollbar ref="examineOldRef" @scroll="scroll" class="flex-1">
+					<el-scrollbar ref="examineOldRef" @scroll="scroll" class="flex-1" v-if="examineOldData">
 						<examine-data :rule="examineRule" v-model="examineValue" :data="examineOldData"></examine-data>
 					</el-scrollbar>
+					<el-empty :description="`暂无${examineProps.old?.label??'原始数据'}`" v-else class="flex-1"></el-empty>
 				</el-splitter-panel>
-				<el-splitter-panel class="flex flex-column grid-gap-4 overflow-hidden">
+				<el-splitter-panel class="flex flex-column grid-gap-4 overflow-hidden" :min="200">
 					<div class="flex flex-center">
 						<el-text v-bind="examineProps.new">{{ examineProps.new?.label??'新数据' }}</el-text>
 					</div>
-					<el-scrollbar ref="examineNewRef" @scroll="scroll" class="flex-1">
+					<el-scrollbar ref="examineNewRef" @scroll="scroll" class="flex-1" v-if="examineNewData">
 						<examine-data :rule="examineRule" v-model="examineValue" :data="examineNewData" :data1="examineOldData"></examine-data>
 					</el-scrollbar>
+					<el-empty :description="`暂无${examineProps.new?.label??'新数据'}`" v-else class="flex-1"></el-empty>
 				</el-splitter-panel>
 				<el-splitter-panel :resizable="false" :size="400">
 					<el-scrollbar>

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { getTableValue } from '@/common/functions';
 const props = withDefaults(defineProps<{
     modelValue?: string,
     rule?: any
@@ -38,39 +39,51 @@ const getComponentValue = (component: any, value: any) => {
 const onActive = (item: any) => {
     emit('update:modelValue', item.field);
 }
+getTableValue
 </script>
 <template>
     <div class="flex flex-column grid-gap-4">
         <div v-for="(item, index) in props.rule" :key="index" class="flex grid-gap-4 examine-item rounded-4"
-            :class="{ 'examine-item-active': props.modelValue === item.field, 'examine-item-change': props.data1 && props.data[item.field] != props.data1[item.field] }"
+            :class="{ 'examine-item-active': props.modelValue === item.field, 'examine-item-change': props.data1 && getTableValue(props.data, item.field) != getTableValue(props.data1, item.field) }"
             @mouseenter="onActive(item)">
             <div class="examine-label">{{ item.title }}</div>
             <div class="flex-1 examine-data">
                 <!-- 信息展示类 -->
                 <template v-if="item.component === 'copy'">
-                    <xl-copy :content="props.data[item.field]" v-bind="item.extra.props" />
+                    <xl-copy :content="getTableValue(props.data, item.field)" v-bind="item.extra.props" />
                 </template>
                 <template v-else-if="item.component === 'marked-text'">
-                    <xl-marked-text :content="props.data[item.field]" v-bind="item.extra.props" />
+                    <xl-marked-text :content="getTableValue(props.data, item.field)" v-bind="item.extra.props" />
                 </template>
                 <template v-else-if="['text', 'link'].includes(item.component)">
-                    <div>
-                        <component :is="'el-' + item.component" v-bind="item.extra.props">{{
-                            props.data[item.field] }}
-                        </component>
-                    </div>
+                    <component :is="'el-' + item.component" v-bind="item.extra.props">{{
+                        getTableValue(props.data, item.field) }}
+                    </component>
                 </template>
-                <template v-else-if="['image', 'avatar'].includes(item.component)">
-                    <div>
-                        <component :is="'el-' + item.component" v-bind="item.extra.props" :src="props.data[item.field]">
-                        </component>
-                    </div>
+                <template v-else-if="['avatar'].includes(item.component)">
+                    <el-avatar v-bind="item.extra.props" style="--el-avatar-text-size:10px;"
+                        :src="getTableValue(props.data, item.field)">
+                        {{ item.title }}
+                    </el-avatar>
+                </template>
+                <template v-else-if="item.component === 'table-userinfo'">
+                    <xl-table-userinfo :data="props.data" v-bind="item.extra?.props" />
+                </template>
+                <template v-else-if="item.component === 'image'">
+                    <template v-if="Array.isArray(getTableValue(props.data, item.field))">
+                        <el-image preview-teleported v-for="(sub, index) in getTableValue(props.data, item.field)"
+                            :key="index" v-bind="item.extra?.props" :src="sub"
+                            :preview-src-list="getTableValue(props.data, item.field)"></el-image>
+                    </template>
+                    <el-image v-else-if="getTableValue(props.data, item.field)" preview-teleported
+                        v-bind="item.extra?.props" :src="getTableValue(props.data, item.field)"
+                        :preview-src-list="[getTableValue(props.data, item.field)]"></el-image>
                 </template>
                 <!-- 信息展示类 -->
                 <!-- 常规表单类 -->
                 <template v-else>
-                    <template v-if="Array.isArray(props.data[item.field])">
-                        <template v-for="(sub, i) in props.data[item.field]">
+                    <template v-if="Array.isArray(getTableValue(props.data, item.field))">
+                        <template v-for="(sub, i) in getTableValue(props.data, item.field)">
                             <component :is="`el-${item.component}`" :key="i"
                                 v-bind="getComponentProps(item.extra, sub, index)"
                                 v-if="getComponentValue(item.extra, sub)">
@@ -78,9 +91,9 @@ const onActive = (item: any) => {
                         </template>
                     </template>
                     <component v-else :is="`el-${item.component}`"
-                        v-bind="getComponentProps(item.extra, props.data[item.field])"
-                        v-if="getComponentValue(item.extra, props.data[item.field])">
-                        {{ getComponentValue(item.extra, props.data[item.field]) }}
+                        v-bind="getComponentProps(item.extra, getTableValue(props.data, item.field))"
+                        v-if="getComponentValue(item.extra, getTableValue(props.data, item.field))">
+                        {{ getComponentValue(item.extra, getTableValue(props.data, item.field)) }}
                     </component>
                 </template>
                 <!-- 常规表单类 -->
@@ -98,7 +111,7 @@ const onActive = (item: any) => {
     --xl-examine-label-width: 120px;
 
     &.examine-item-active {
-        background-color: var(--el-bg-color-page) !important;
+        background-color: var(--el-bg-color-page);
     }
 
     &.examine-item-change {

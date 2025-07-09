@@ -3,21 +3,22 @@ import { $http } from '@/common';
 import { ElMessage, ElMessageBox, ElInput, ElSelect, ElInputNumber } from 'element-plus'
 import { useWebConfigStore } from "@/stores";
 import { useI18n } from 'vue-i18n';
-const {t} = useI18n();
+const { t } = useI18n();
 const { WEBCONFIG } = useWebConfigStore();
 const props = withDefaults(defineProps<{
     modelValue?: string | string[],
     accept?: string,
     multiple?: number,
     view?: string,
-    size?: number
+    size?: number,
+    customStyle?: string
 }>(), {
     modelValue: '',
     accept: '',
     multiple: 1,
     view: 'image'
 });
-const emit = defineEmits(['update:modelValue','change','closed'])
+const emit = defineEmits(['update:modelValue', 'change', 'closed'])
 const uploadRef = ref();
 const dialogVisible = ref(false);
 const open = () => {
@@ -188,7 +189,7 @@ const submitSelected = () => {
     }
     dialogVisible.value = false;
 }
-const handlePictureCardPreview = (index:number) => {
+const handlePictureCardPreview = (index: number) => {
     dialogImageIndex.value = index
     dialogPreview.value = true
 }
@@ -226,7 +227,7 @@ const handleUploadSuccess = (res: ResponseInterface) => {
     }
 }
 const deleteClassify = (item: ClassifyInterface) => {
-    ElMessageBox.confirm(t('form.bundle.confirmDeleteClassifyContent',{title:item.title}), t('message.tips'), {
+    ElMessageBox.confirm(t('form.bundle.confirmDeleteClassifyContent', { title: item.title }), t('message.tips'), {
         confirmButtonText: t('button.confirmText'),
         cancelButtonText: t('button.cancelText'),
         type: 'warning'
@@ -257,7 +258,7 @@ const saveClassify = (item?: ClassifyInterface) => {
     }
     ElMessageBox({
         title: t('form.bundle.createClassify'),
-        confirmButtonText:t('button.confirmText'),
+        confirmButtonText: t('button.confirmText'),
         cancelButtonText: t('button.cancelText'),
         showClose: false,
         showCancelButton: true,
@@ -272,8 +273,8 @@ const saveClassify = (item?: ClassifyInterface) => {
                     class: 'mb-4',
                     placeholder: t('form.bundle.createClassifyPlaceholder'),
                     modelValue: classifyForm.value.title,
-                    maxlength:50,
-                    showWordLimit:true,
+                    maxlength: 50,
+                    showWordLimit: true,
                     onInput: (val: string) => {
                         classifyForm.value.title = val
                     },
@@ -284,7 +285,7 @@ const saveClassify = (item?: ClassifyInterface) => {
                 h(ElSelect, {
                     class: 'mb-4',
                     modelValue: classifyForm.value.channels,
-                    placeholder:t('form.bundle.createClassifyUseChannelPlaceholder'),
+                    placeholder: t('form.bundle.createClassifyUseChannelPlaceholder'),
                     onChange: (val: string) => {
                         classifyForm.value.channels = val
                     },
@@ -341,12 +342,12 @@ const saveClassify = (item?: ClassifyInterface) => {
     }).then(() => {
     }).catch(() => { })
 }
-const clear=()=>{
+const clear = () => {
     selected.value = [];
     selectedEdit.value = [];
     values.value = [];
 }
-const closed=()=>{
+const closed = () => {
     emit('closed')
 }
 defineExpose({
@@ -356,7 +357,7 @@ defineExpose({
 </script>
 
 <template>
-    <div class="bundle-images-list el-upload-list el-upload-list--picture-card">
+    <div class="bundle-images-list el-upload-list el-upload-list--picture-card" :style="props.customStyle">
         <slot :open="open">
             <div class="el-upload-list__item is-success" @click.stop v-for="(url, index) in values">
                 <img class="el-upload-list__item-thumbnail" :src="url" alt="" v-if="view === 'image'" />
@@ -381,20 +382,21 @@ defineExpose({
                 </span>
             </div>
             <div class="el-upload el-upload--picture-card" v-if="values.length < props.multiple" @click="open">
-                <el-icon>
-                    <Plus />
-                </el-icon>
+                <div class="flex flex-column flex-center">
+                    <el-icon size="20">
+                        <Plus/>
+                    </el-icon>
+                    <el-text v-if="props.multiple > 1" size="small">
+                        {{ values.length }}/{{ props.multiple }}
+                    </el-text>
+                </div>
             </div>
         </slot>
     </div>
-      <el-image-viewer
-        v-if="dialogPreview"
-        :url-list="values"
-        show-progress
-        :initial-index="dialogImageIndex"
-        @close="dialogPreview = false"
-      />
-    <el-dialog v-model="dialogVisible" title="Tips" width="70%" class="bundle-dialog" draggable append-to-body @closed="closed">
+    <el-image-viewer v-if="dialogPreview" :url-list="values" show-progress :initial-index="dialogImageIndex"
+        @close="dialogPreview = false" />
+    <el-dialog v-model="dialogVisible" title="Tips" width="70%" class="bundle-dialog" draggable append-to-body
+        @closed="closed">
         <template #header>
             <div class="bundle-name">
                 <div class="flex-1">{{ t('form.bundle.bundleClassify') }}</div>
@@ -405,7 +407,7 @@ defineExpose({
                 </permissions>
             </div>
             <div class="bundle-title">
-                {{t('form.bundle.title')}}
+                {{ t('form.bundle.title') }}
             </div>
         </template>
         <div class="categrory">
@@ -444,12 +446,13 @@ defineExpose({
 
         <template #footer>
             <template v-if="uploadForm.dir_name != 'all'">
-                <uploads ref="uploadRef" :on-success="handleUploadSuccess" :data="uploadForm" class="mr-4" 
+                <uploads ref="uploadRef" :on-success="handleUploadSuccess" :data="uploadForm" class="mr-4"
                     :multiple="props.multiple > 1" :accept="props.accept" :limit="props.multiple" :size="props.size">
                     <el-button type="success">{{ t('button.uploadText') }}</el-button>
                 </uploads>
                 <permissions name="Uploads/updateUploads">
-                    <el-button type="primary" v-if="isEdit" @click="isEdit = false">{{t('button.completeText')}}</el-button>
+                    <el-button type="primary" v-if="isEdit"
+                        @click="isEdit = false">{{ t('button.completeText') }}</el-button>
                     <el-button v-else @click="isEdit = true">{{ t('button.manageText') }}</el-button>
                     <el-button v-if="isEdit">{{ t('button.allSelectText') }}</el-button>
                 </permissions>
@@ -457,18 +460,20 @@ defineExpose({
             <div class="flex-1"></div>
             <div class="btn-group" v-if="isEdit">
                 <permissions name="Uploads/updateUploads">
-                    <el-button type="warning" :disabled="selectedEdit.length <= 0" @click="updateUploads">{{ t('button.moveText') }}</el-button>
+                    <el-button type="warning" :disabled="selectedEdit.length <= 0" @click="updateUploads">{{
+                        t('button.moveText')
+                        }}</el-button>
                 </permissions>
                 <permissions name="Uploads/deleteUploads">
                     <el-button type="danger" :disabled="selectedEdit.length <= 0" @click="deleteUploads">
-                        {{t('button.deleteText')}}({{ selectedEdit.length }})
+                        {{ t('button.deleteText') }}({{ selectedEdit.length }})
                     </el-button>
                 </permissions>
             </div>
             <div class="btn-group" v-else>
                 <el-button @click="dialogVisible = false">{{ t('button.cancelText') }}</el-button>
                 <el-button type="primary" @click="submitSelected" :disabled="selected.length <= 0">
-                    {{ t('form.bundle.confirmButtonText',{count:selected.length}) }}
+                    {{ t('form.bundle.confirmButtonText', { count: selected.length }) }}
                 </el-button>
             </div>
         </template>

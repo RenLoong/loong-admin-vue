@@ -3,10 +3,14 @@
   display: -ms-flexbox;
   display: flex;
   gap: 10px;
+  --el-upload-list-picture-card-height:var(--el-upload-list-picture-card-size);
+  --el-upload-list-picture-card-width:var(--el-upload-list-picture-card-size);
 }
 
-.bundle-images-list .el-upload-list__item {
+.bundle-images-list .el-upload--picture-card, .bundle-images-list .el-upload-list__item {
   margin: 0;
+  height: var(--el-upload-list-picture-card-height);
+  width: var(--el-upload-list-picture-card-width);
 }
 
 .bundle-dialog {

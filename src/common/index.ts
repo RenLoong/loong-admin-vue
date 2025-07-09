@@ -35,6 +35,9 @@ axios.interceptors.request.use((_config) => {
     const lang=STATE.value.language;
     _config.headers.set('Accept-Language', lang);
     _config.headers.set('lang', lang);
+    if(import.meta.env.DEV){
+        _config.headers.set('xhadmin-developer', 'true');
+    }
     // 判断url是否不以“/”开头
     if (!_config.url?.startsWith('/')) {
         _config.baseURL = (baseURL + config.URLModule);
