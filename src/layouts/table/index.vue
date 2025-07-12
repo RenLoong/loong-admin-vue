@@ -10,9 +10,11 @@ import columnExpand from "./component/column-expand.vue";
 import { ElForm, ElMessage, ElTable } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
-const emit = defineEmits(['confirm','cannel','loading']);
+const emit = defineEmits(['confirm', 'cannel', 'loading']);
 const props = withDefaults(defineProps<{
 	params?: any
+	title?: string
+	showDialogSubmit?: boolean
 }>(), {
 });
 const formRef = ref<InstanceType<typeof ElForm>>()
@@ -33,6 +35,10 @@ const selection = ref(false);
 let ApiUrl = currentRoute.meta.api;
 if (props.params) {
 	ApiUrl = props.params.api;
+}
+const pageTitle = ref(currentRoute.meta.title);
+if (props.title) {
+	pageTitle.value = props.title;
 }
 const resFail = ref();
 onBeforeMount(() => {
@@ -156,8 +162,10 @@ const handleAction = (group: any, row: any) => {
 	};
 	useClick(options).then(() => {
 		getList();
-	}).catch(() => {
-		emit('cannel');
+	}).catch((val: any) => {
+		if (val === 'close') {
+			emit('cannel');
+		}
 	})
 }
 const handleFooter = (group: any) => {
@@ -170,10 +178,10 @@ const handleFooter = (group: any) => {
 	};
 	if (group.extra.field) {
 		for (let key in group.extra.field) {
-			query[group.extra.field[key]] = multipleSelection.value.map((item: any) => item[key]).join(',');
+			query[group.extra.field[key]] = multipleSelection.value.map((item: any) => item[key]);
 		}
 	} else {
-		query.id = multipleSelection.value.map((item: any) => item.id).join(',');
+		query.ids = multipleSelection.value.map((item: any) => item.id);
 	}
 	const options = {
 		model: group.extra.model,
@@ -184,7 +192,11 @@ const handleFooter = (group: any) => {
 	};
 	useClick(options).then(() => {
 		getList();
-	}).catch(() => { })
+	}).catch((val: any) => {
+		if (val === 'close') {
+			emit('cannel');
+		}
+	})
 }
 const handleHeader = (group: any) => {
 	if (!group.extra) return;
@@ -206,7 +218,11 @@ const handleHeader = (group: any) => {
 	};
 	useClick(options).then(() => {
 		getList();
-	}).catch(() => { })
+	}).catch((val: any) => {
+		if (val === 'close') {
+			emit('cannel');
+		}
+	})
 }
 const resetForm = () => {
 	formRef.value?.resetFields();
@@ -255,8 +271,12 @@ const handleSelectionChange = (val: any[]) => {
 				<el-skeleton-item style="height: 30px;" />
 			</template>
 			<template #default>
-				<div class="flex flex-center p-4 shadow-light rounded-4 mb-6" v-if="header">
-					<div class="font-weight-600">{{ currentRoute.meta.title }}</div>
+				<div class="flex flex-center mb-6" v-if="header && !props.showDialogSubmit">
+					<el-button bg text @click="router.push(currentRoute.query.back as string)" size="large"
+						v-if="currentRoute.query.back">
+						返回
+					</el-button>
+					<div class="font-weight-600">{{ pageTitle }}</div>
 					<div class="flex-1"></div>
 					<template v-for="(group, _index) in header.extra.group" :index="_index">
 						<permissions :name="group.extra.path">
@@ -266,6 +286,14 @@ const handleSelectionChange = (val: any[]) => {
 							</component>
 						</permissions>
 					</template>
+				</div>
+				<div class="flex submit-item flex-center" v-else-if="currentRoute.query.back">
+					<el-button bg text @click="router.push(currentRoute.query.back as string)" :disabled="loading"
+						size="large">
+						返回
+					</el-button>
+					<div class="flex-1">
+					</div>
 				</div>
 				<div class="table-layouts">
 					<el-form ref="formRef" :model="search" :rules="rules" label-width="80px" v-if="showScreen"
@@ -280,6 +308,15 @@ const handleSelectionChange = (val: any[]) => {
 							<el-button type="primary" @click="onSubmit" :loading="listLoading">{{ t('button.queryText')
 							}}</el-button>
 							<el-button @click="resetForm">{{ t('button.resetText') }}</el-button>
+							<template v-for="(group, _index) in header.extra.group" :index="_index"
+								v-if="header && props.showDialogSubmit">
+								<permissions :name="group.extra.path">
+									<component :is="`el-${group.extra.component.name}`"
+										v-bind="group.extra.component.props" @click="handleHeader(group)">
+										{{ group.label }}
+									</component>
+								</permissions>
+							</template>
 						</el-form-item>
 					</el-form>
 					<el-table ref="tableRef" :data="tableData" v-if="showTable" v-bind="tableProps" class="flex-1"

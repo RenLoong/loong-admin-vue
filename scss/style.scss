@@ -200,6 +200,7 @@ a {
 }
 
 .action-dialog {
+    --el-dialog-border-radius:10px;
     --el-messagebox-font-size:14px;
     --max-height:calc(100vh - 32px);
     max-height: var(--max-height);

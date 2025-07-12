@@ -18,8 +18,7 @@ layouts.set('info', infoComponent);
         <template v-for="(component) in props.components">
             <el-col v-bind="component.col">
                 <template v-if="layouts.has(component.name)">
-                    <component :is="layouts.get(component.name)" :component="component" :row="props.row"
-                        :prop="props.prop" />
+                    <component :is="layouts.get(component.name)" :component="component" :row="props.row" />
                 </template>
                 <template v-else>
                     <default-component :name="component.name" :layouts="layouts" />

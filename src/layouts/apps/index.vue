@@ -8,6 +8,7 @@ const props = withDefaults(defineProps<{
 	params?: any
 }>(), {
 });
+const emit = defineEmits(['cannel']);
 const loading = ref(true);
 const showMore = ref(false);
 const appsProps = ref<any>();
@@ -89,7 +90,11 @@ const handleAction = (group: any, row: any) => {
 	};
 	useClick(options).then(() => {
 		getList();
-	}).catch(() => { })
+	}).catch((val: any) => {
+		if (val === 'close') {
+			emit('cannel');
+		}
+	})
 }
 </script>
 

@@ -132,8 +132,10 @@ const handleAction = (group: any, row: any) => {
 	};
 	useClick(options).then(() => {
 		getList();
-	}).catch(() => {
-		emit('cannel');
+	}).catch((val: any) => {
+		if (val === 'close') {
+			emit('cannel');
+		}
 	})
 }
 const handleFooter = (group: any) => {
@@ -146,10 +148,10 @@ const handleFooter = (group: any) => {
 	};
 	if (group.extra.field) {
 		for (let key in group.extra.field) {
-			query[group.extra.field[key]] = multipleSelection.value.map((item: any) => item[key]).join(',');
+			query[group.extra.field[key]] = multipleSelection.value.map((item: any) => item[key]);
 		}
 	} else {
-		query.id = multipleSelection.value.map((item: any) => item.id).join(',');
+		query.ids = multipleSelection.value.map((item: any) => item.id);
 	}
 	const options = {
 		model: group.extra.model,
@@ -160,7 +162,11 @@ const handleFooter = (group: any) => {
 	};
 	useClick(options).then(() => {
 		getList();
-	}).catch(() => { })
+	}).catch((val: any) => {
+		if (val === 'close') {
+			emit('cannel');
+		}
+	})
 }
 const handleHeader = (group: any) => {
 	if (!group.extra) return;
@@ -182,7 +188,11 @@ const handleHeader = (group: any) => {
 	};
 	useClick(options).then(() => {
 		getList();
-	}).catch(() => { })
+	}).catch((val: any) => {
+		if (val === 'close') {
+			emit('cannel');
+		}
+	})
 }
 const resetForm = () => {
 	formRef.value?.resetFields();
@@ -282,7 +292,7 @@ const download = (item: any) => {
 					</el-form>
 					<el-scrollbar class="flex-1">
 						<el-checkbox-group class="images-list" v-model="multipleSelection"
-							@change="handleCheckedCitiesChange">
+							@change="handleCheckedCitiesChange" v-if="imagesData.length > 0">
 							<div class="image-item" v-for="(item, index) in imagesData" :key="index" v-bind="gridProps"
 								:class="{ 'image-selection': selection }">
 								<el-image :src="getTableValue(item, gridProps.image)" alt="" fit="cover"
@@ -362,6 +372,7 @@ const download = (item: any) => {
 								</div>
 							</div>
 						</el-checkbox-group>
+						<el-empty v-else description="暂无数据" />
 					</el-scrollbar>
 					<div v-if="search.total > 0" class="overflow-x-auto flex-shrink-0">
 						<div class="pagination">

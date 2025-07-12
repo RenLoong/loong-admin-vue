@@ -23,6 +23,8 @@ watch(() => valueHtml.value, (val) => {
 })
 const imagesRef = ref();
 const videosRef = ref();
+const imagesValue = ref<string[]>([]);
+const videosValue = ref<string[]>([]);
 let insertFunc: InsertFnType = () => { }
 const selected = (files:any) => {
     files.forEach((file:any) => {
@@ -65,10 +67,10 @@ const handleCreated = (editor: any) => {
     <div class="border wangeditor-body">
         <Toolbar class="border-bottom" :editor="editorRef" :defaultConfig="toolbarConfig" />
         <Editor class="wangeditor" v-model="valueHtml" :defaultConfig="editorConfig" @onCreated="handleCreated"/>
-        <xl-bundle ref="imagesRef" accept="image/*" :multiple="99" @change="selected">
+        <xl-bundle ref="imagesRef" accept="image/*" v-model="imagesValue" :multiple="99" @change="selected" customStyle="zzz:123">
             <template></template>
         </xl-bundle>
-        <xl-bundle ref="videosRef" accept="video/*" :multiple="99" @change="selected">
+        <xl-bundle ref="videosRef" accept="video/*" v-model="videosValue" :multiple="99" @change="selected" customStyle="ddd:456">
             <template></template>
         </xl-bundle>
     </div>
@@ -76,10 +78,12 @@ const handleCreated = (editor: any) => {
 
 <style lang="scss" scoped>
 .wangeditor-body {
-    z-index: 9000;
+    // z-index: 9000;
     display: flex;
     flex-direction: column;
-
+    &.w-e-full-screen-container{
+        z-index: 2000;
+    }
     .wangeditor {
         flex: 1;
         overflow-y: hidden;

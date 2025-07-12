@@ -10,6 +10,7 @@ const props = withDefaults(defineProps<{
     rule: [],
     group: ''
 });
+const emit = defineEmits(['cannel']);
 interface RuleInterface {
     title: string;
     field: string;
@@ -53,7 +54,11 @@ const handleAction = ({group, field}:{group: any, field: any}) => {
         if (data[field]) {
             form.value[field] = data[field]
         }
-    }).catch(() => { })
+    }).catch((val: any) => {
+        if (val === 'close') {
+            emit('cannel');
+        }
+    })
 }
 </script>
 

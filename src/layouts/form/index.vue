@@ -158,8 +158,13 @@ defineExpose({
 					<xl-code lang="json" height="400px">{{ resFail.data }}</xl-code>
 				</div>
 			</template>
-			<el-button type="primary" @click="router.go(-1)">上一页</el-button>
-			<el-button type="default" @click="router.push('/')">返回首页</el-button>
+			<template v-if="showDialogSubmit">
+				<el-button type="primary" @click="emitCannel">取消</el-button>
+			</template>
+			<template v-else>
+				<el-button type="primary" @click="router.go(-1)">上一页</el-button>
+				<el-button type="default" @click="router.push('/')">返回首页</el-button>
+			</template>
 		</el-empty>
 	</main>
 	<el-skeleton :loading="loading" animated v-else>
@@ -176,7 +181,7 @@ defineExpose({
 			</div>
 		</template>
 		<template #default>
-			<div class="flex submit-item flex-center mb-6" v-if="currentRoute.query.back">
+			<div class="flex submit-item flex-center mb-6" v-if="!showDialogSubmit&&currentRoute.query.back">
 				<el-button bg text @click="router.push(currentRoute.query.back as string)" :disabled="loading||submitLoading" size="large">
 					返回
 				</el-button>

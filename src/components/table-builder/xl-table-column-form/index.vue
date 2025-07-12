@@ -126,12 +126,6 @@ const elProps = computed(() => {
         </el-popover>
     </template>
     <template v-else-if="column.name === 'select'">
-        <!-- <el-select v-model="values" :disabled="loading" v-bind="column.props" @change="submit">
-            <template v-for="(sub, _subIndex) in column.options" :key="_subIndex">
-                <el-option :label="sub.label" :value="sub.value" v-bind="column.subProps"
-                    v-if="hasWhere(sub.extra, scope.row)" />
-            </template>
-</el-select> -->
         <el-select v-model="values" :disabled="loading" v-bind="elProps" @change="submit" class="select-item">
             <template v-if="column.group">
                 <template v-for="(groupItem, index) in options">

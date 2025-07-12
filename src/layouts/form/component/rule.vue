@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { hasWhere } from '@/common/functions';
 import formItem from './form-item.vue'
 import { useClick } from '@/common/functions/action';
 const props = withDefaults(defineProps<{
@@ -10,6 +11,7 @@ const props = withDefaults(defineProps<{
     rule: [],
     group: ''
 });
+const emit = defineEmits(['cannel']);
 interface RuleInterface {
     title: string;
     field: string;
@@ -53,14 +55,18 @@ const handleAction = ({group, field}:{group: any, field: any}) => {
         if (data[field]) {
             form.value[field] = data[field]
         }
-    }).catch(() => { })
+    }).catch((val: any) => {
+        if (val === 'close') {
+            emit('cannel');
+        }
+    })
 }
 </script>
 
 <template>
     <el-row :gutter="20">
         <template v-for="(item, index) in rule">
-            <el-col v-bind="item.extra?.col">
+            <el-col v-bind="item.extra?.col" v-if="hasWhere(item.extra, form)">
                 <form-item :item="item" v-model="form" :group="props.group" :key="index" @action="handleAction"/>
             </el-col>
         </template>

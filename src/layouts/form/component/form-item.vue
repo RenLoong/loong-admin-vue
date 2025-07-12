@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { $http } from '@/common';
-import { hasWhere } from '@/common/functions';
 interface RuleInterface {
     title: string;
     field: string;
@@ -136,7 +135,7 @@ onUnmounted(() => {
 
 <template>
     <template v-if="item">
-        <el-form-item :label="item.title" :prop="prop(item.field)" v-if="hasWhere(item.extra, form)"
+        <el-form-item :label="item.title" :prop="prop(item.field)"
             :class="{ 'none-label': item.title === 'none-label' }">
             <!-- <div class="" v-bind="item.extra.divProps"> -->
             <!-- 信息展示类 -->

@@ -225,9 +225,10 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     customClass: 'el-messagebox-width',
                     message: () => h('div', {}, t('message.confirmActionContent')),
                     ...messageProps,
-                    beforeClose: (action: string, instance: { confirmButtonLoading: boolean; }, done: () => void) => {
+                    beforeClose: (action: string, instance: { confirmButtonLoading: boolean; cancelButtonLoading: boolean; }, done: () => void) => {
                         if (action === 'confirm') {
                             instance.confirmButtonLoading = true
+                            instance.cancelButtonLoading = true
                             $http.post(options.path, options.query).then((res: any) => {
                                 if (res.code === $http.ResponseCode.SUCCESS) {
                                     done()
@@ -241,6 +242,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                                 reject();
                             }).finally(() => {
                                 instance.confirmButtonLoading = false
+                                instance.cancelButtonLoading = false
                             })
                         } else {
                             reject();
@@ -275,8 +277,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     closeOnClickModal: false,
                     showClose: !['formComponent'].includes(findRouter?.meta.component as string),
                     customStyle: {
-                        '--el-messagebox-width': '60%',
-                        '--el-dialog-border-radius': '10px'
+                        '--el-messagebox-width': '60%'
                     },
                     customClass: 'el-messagebox-width action-dialog',
                     ...messageProps,
@@ -284,8 +285,9 @@ export const useClick = (options: UseClickOptionsInterface) => {
                         params: {
                             api: options.path,
                             query: options.query,
-                            params: options.props.params,
+                            params: options.props.params
                         },
+                        title:messageProps.title,
                         showSubmitItem: false,
                         showDialogSubmit: true,
                         onConfirm: () => {
@@ -318,7 +320,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     path,
                     query: options.query
                 });
-                reject();
+                reject('close');
                 break;
             case 'link':
                 console.log(options);
@@ -336,7 +338,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     path,
                     query: options.query
                 });
-                reject();
+                reject('close');
                 break;
         }
     });

@@ -26,6 +26,7 @@ $builder->add('example', '', [
     'components' => [
         [
             'name' => 'table',
+            'prop' => 'example',
             'col'=>[
                 'xs' => 24,
                 'sm' => 12,

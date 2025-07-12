@@ -10,11 +10,11 @@ const props = withDefaults(defineProps<{
 	showDialogSubmit?: boolean
 }>(), {
 });
-const emit = defineEmits(['confirm','cannel','loading']);
+const emit = defineEmits(['confirm', 'cannel', 'loading']);
 const loading = ref(true);
 const currentRoute = router.currentRoute.value;
 const infoData = ref<any>({})
-	const formProps = ref<any>({
+const formProps = ref<any>({
 	labelWidth: '200px',
 	labelPosition: 'top',
 	class: 'py-10'
@@ -64,14 +64,10 @@ onBeforeMount(() => {
 		loading.value = false;
 	})
 })
-const submitLoading = ref(false)
-watchEffect(()=>{
-	emit('loading',loading.value||submitLoading.value)
-})
-const emitConfirm=()=>{
+const emitConfirm = () => {
 	emit('confirm');
 }
-const emitCannel=()=>{
+const emitCannel = () => {
 	emit('cannel');
 }
 defineExpose({
@@ -108,7 +104,8 @@ defineExpose({
 		</template>
 		<template #default>
 			<div class="flex submit-item flex-center mb-6" v-if="currentRoute.query.back">
-				<el-button bg text @click="router.push(currentRoute.query.back as string)" :disabled="loading||submitLoading" size="large">
+				<el-button bg text @click="router.push(currentRoute.query.back as string)"
+					:disabled="loading" size="large">
 					返回
 				</el-button>
 				<div class="flex-1">
@@ -125,8 +122,7 @@ defineExpose({
 					v-for="tab in tabs">{{ tab.title }}</div>
 			</div>
 			<el-scrollbar>
-				<el-form ref="formRef"v-if="showForm" :disabled="submitLoading"
-					class="layouts" v-bind="formProps">
+				<el-form ref="formRef" v-if="showForm" class="layouts" v-bind="formProps">
 					<template v-if="formProps.inline">
 						<template v-if="selectedGroup === basicFormName">
 							<inlineRuleComponent v-model="infoData" :rule="rule" />
@@ -155,7 +151,7 @@ defineExpose({
 				</el-form>
 			</el-scrollbar>
 			<div class="flex submit-item pt-10" v-if="showDialogSubmit">
-				<el-button bg text @click="emitCannel" size="large" :disabled="loading||submitLoading">
+				<el-button bg text @click="emitCannel" size="large" :disabled="loading">
 					{{ t('button.cancelText') }}
 				</el-button>
 				<div class="flex-1"></div>

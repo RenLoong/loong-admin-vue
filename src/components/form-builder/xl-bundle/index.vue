@@ -11,17 +11,22 @@ const props = withDefaults(defineProps<{
     multiple?: number,
     view?: string,
     size?: number,
-    customStyle?: string
+    customStyle?: string,
+    disabled?: boolean
 }>(), {
     modelValue: '',
     accept: '',
     multiple: 1,
-    view: 'image'
+    view: 'image',
+    disabled: false
 });
 const emit = defineEmits(['update:modelValue', 'change', 'closed'])
 const uploadRef = ref();
 const dialogVisible = ref(false);
 const open = () => {
+    if (props.disabled) {
+        return;
+    }
     dialogVisible.value = true;
     nextTick(() => {
         getUploadClassify();
@@ -30,20 +35,24 @@ const open = () => {
 }
 const bundleBodyRef = ref();
 const values = ref<string[]>([]);
-watchEffect(() => {
-    if (!props.modelValue) {
-        return values.value = []
-    }
-    if (typeof props.modelValue === 'string') {
-        values.value = [props.modelValue]
-    } else if (Array.isArray(props.modelValue)) {
-        values.value = props.modelValue
-    }
-})
 const selected = ref<any[]>([]);
 const selectedEdit = ref<any[]>([]);
 const fileList = ref<any[]>([]);
 const loadingState = ref(false);
+watchEffect(() => {
+    if (!props.modelValue) {
+        values.value = []
+        selected.value = []
+    } else if (typeof props.modelValue === 'string') {
+        values.value = [props.modelValue]
+        selected.value = [{url: props.modelValue}]
+    } else if (Array.isArray(props.modelValue)) {
+        values.value = props.modelValue
+        if(props.modelValue.length > 0){
+            selected.value = props.modelValue.map((item: string) => ({url: item}))
+        }
+    }
+})
 const search = ref({
     dir_name: 'all',
     accept: props.accept,
@@ -98,6 +107,9 @@ const handelSelected = (item: any) => {
 const dialogPreview = ref(false);
 const dialogImageIndex = ref(0);
 const handleRemove = (index: number) => {
+    if (props.disabled) {
+        return;
+    }
     selected.value.splice(index, 1)
     if (props.multiple === 1) {
         emit('update:modelValue', '')
@@ -357,7 +369,8 @@ defineExpose({
 </script>
 
 <template>
-    <div class="bundle-images-list el-upload-list el-upload-list--picture-card" :style="props.customStyle">
+    <div class="bundle-images-list el-upload-list el-upload-list--picture-card" :style="props.customStyle"
+        :class="{ 'is-disabled': props.disabled }">
         <slot :open="open">
             <div class="el-upload-list__item is-success" @click.stop v-for="(url, index) in values">
                 <img class="el-upload-list__item-thumbnail" :src="url" alt="" v-if="view === 'image'" />
@@ -384,7 +397,7 @@ defineExpose({
             <div class="el-upload el-upload--picture-card" v-if="values.length < props.multiple" @click="open">
                 <div class="flex flex-column flex-center">
                     <el-icon size="20">
-                        <Plus/>
+                        <Plus />
                     </el-icon>
                     <el-text v-if="props.multiple > 1" size="small">
                         {{ values.length }}/{{ props.multiple }}
@@ -451,8 +464,8 @@ defineExpose({
                     <el-button type="success">{{ t('button.uploadText') }}</el-button>
                 </uploads>
                 <permissions name="Uploads/updateUploads">
-                    <el-button type="primary" v-if="isEdit"
-                        @click="isEdit = false">{{ t('button.completeText') }}</el-button>
+                    <el-button type="primary" v-if="isEdit" @click="isEdit = false">{{ t('button.completeText')
+                        }}</el-button>
                     <el-button v-else @click="isEdit = true">{{ t('button.manageText') }}</el-button>
                     <el-button v-if="isEdit">{{ t('button.allSelectText') }}</el-button>
                 </permissions>
@@ -462,7 +475,7 @@ defineExpose({
                 <permissions name="Uploads/updateUploads">
                     <el-button type="warning" :disabled="selectedEdit.length <= 0" @click="updateUploads">{{
                         t('button.moveText')
-                        }}</el-button>
+                    }}</el-button>
                 </permissions>
                 <permissions name="Uploads/deleteUploads">
                     <el-button type="danger" :disabled="selectedEdit.length <= 0" @click="deleteUploads">

@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<{
     params?: any
 }>(), {
 });
+const emit = defineEmits(['cannel']);
 const loading = ref(true);
 const action = ref<any>([]);
 const tabs = ref<any>([]);
@@ -81,7 +82,11 @@ const handleAction = (group: any, row: any) => {
     };
     useClick(options).then(() => {
         getDetails();
-    }).catch(() => { })
+    }).catch((val: any) => {
+        if (val === 'close') {
+            emit('cannel');
+        }
+    })
 }
 const contentScrollTop=ref(0);
 const contentScrollRef=ref();

@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<{
     label: '',
     yesterday_label: '',
 });
-console.log(props);
+const emit = defineEmits(['cannel']);
 const value = ref<dataType>({
     today: 0
 });
@@ -84,7 +84,11 @@ const handleAction = () => {
         data: {}
     };
     useClick(options).then(() => {
-    }).catch(() => { })
+    }).catch((val: any) => {
+        if (val === 'close') {
+            emit('cannel');
+        }
+    })
 }
 defineExpose({
     update

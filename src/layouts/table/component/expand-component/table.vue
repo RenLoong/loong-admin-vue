@@ -4,12 +4,12 @@ import { useClick } from "@/common/functions/action";
 import columnComponent from '../column.vue'
 const props = withDefaults(defineProps<{
     component: any,
-    row:any,
-    prop:any
+    row:any
 }>(), {
     component: {}
 });
-const tableData = ref<any[]>(props.row[props.prop]);
+const emit = defineEmits(['cannel']);
+const tableData = ref<any[]>(props.row[props.component.prop]);
 const updateTableDataValue = (scope: any, value: any) => {
     tableData.value[scope.$index][scope.column.property] = value;
 }
@@ -33,7 +33,11 @@ const handleAction = (group: any, row: any) => {
         data: row
     };
     useClick(options).then(() => {
-    }).catch(() => { })
+    }).catch((val: any) => {
+        if (val === 'close') {
+            emit('cannel');
+        }
+    })
 }
 </script>
 <template>
