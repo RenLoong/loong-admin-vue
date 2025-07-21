@@ -271,4 +271,6 @@ a {
 .el-table td.el-table__cell .cell{
     display: flex;
     align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
 }

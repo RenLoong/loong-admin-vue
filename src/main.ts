@@ -8,15 +8,21 @@ import App from './App.vue'
 import { createPinia } from 'pinia'
 const pinia = createPinia()
 import router from "@/routers";
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import * as LucideIcons from 'lucide-vue-next';
 import NumberScrollDirective from "@/common/functions/numberScroll";
 import zhCn from 'element-plus/es/locale/lang/zh-cn';
 const app = createApp(App)
+for (const [key, component] of Object.entries(LucideIcons)) {
+    if (typeof component === 'function' && component.name) {
+        app.component(key, component as any)
+    }
+}
+
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
 import XlIconsVue from "@/components/xl-icon";
-import { i18n } from './locale';
 for (const [key, component] of Object.entries(XlIconsVue)) {
     app.component(key, component)
 }
@@ -25,6 +31,7 @@ app.component('xl-prompt',XlPrompt);
 // 全局数字滚动效果指令
 app.use(NumberScrollDirective);
 app.use(ElementPlus, { locale: zhCn });
+import { i18n } from './locale';
 app.use(i18n);
 app.use(pinia);
 app.use(router);
