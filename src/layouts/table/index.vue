@@ -249,7 +249,7 @@ const handleSelectionChange = (val: any[]) => {
 			<template #description>
 				<div class="flex flex-column">
 					<span>{{ resFail.msg }}</span>
-					<xl-code lang="json" height="400px">{{ resFail.data }}</xl-code>
+					<xl-code lang="json" height="400px" v-if="resFail.data&&resFail.data.length>0">{{ resFail.data }}</xl-code>
 				</div>
 			</template>
 			<el-button type="primary" @click="router.go(-1)">上一页</el-button>

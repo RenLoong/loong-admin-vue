@@ -481,9 +481,12 @@ export const parseRules = (rules: any, rule: any, group?: string, form?: any) =>
  * @example truncate('abcdefg',3)=>'abc'
  * @example truncate('你好，世界！',1)=>'你'
  */
-export function truncate(str: string, length: number): string {
+export function truncate(str: string, length: number, start: number = 0): string {
     if (!str) return '';
-    return str.slice(0, length);
+    // 如果长度大于字符串长度，则返回字符串
+    if (length >= str.length) return str;
+    // 如果取值不完整，则返回截取后的字符串
+    return [...str].slice(start, start + length).join('');
 }
 /**
  * 递归取值

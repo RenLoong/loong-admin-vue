@@ -8,13 +8,13 @@ import App from './App.vue'
 import { createPinia } from 'pinia'
 const pinia = createPinia()
 import router from "@/routers";
-import * as LucideIcons from 'lucide-vue-next';
 import NumberScrollDirective from "@/common/functions/numberScroll";
 import zhCn from 'element-plus/es/locale/lang/zh-cn';
 const app = createApp(App)
+import * as LucideIcons from 'lucide-vue-next';
 for (const [key, component] of Object.entries(LucideIcons)) {
-    if (typeof component === 'function' && component.name) {
-        app.component(key, component as any)
+    if (typeof component === 'function') {
+        app.component(`Lucide${key}`, component as any)
     }
 }
 

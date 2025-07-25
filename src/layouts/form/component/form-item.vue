@@ -153,7 +153,8 @@ onUnmounted(() => {
             </template>
             <template v-else-if="['tags'].includes(item.component)">
                 <template v-for="(tag, tagIndex) in item.extra.options" :key="tagIndex">
-                    <el-tag v-if="form[item.field] === tag.value" v-bind="{...item.extra.props, ...tag.props}">{{ tag.label }}
+                    <el-tag v-if="form[item.field] === tag.value" v-bind="{ ...item.extra.props, ...tag.props }">{{
+                        tag.label }}
                     </el-tag>
                 </template>
             </template>
@@ -161,6 +162,11 @@ onUnmounted(() => {
                 <div>
                     <component :is="'el-' + item.component" v-bind="item.extra.props" :src="form[item.field]">
                     </component>
+                </div>
+            </template>
+            <template v-else-if="item.component === 'compute'">
+                <div>
+                    <xl-compute :data="form" v-bind="item.extra.props" />
                 </div>
             </template>
             <!-- 信息展示类 -->

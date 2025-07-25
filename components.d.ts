@@ -89,6 +89,7 @@ declare module '@vue/runtime-core' {
     XlBundle: typeof import('./src/components/form-builder/xl-bundle/index.vue')['default']
     XlCode: typeof import('./src/components/form-builder/xl-code/index.vue')['default']
     XlCol: typeof import('./src/components/xl-col/index.vue')['default']
+    XlCompute: typeof import('./src/components/form-builder/xl-compute/index.vue')['default']
     XlCopy: typeof import('./src/components/form-builder/xl-copy/index.vue')['default']
     XlCountdown: typeof import('./src/components/form-builder/xl-countdown/index.vue')['default']
     XlDomain: typeof import('./src/components/data-builder/xl-domain/index.vue')['default']
