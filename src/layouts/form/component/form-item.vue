@@ -67,7 +67,7 @@ const remoteMethod = (query: string) => {
         }, 300);
     } else {
         loading.value = false
-        options.value = [];
+        options.value = item.value?.extra.options;
     }
 }
 const autocompleteRemoteMethod = (query: string, cb: (arg: any) => void) => {

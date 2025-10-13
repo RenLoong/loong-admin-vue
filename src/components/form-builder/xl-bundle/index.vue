@@ -59,6 +59,7 @@ const search = ref({
     page: 1,
     limit: 24,
     total: 0,
+    channels: ''
 });
 const getList = () => {
     if (loadingState.value) return;
@@ -222,11 +223,14 @@ const getUploadClassify = () => {
     })
 }
 const uploadForm = ref({
-    dir_name: 'all'
+    dir_name: 'all',
+    channels: ''
 });
 const selectedClassify = (item: ClassifyInterface) => {
     uploadForm.value.dir_name = item.dir_name;
+    uploadForm.value.channels = item.channels;
     search.value.dir_name = item.dir_name;
+    search.value.channels = item.channels;
     isEdit.value = false;
     getList();
 }
@@ -425,7 +429,7 @@ defineExpose({
         </template>
         <div class="categrory">
             <div v-for="(item, index) in classify" :index="index" class="categrory-item"
-                :class="{ 'active': item.dir_name === uploadForm.dir_name }" @click="selectedClassify(item)">
+                :class="{ 'active': item.dir_name === uploadForm.dir_name&&item.channels===uploadForm.channels }" @click="selectedClassify(item)">
                 <el-icon color="#FBAC15">
                     <FolderOpened />
                 </el-icon>

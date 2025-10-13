@@ -3,7 +3,9 @@
     gap: 10px;
     --el-upload-list-picture-card-height:var(--el-upload-list-picture-card-size);
     --el-upload-list-picture-card-width:var(--el-upload-list-picture-card-size);
-    .el-upload--picture-card,.el-upload-list__item{
+    
+    &.el-upload-list--picture-card .el-upload-list__item,
+    .el-upload-list__item{
         margin:0;
         height: var(--el-upload-list-picture-card-height);
         width: var(--el-upload-list-picture-card-width);

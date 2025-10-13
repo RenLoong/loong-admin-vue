@@ -86,7 +86,7 @@ export default defineConfig((ConfigEnv:ConfigEnv) => {
 		// base: '/control',
 		server: {
 			open: true,
-			port: 1224,
+			port: 5173,
 			// 接口代理（解决跨域）
 			proxy: {
 				"/local": {

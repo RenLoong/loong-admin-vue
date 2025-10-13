@@ -1,7 +1,7 @@
 {
   "name": "cloud-vue",
   "private": true,
-  "version": "0.0.82",
+  "version": "0.0.86",
   "type": "module",
   "scripts": {
     "dev": "vite --mode development --host 0.0.0.0",
@@ -21,7 +21,7 @@
     "element-plus": "^2.10.1",
     "highlight.js": "^11.8.0",
     "isomorphic-dompurify": "^1.8.0",
-    "lucide-vue-next": "^0.525.0",
+    "lucide-vue-next": "^0.544.0",
     "marked": "^9.0.3",
     "marked-highlight": "^2.0.6",
     "mathjs": "^14.5.3",

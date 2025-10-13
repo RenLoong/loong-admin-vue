@@ -199,7 +199,7 @@ defineExpose({
 						<el-text v-bind="examineProps.old">{{ examineProps.old?.label??'原始数据' }}</el-text>
 					</div>
 					<el-scrollbar ref="examineOldRef" @scroll="scroll" class="flex-1" v-if="examineOldData">
-						<examine-data :rule="examineRule" v-model="examineValue" :data="examineOldData"></examine-data>
+						<examine-data group="old" :rule="examineRule" v-model="examineValue" :data="examineOldData"></examine-data>
 					</el-scrollbar>
 					<el-empty :description="`暂无${examineProps.old?.label??'原始数据'}`" v-else class="flex-1"></el-empty>
 				</el-splitter-panel>
@@ -208,7 +208,7 @@ defineExpose({
 						<el-text v-bind="examineProps.new">{{ examineProps.new?.label??'新数据' }}</el-text>
 					</div>
 					<el-scrollbar ref="examineNewRef" @scroll="scroll" class="flex-1" v-if="examineNewData">
-						<examine-data :rule="examineRule" v-model="examineValue" :data="examineNewData" :data1="examineOldData"></examine-data>
+						<examine-data group="new" :rule="examineRule" v-model="examineValue" :data="examineNewData" :data1="examineOldData"></examine-data>
 					</el-scrollbar>
 					<el-empty :description="`暂无${examineProps.new?.label??'新数据'}`" v-else class="flex-1"></el-empty>
 				</el-splitter-panel>

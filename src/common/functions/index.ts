@@ -348,23 +348,38 @@ export const hasWhere = (extra: any, form: any): boolean => {
     // 把每一种比较集中到一个函数里，便于复用
     const match = (field: string, exp: string, value: any): boolean => {
         const formValue = getTableValue(form, field);
-
-        switch (exp) {
-            case '=':          return formValue === value;
-            case '!=':         return formValue !== value;
-            case '>':          return formValue >  value;
-            case '>=':         return formValue >= value;
-            case '<':          return formValue <  value;
-            case '<=':         return formValue <= value;
-            case 'in':         return Array.isArray(value) && value.includes(formValue);
-            case 'not in':     return Array.isArray(value) && !value.includes(formValue);
-            case 'like':       return typeof formValue === 'string' && formValue.includes(value);
-            case 'not like':   return typeof formValue === 'string' && !formValue.includes(value);
-            case 'between':    return formValue >= value[0] && formValue <= value[1];
-            case 'not between':return formValue <  value[0] ||  formValue >  value[1];
-            case 'null':       return formValue === null;
-            case 'not null':   return formValue !== null;
-            default:           return false;
+        if(Array.isArray(formValue)&&Array.isArray(value)){
+            switch (exp) {
+                case '=':          return value.every(item=>formValue.includes(item));
+                case '!=':         return !value.every(item=>formValue.includes(item));
+                case 'in':         return value.some(item=>formValue.includes(item));
+                case 'not in':     return !value.some(item=>formValue.includes(item));
+                default:           return false;
+            }
+        }else if(Array.isArray(formValue)){
+            switch (exp) {
+                case 'in':         return formValue.includes(value);
+                case 'not in':     return !formValue.includes(value);
+                default:           return false;
+            }
+        }else{
+            switch (exp) {
+                case '=':          return formValue === value;
+                case '!=':         return formValue !== value;
+                case '>':          return formValue >  value;
+                case '>=':         return formValue >= value;
+                case '<':          return formValue <  value;
+                case '<=':         return formValue <= value;
+                case 'in':         return Array.isArray(value) && value.includes(formValue);
+                case 'not in':     return Array.isArray(value) && !value.includes(formValue);
+                case 'like':       return typeof formValue === 'string' && formValue.includes(value);
+                case 'not like':   return typeof formValue === 'string' && !formValue.includes(value);
+                case 'between':    return formValue >= value[0] && formValue <= value[1];
+                case 'not between':return formValue <  value[0] ||  formValue >  value[1];
+                case 'null':       return formValue === null;
+                case 'not null':   return formValue !== null;
+                default:           return false;
+            }
         }
     };
 
