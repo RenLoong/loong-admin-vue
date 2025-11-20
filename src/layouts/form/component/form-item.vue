@@ -172,6 +172,9 @@ onUnmounted(() => {
             <!-- 信息展示类 -->
 
             <!-- 自定义表单类 -->
+            <template v-else-if="item.component === 'drag-sort'">
+                <xl-drag-sort v-model="form[item.field]" :items="item.extra.options" v-bind="item.extra.props" />
+            </template>
             <template v-else-if="item.component === 'cascader'">
                 <el-cascader v-model="form[item.field]" :options="item.extra.options" v-bind="item.extra.props" />
             </template>

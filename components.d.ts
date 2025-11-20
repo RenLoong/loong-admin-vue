@@ -93,6 +93,7 @@ declare module '@vue/runtime-core' {
     XlCopy: typeof import('./src/components/form-builder/xl-copy/index.vue')['default']
     XlCountdown: typeof import('./src/components/form-builder/xl-countdown/index.vue')['default']
     XlDomain: typeof import('./src/components/data-builder/xl-domain/index.vue')['default']
+    XlDragSort: typeof import('./src/components/form-builder/xl-drag-sort/index.vue')['default']
     XlEcharts: typeof import('./src/components/data-builder/xl-echarts/index.vue')['default']
     XlMarkedEditor: typeof import('./src/components/form-builder/xl-marked-editor/index.vue')['default']
     XlMarkedText: typeof import('./src/components/form-builder/xl-marked-text/index.vue')['default']
