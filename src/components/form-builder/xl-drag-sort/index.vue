@@ -64,7 +64,7 @@ const dragEnd = () => {
     <div v-for="(item, index) in localItems" :key="item.value" draggable="true" @dragstart="dragStart($event, index)"
         @dragenter="dragEnter($event, index)" @dragover="dragOver" @dragend="dragEnd">
         <slot :item="item" :index="index" :drag-index="dragIndex">
-            <div class="flex">
+            <div class="flex flex-y-center">
                 <el-icon class="nav-drag" :class="{ moveing: dragIndex !== undefined }">
                     <Rank />
                 </el-icon>
