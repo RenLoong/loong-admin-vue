@@ -101,6 +101,7 @@ declare module '@vue/runtime-core' {
     XlQrcode: typeof import('./src/components/form-builder/xl-qrcode/index.vue')['default']
     XlRow: typeof import('./src/components/xl-row/index.vue')['default']
     XlStatistic: typeof import('./src/components/data-builder/xl-statistic/index.vue')['default']
+    XlTableAction: typeof import('./src/components/table-builder/xl-table-action/index.vue')['default']
     XlTableColumnForm: typeof import('./src/components/table-builder/xl-table-column-form/index.vue')['default']
     XlTableTimes: typeof import('./src/components/table-builder/xl-table-times/index.vue')['default']
     XlTableUserinfo: typeof import('./src/components/table-builder/xl-table-userinfo/index.vue')['default']

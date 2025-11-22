@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<{
     rule: [],
     group: ''
 });
-const emit = defineEmits(['cannel']);
+const emit = defineEmits(['cannel','update:modelValue']);
 interface RuleInterface {
     title: string;
     field: string;
@@ -25,6 +25,9 @@ watchEffect(() => {
         form.value = props.modelValue;
     }
 });
+watch(form, (newVal) => {
+    emit('update:modelValue', newVal)
+})
 watchEffect(() => {
     if (props.rule) {
         rule.value = props.rule;

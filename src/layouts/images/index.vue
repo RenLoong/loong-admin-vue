@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { $http } from '@/common';
-import { getTableValue, hasWhere, parseRules } from '@/common/functions';
+import { getTableValue, parseRules } from '@/common/functions';
 import router from '@/routers';
 import { useClick } from '@/common/functions/action';
 import ruleComponent from '@/layouts/form/component/rule.vue'
@@ -111,33 +111,6 @@ const onSubmit = () => {
 	search.value.page = 1;
 	getList();
 }
-const handleAction = (group: any, row: any) => {
-	if (!group.extra) return;
-	let query = {
-		...group.extra.params
-	};
-	if (group.extra.field) {
-		for (let key in group.extra.field) {
-			query[group.extra.field[key]] = row[key];
-		}
-	} else {
-		query.id = row.id;
-	}
-	const options = {
-		model: group.extra.model,
-		props: group.extra.props,
-		path: group.extra.path,
-		query,
-		data: row
-	};
-	useClick(options).then(() => {
-		getList();
-	}).catch((val: any) => {
-		if (val === 'close') {
-			emit('cannel');
-		}
-	})
-}
 const handleFooter = (group: any) => {
 	if (!group.extra) return;
 	if (multipleSelection.value.length <= 0) {
@@ -241,7 +214,8 @@ const download = (item: any) => {
 			<template #description>
 				<div class="flex flex-column">
 					<span>{{ resFail.msg }}</span>
-					<xl-code lang="json" height="400px" v-if="resFail.data&&resFail.data.length>0">{{ resFail.data }}</xl-code>
+					<xl-code lang="json" height="400px" v-if="resFail.data && resFail.data.length > 0">{{ resFail.data
+						}}</xl-code>
 				</div>
 			</template>
 			<el-button type="primary" @click="router.go(-1)">上一页</el-button>
@@ -328,16 +302,8 @@ const download = (item: any) => {
 										<el-icon @click="download(item)">
 											<Download />
 										</el-icon>
-										<template v-for="(group, _index) in action" :index="_index">
-											<permissions :name="group.extra.path">
-												<component :is="`el-${group.extra.component.name}`"
-													v-bind="group.extra.component.props"
-													v-if="hasWhere(group.extra, item)"
-													@click.stop="handleAction(group, item)">
-													{{ group.label }}
-												</component>
-											</permissions>
-										</template>
+										<xl-table-action :action="action" :item="item" @success="getList"
+											@cannel="emit('cannel')" />
 									</template>
 								</el-image>
 								<div class="image-item-mask" @click.stop>
@@ -357,16 +323,8 @@ const download = (item: any) => {
 										</template>
 										<div class="flex-1"></div>
 										<div class="btn-group flex-x-flex-end">
-											<template v-for="(group, _index) in action" :index="_index">
-												<permissions :name="group.extra.path">
-													<component :is="`el-${group.extra.component.name}`"
-														v-bind="group.extra.component.props"
-														v-if="hasWhere(group.extra, item)"
-														@click.stop="handleAction(group, item)">
-														{{ group.label }}
-													</component>
-												</permissions>
-											</template>
+											<xl-table-action :action="action" :item="item" @success="getList"
+												@cannel="emit('cannel')" />
 										</div>
 									</div>
 								</div>
@@ -450,7 +408,8 @@ const download = (item: any) => {
 			justify-content: space-between;
 			backdrop-filter: blur(10px);
 			border-radius: 10px;
-			:deep(.el-checkbox .el-checkbox__label){
+
+			:deep(.el-checkbox .el-checkbox__label) {
 				overflow: hidden;
 			}
 		}

@@ -8,7 +8,7 @@ import { i18n } from '@/locale';
 import { getTableValue } from '.';
 const { t } = i18n.global;
 interface UseClickOptionsInterface {
-    model: '' | 'redirect' | 'link' | 'comfirm' | 'dialog' | 'dialogTable' | 'Lock' | 'Search' | 'Notification' | 'FullScreen' | 'OutLogin';
+    model: '' | 'redirect' | 'link' | 'comfirm' | 'dialog' | 'dialogTable' | 'Lock' | 'Search' | 'Notification' | 'FullScreen' | 'OutLogin' | 'request';
     path: string;
     props?: any;
     data?: any;
@@ -252,6 +252,19 @@ export const useClick = (options: UseClickOptionsInterface) => {
                 }).then(() => {
                 }).catch(() => { })
                 break;
+            case 'request':
+                $http.post(options.path, options.query).then((res: any) => {
+                    if (res.code === $http.ResponseCode.SUCCESS) {
+                        ElMessage.success(res.msg);
+                        resolve(res.data);
+                    } else {
+                        reject();
+                        ElMessage.error(res.msg);
+                    }
+                }).catch(() => {
+                    reject();
+                })
+                break;
             case 'dialog':
                 if (messageProps.title) {
                     const matches = [...messageProps.title.matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
@@ -267,7 +280,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                     }
                 }
                 const findRouter = router.getRoutes().find((item) => item.path === path);
-                const loading=ref();
+                const loading = ref();
                 const ElMessageBoxOptions = {
                     title: t('message.title'),
                     cancelButtonText: t('button.cancelText'),
@@ -287,7 +300,7 @@ export const useClick = (options: UseClickOptionsInterface) => {
                             query: options.query,
                             params: options.props.params
                         },
-                        title:messageProps.title,
+                        title: messageProps.title,
                         showSubmitItem: false,
                         showDialogSubmit: true,
                         onConfirm: () => {
@@ -300,12 +313,12 @@ export const useClick = (options: UseClickOptionsInterface) => {
                             // ElMessageBox.close();
                             ElMessageBoxOptions.onVanish?.()
                         },
-                        onLoading:(val:boolean)=>{
-                            loading.value=val;
+                        onLoading: (val: boolean) => {
+                            loading.value = val;
                         }
                     }),
                     beforeClose: (_action: any, _instance: any, done: any) => {
-                        if(loading.value)return;
+                        if (loading.value) return;
                         done();
                         reject();
                     }

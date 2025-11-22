@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<{
     rule: [],
     group: ''
 });
-const emit = defineEmits(['cannel']);
+const emit = defineEmits(['cannel', 'update:modelValue']);
 interface RuleInterface {
     title: string;
     field: string;
@@ -25,12 +25,15 @@ watchEffect(() => {
         form.value = props.modelValue;
     }
 });
+watch(form, (newVal) => {
+    emit('update:modelValue', newVal)
+})
 watchEffect(() => {
     if (props.rule) {
         rule.value = props.rule;
     }
 });
-const handleAction = ({group, field}:{group: any, field: any}) => {
+const handleAction = ({ group, field }: { group: any, field: any }) => {
     if (!group.extra) return;
     let query = {
         ...group.extra.params,
@@ -66,11 +69,10 @@ const handleAction = ({group, field}:{group: any, field: any}) => {
     <el-row :gutter="20">
         <template v-for="(item, index) in rule">
             <el-col v-bind="item.extra?.col">
-                <info-item :item="item" v-model="form" :group="props.group" :key="index" @action="handleAction"/>
+                <info-item :item="item" v-model="form" :group="props.group" :key="index" @action="handleAction" />
             </el-col>
         </template>
     </el-row>
 </template>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

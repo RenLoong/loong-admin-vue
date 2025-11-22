@@ -6,6 +6,7 @@ interface RuleInterface {
     component: string;
     extra?: any;
     children: any;
+    action?: any;
 }
 const props = withDefaults(defineProps<{
     modelValue: any
@@ -33,7 +34,7 @@ const prop = (field: string) => {
     }
     return field;
 }
-const emit = defineEmits(['action']);
+const emit = defineEmits(['action','update:modelValue']);
 const handleAction = (group: any, field: any, _e: any) => {
     emit('action', {
         group,
@@ -128,6 +129,19 @@ const elProps = computed(() => {
     }
     return item.value.extra.props;
 })
+const handleResultAction = (res: any) => {
+    if (res.callback) {
+        switch (res.callback) {
+            case 'append':
+                form.value = {
+                    ...form.value,
+                    ...res.data
+                }
+                emit('update:modelValue', form.value)
+                break;
+        }
+    }
+}
 onUnmounted(() => {
     if (timer) clearTimeout(timer)
 })
@@ -248,6 +262,10 @@ onUnmounted(() => {
                     </template>
                 </component>
             </template>
+            <!-- 操作组 -->
+            <div v-if="item.action" v-bin>
+                <xl-table-action :action="item.action.extra.group" :item="form" @success="handleResultAction" />
+            </div>
             <!-- 常规表单类 -->
             <div class="flex flex-column grid-gap-2 line-height-1 mt-4" v-if="item.extra.prompt">
                 <xl-prompt :prompt="item.extra.prompt"></xl-prompt>

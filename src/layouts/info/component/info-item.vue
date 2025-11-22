@@ -6,6 +6,7 @@ interface RuleInterface {
     component: string;
     extra?: any;
     children: any;
+    action?: any;
 }
 const props = withDefaults(defineProps<{
     modelValue: any
@@ -27,7 +28,7 @@ watchEffect(() => {
         item.value = props.item;
     }
 });
-const emit = defineEmits(['action']);
+const emit = defineEmits(['action','update:modelValue']);
 const getComponentProps = (component: any, value: any, index?: number) => {
     let props = {
         ...component.props
@@ -53,6 +54,19 @@ const getComponentValue = (component: any, value: any) => {
     }
     return result;
 }
+const handleResultAction = (res: any) => {
+    if (res.callback) {
+        switch (res.callback) {
+            case 'append':
+                data.value = {
+                    ...data.value,
+                    ...res.data
+                }
+                emit('update:modelValue', data.value)
+                break;
+        }
+    }
+}
 onUnmounted(() => {
 })
 </script>
@@ -71,19 +85,22 @@ onUnmounted(() => {
             </template>
             <template v-else-if="['text', 'link', 'tag'].includes(item.component)">
                 <div>
-                    <component :is="'el-' + item.component" v-bind="item.extra.props">{{ getTableValue(data, item.field) }}
+                    <component :is="'el-' + item.component" v-bind="item.extra.props">{{ getTableValue(data, item.field)
+                        }}
                     </component>
                 </div>
             </template>
             <template v-else-if="['tags'].includes(item.component)">
                 <template v-for="(tag, tagIndex) in item.extra.options" :key="tagIndex">
-                    <el-tag v-if="getTableValue(data, item.field) === tag.value" v-bind="{...item.extra.props, ...tag.props}">{{ tag.label }}
+                    <el-tag v-if="getTableValue(data, item.field) === tag.value"
+                        v-bind="{ ...item.extra.props, ...tag.props }">{{ tag.label }}
                     </el-tag>
                 </template>
             </template>
             <template v-else-if="['image', 'avatar'].includes(item.component)">
                 <div>
-                    <component :is="'el-' + item.component" v-bind="item.extra.props" :src="getTableValue(data, item.field)">
+                    <component :is="'el-' + item.component" v-bind="item.extra.props"
+                        :src="getTableValue(data, item.field)">
                     </component>
                 </div>
             </template>
@@ -108,6 +125,9 @@ onUnmounted(() => {
                     {{ getComponentValue(item.extra, getTableValue(data, item.field)) }}
                 </component>
             </template>
+            <div v-if="item.action">
+                <xl-table-action :action="item.action.extra.group" :item="data" @success="handleResultAction" />
+            </div>
             <!-- 常规表单类 -->
             <div class="flex flex-column grid-gap-2 line-height-1 mt-4" v-if="item.extra.prompt">
                 <xl-prompt :prompt="item.extra.prompt"></xl-prompt>
