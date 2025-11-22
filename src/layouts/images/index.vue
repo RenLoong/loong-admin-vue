@@ -215,7 +215,7 @@ const download = (item: any) => {
 				<div class="flex flex-column">
 					<span>{{ resFail.msg }}</span>
 					<xl-code lang="json" height="400px" v-if="resFail.data && resFail.data.length > 0">{{ resFail.data
-						}}</xl-code>
+					}}</xl-code>
 				</div>
 			</template>
 			<el-button type="primary" @click="router.go(-1)">上一页</el-button>
@@ -302,8 +302,10 @@ const download = (item: any) => {
 										<el-icon @click="download(item)">
 											<Download />
 										</el-icon>
-										<xl-table-action :action="action" :item="item" @success="getList"
-											@cannel="emit('cannel')" />
+										<div v-if="action" v-bind="item.extra.props" class="table-group">
+											<xl-table-action :action="action" :item="item" @success="getList"
+												@cannel="emit('cannel')" />
+										</div>
 									</template>
 								</el-image>
 								<div class="image-item-mask" @click.stop>

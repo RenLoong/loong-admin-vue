@@ -209,9 +209,9 @@ a {
 }
 
 .action-dialog {
-  --el-dialog-border-radius:10px;
-  --el-messagebox-font-size:14px;
-  --max-height:calc(100vh - 32px);
+  --el-dialog-border-radius: 10px;
+  --el-messagebox-font-size: 14px;
+  --max-height: calc(100vh - 32px);
   max-height: var(--max-height);
 }
 
@@ -315,5 +315,18 @@ a {
   gap: 6px;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+}
+
+.table-group {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  gap: 10px;
+}
+
+.table-group .el-button + .el-button {
+  margin: 0;
 }
 /*# sourceMappingURL=style.css.map */

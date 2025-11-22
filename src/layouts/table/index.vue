@@ -362,15 +362,6 @@ const handleSelectionChange = (val: any[]) => {
 	}
 }
 
-.table-group {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-
-	.el-button+.el-button {
-		margin: 0;
-	}
-}
 
 .table-screen {
 	display: grid;

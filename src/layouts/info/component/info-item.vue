@@ -125,7 +125,7 @@ onUnmounted(() => {
                     {{ getComponentValue(item.extra, getTableValue(data, item.field)) }}
                 </component>
             </template>
-            <div v-if="item.action">
+            <div v-if="item.action" v-bind="item.extra.props" class="table-group">
                 <xl-table-action :action="item.action.extra.group" :item="data" @success="handleResultAction" />
             </div>
             <!-- 常规表单类 -->

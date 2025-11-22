@@ -13,6 +13,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits(['cannel', 'success']);
 const handleAction = (group: any, row: any) => {
     if (!group.extra) return;
+    group.extra.loading = true;
     let query = {
         ...group.extra.params
     };
@@ -43,6 +44,8 @@ const handleAction = (group: any, row: any) => {
         if (val === 'close') {
             emit('cannel');
         }
+    }).finally(() => {
+        group.extra.loading = false;
     })
 }
 </script>
@@ -50,7 +53,8 @@ const handleAction = (group: any, row: any) => {
     <template v-for="(group, _index) in props.action" :index="_index">
         <permissions :name="group.extra.path">
             <component :is="`el-${group.extra.component.name}`" v-bind="group.extra.component.props"
-                v-if="hasWhere(group.extra, props.item)" @click.stop="handleAction(group, props.item)">
+                :loading="group.extra.loading" v-if="hasWhere(group.extra, props.item)"
+                @click.stop="handleAction(group, props.item)">
                 {{ group.label }}
             </component>
         </permissions>

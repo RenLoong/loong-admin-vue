@@ -200,18 +200,21 @@ a {
 }
 
 .action-dialog {
-    --el-dialog-border-radius:10px;
-    --el-messagebox-font-size:14px;
-    --max-height:calc(100vh - 32px);
+    --el-dialog-border-radius: 10px;
+    --el-messagebox-font-size: 14px;
+    --max-height: calc(100vh - 32px);
     max-height: var(--max-height);
+
     .el-message-box__header {
         padding: 20px;
         margin-right: 0;
-        .el-message-box__title{
+
+        .el-message-box__title {
             font-weight: 600;
         }
-        .el-message-box__headerbtn{
-            top:26px;
+
+        .el-message-box__headerbtn {
+            top: 26px;
             right: 12px;
         }
     }
@@ -221,10 +224,12 @@ a {
         flex-direction: column;
         padding: 20px;
         max-height: calc(var(--max-height) - 24px - 64px);
-        .el-scrollbar{
+
+        .el-scrollbar {
             display: flex;
             flex-direction: column;
-            .el-form.layouts{
+
+            .el-form.layouts {
                 padding-top: 0px;
             }
         }
@@ -233,10 +238,12 @@ a {
     .el-dialog__body .item-label {
         width: 140px;
     }
-    .el-message-box__btns{
+
+    .el-message-box__btns {
         display: none;
     }
 }
+
 .full-action-dialog {
     height: var(--max-height);
 
@@ -244,33 +251,48 @@ a {
         height: calc(var(--max-height) - 24px - 64px);
     }
 }
-.el-form{
-    .none-label{
-        .el-form-item__label{
+
+.el-form {
+    .none-label {
+        .el-form-item__label {
             display: none !important;
         }
     }
-    .el-form-item__content{
+
+    .el-form-item__content {
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
     }
-    .submit-item{
-        .el-form-item__content{
+
+    .submit-item {
+        .el-form-item__content {
             flex-direction: row;
             justify-content: flex-start;
             align-items: center;
         }
     }
 }
-.el-select{
-    .el-select-dropdown__item{
+
+.el-select {
+    .el-select-dropdown__item {
         height: auto;
     }
 }
-.el-table td.el-table__cell .cell{
+
+.el-table td.el-table__cell .cell {
     display: flex;
     align-items: center;
     gap: 6px;
     flex-wrap: wrap;
+}
+
+.table-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .el-button+.el-button {
+        margin: 0;
+    }
 }
