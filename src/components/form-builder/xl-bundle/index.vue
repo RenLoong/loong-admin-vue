@@ -497,5 +497,5 @@ defineExpose({
     </el-dialog>
 </template>
 <style lang="scss">
-@use '@/assets/css/index.min.css';
+@use '@/assets/css/bundle.min.css';
 </style>

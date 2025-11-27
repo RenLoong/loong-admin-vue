@@ -302,7 +302,7 @@ const download = (item: any) => {
 										<el-icon @click="download(item)">
 											<Download />
 										</el-icon>
-										<div v-if="action" v-bind="item.extra.props" class="table-group">
+										<div v-if="action" class="table-group">
 											<xl-table-action :action="action" :item="item" @success="getList"
 												@cannel="emit('cannel')" />
 										</div>

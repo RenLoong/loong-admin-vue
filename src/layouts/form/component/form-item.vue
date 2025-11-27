@@ -263,7 +263,7 @@ onUnmounted(() => {
                 </component>
             </template>
             <!-- 操作组 -->
-            <div v-if="item.action" v-bind="item.extra.props" class="table-group">
+            <div v-if="item.action" v-bind="item.action?.extra?.props" class="table-group">
                 <xl-table-action :action="item.action.extra.group" :item="form" @success="handleResultAction" />
             </div>
             <!-- 常规表单类 -->
