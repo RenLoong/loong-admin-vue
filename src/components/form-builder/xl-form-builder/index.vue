@@ -44,9 +44,8 @@ const handleEdit = (index: number, row: any) => {
     subForm.value = JSON.parse(JSON.stringify(row));
     dialogVisible.value = true;
 }
-const handleDelete = (row: any) => {
-    form.value = form.value.filter((item: any) => item.id !== row.id);
-    resetForm();
+const handleDelete = (index: number) => {
+    form.value.splice(index, 1);
     emit("update:modelValue", form.value)
 }
 const onSubmit = () => {
@@ -60,9 +59,8 @@ const onSubmit = () => {
                 form.value.push(JSON.parse(JSON.stringify(subForm.value)));
             }
             emit("update:modelValue", form.value)
-            resetForm();
-            dialogVisible.value = false;
             editIndex = undefined;
+            resetForm(() => { });
         } else {
             for (const key in fields) {
                 if (Object.prototype.hasOwnProperty.call(fields, key)) {
@@ -75,9 +73,12 @@ const onSubmit = () => {
         }
     })
 }
-const resetForm = () => {
+const resetForm = (done: () => void) => {
     formRef.value?.resetFields();
+    subForm.value = props.rule.form;
     submitLoading.value = false;
+    dialogVisible.value = false;
+    done();
 }
 const tableText = (value: any) => {
     if (value === undefined || value === null) return '-';
@@ -124,13 +125,13 @@ onMounted(() => {
                     <el-button type="primary" size="small" bg text @click="handleEdit(scope.$index, scope.row)">
                         编辑
                     </el-button>
-                    <el-button size="small" type="danger" bg text @click="handleDelete(scope.row)">
+                    <el-button size="small" type="danger" bg text @click="handleDelete(scope.$index)">
                         删除
                     </el-button>
                 </template>
             </el-table-column>
         </el-table>
-        <el-dialog v-model="dialogVisible" :title="props.rule.title" width="375">
+        <el-dialog v-model="dialogVisible" :title="props.rule.title" width="375" :before-close="resetForm">
             <el-form ref="formRef" :model="subForm" :rules="rules" :disabled="submitLoading" class="layouts"
                 v-bind="formProps">
                 <template v-if="formProps.inline">
