@@ -34,7 +34,7 @@ const prop = (field: string) => {
     }
     return field;
 }
-const emit = defineEmits(['action','update:modelValue']);
+const emit = defineEmits(['action', 'update:modelValue']);
 const handleAction = (group: any, field: any, _e: any) => {
     emit('action', {
         group,
@@ -43,7 +43,17 @@ const handleAction = (group: any, field: any, _e: any) => {
     })
 }
 const loading = ref(false)
-const options = ref(item.value?.extra.options);
+const getOptions = () => {
+    if (!props.item?.extra.options) return [];
+    if (typeof props.item?.extra.options === 'string') {
+        return form.value[props.item?.extra.options] || [];
+    }
+    if (props.item?.extra.options) {
+        return props.item?.extra.options;
+    }
+    return [];
+}
+const options = ref(getOptions());
 let timer: NodeJS.Timeout;
 const remoteMethod = (query: string) => {
     if (timer) clearTimeout(timer)
@@ -228,7 +238,7 @@ onUnmounted(() => {
                 <xl-marked-editor v-model="form[item.field]" v-bind="item.extra.props" />
             </template>
             <template v-else-if="item.component === 'admin-rule'">
-                <xl-admin-rule v-model="form[item.field]" v-bind="item.extra.props" :options="item.extra.options" />
+                <xl-admin-rule v-model="form[item.field]" v-bind="item.extra.props" :options="options" />
             </template>
             <template v-else-if="item.component === 'wangeditor'">
                 <xl-wangeditor v-model="form[item.field]" v-bind="item.extra.props" />
@@ -236,10 +246,13 @@ onUnmounted(() => {
             <template v-else-if="['radio', 'checkbox'].includes(item.component)">
                 <component :is="'el-' + item.component + '-group'" v-model="form[item.field]" v-bind="item.extra.props"
                     class="el-group">
-                    <component :is="'el-' + item.component" v-for="(sub, subIndex) in item.extra.options"
+                    <component :is="'el-' + item.component" v-for="(sub, subIndex) in options"
                         :key="subIndex" :value="sub.value" v-bind="item.extra.subProps">{{ sub.label }}
                     </component>
                 </component>
+            </template>
+            <template v-else-if="item.component === 'form-builder'">
+                <xl-form-builder v-model="form[item.field]" v-bind="item.extra.props" />
             </template>
             <!-- 自定义表单类 -->
             <!-- 常规表单类 -->

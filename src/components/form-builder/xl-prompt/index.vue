@@ -9,7 +9,6 @@ const props = withDefaults(defineProps<{
 }>(), {
     prompt: []
 });
-console.log(props.prompt);
 const getComponentName = (component: string) => {
     const customComponents = ['code','marked-text','copy','countdown','qrcode'];
     if (customComponents.includes(component)) {
