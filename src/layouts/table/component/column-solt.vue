@@ -13,7 +13,10 @@ const updateTableDataValue = (scope: any, value: any) => {
     emit('change', scope, value);
 }
 const tableDataPreview = (prop: string) => {
-    return props.tableData.map((item: any) => getTableValue(item, prop));
+    return props.tableData.map((item: any) => getTableValue(item, prop)).filter((item: any) => item);
+}
+const tableDataPreviewIndex = (row: any, prop: string) => {
+    return tableDataPreview(prop).findIndex((item: any) => item === getTableValue(row, prop));
 }
 const getComponentProps = (component: any, value: any, index?: number) => {
     let props = {
@@ -63,9 +66,10 @@ const getComponentValue = (component: any, value: any) => {
                     v-bind="{ ...column.extra?.component, ...item.props }">
                     <template v-for="(subChild, subName) in item.children" :index="subName" v-slot:[subName]>
                         <component :is="subChild.component" v-if="typeof subChild === 'object'" v-bind="subChild.props">
-                            <template v-for="(subSubChild, subSubName) in subChild.children" :index="subSubName" v-slot:[subSubName]>
+                            <template v-for="(subSubChild, subSubName) in subChild.children" :index="subSubName"
+                                v-slot:[subSubName]>
                                 <component :is="subSubChild.component" v-if="typeof subSubChild === 'object'"
-                                    v-bind="subSubChild.props"/>
+                                    v-bind="subSubChild.props" />
                                 <template v-else>{{ subSubChild }}</template>
                             </template>
                         </component>
@@ -82,7 +86,8 @@ const getComponentValue = (component: any, value: any) => {
             </template>
             <el-image v-else preview-teleported v-bind="column.extra?.component.props"
                 v-if="getTableValue(scope.row, column.prop)" :src="getTableValue(scope.row, column.prop)"
-                :preview-src-list="tableDataPreview(column.prop)"></el-image>
+                :preview-src-list="tableDataPreview(column.prop)"
+                :initial-index="tableDataPreviewIndex(scope.row, column.prop)"></el-image>
         </template>
 
         <template v-else>
