@@ -9,9 +9,15 @@ const { t } = useI18n();
 const props = withDefaults(defineProps<{
     modelValue: any[],
     rule?: any,
+    dialogProps?: any,
 }>(), {
     modelValue: () => [],
     rule: () => { },
+    dialogProps: () => {
+        return {
+            width: 375
+        }
+    },
 });
 const form = ref<any[]>(props.modelValue)
 const emit = defineEmits(['update:modelValue'])
@@ -131,7 +137,8 @@ onMounted(() => {
                 </template>
             </el-table-column>
         </el-table>
-        <el-dialog v-model="dialogVisible" :title="props.rule.title" width="375" :before-close="resetForm">
+        <el-dialog v-model="dialogVisible" :title="props.rule.title" :before-close="resetForm"
+            v-bind="props.dialogProps">
             <el-form ref="formRef" :model="subForm" :rules="rules" :disabled="submitLoading" class="layouts"
                 v-bind="formProps">
                 <template v-if="formProps.inline">

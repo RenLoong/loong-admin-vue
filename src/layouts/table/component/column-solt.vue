@@ -18,7 +18,7 @@ const tableDataPreview = (prop: string) => {
 const tableDataPreviewIndex = (row: any, prop: string) => {
     return tableDataPreview(prop).findIndex((item: any) => item === getTableValue(row, prop));
 }
-const getComponentProps = (component: any, value: any, index?: number) => {
+const getComponentProps = (component: any, value: any, index?: any) => {
     let props = {
         ...component.props
     };
@@ -43,6 +43,36 @@ const getComponentValue = (component: any, value: any) => {
     }
     return result;
 }
+const formatTableLinkHref = (href: string, row: any) => {
+    // 提取href中的变量
+    const variables = href.match(/{{(\w+)}}/g);
+    if (variables) {
+        for (let variable of variables) {
+            let variableName = variable.replace(/{{/g, '').replace(/}}/g, '').trim();
+            if (!variableName) {
+                continue;
+            }
+            href = href.replace(variable, getTableValue(row, variableName) || '');
+        }
+    }
+    return href;
+}
+const getTableLinkProps = (row: any, column: any) => {
+    let href = column.extra?.component.href;
+    if (!href) {
+        href = getTableValue(row, column.prop);
+    }
+    return {
+        ...column.extra?.component.props,
+        href: formatTableLinkHref(href, row)
+    }
+}
+const getTableLinkText = (row: any, prop: string, component: any) => {
+    if (component.text) {
+        return component.text;
+    }
+    return getTableValue(row, prop);
+}
 </script>
 <template>
     <template v-if="hasWhere(column.extra, scope.row)">
@@ -55,6 +85,9 @@ const getComponentValue = (component: any, value: any) => {
         </template>
         <template v-else-if="column.extra?.component.name === 'table-times'">
             <xl-table-times :data="scope.row" v-bind="column.extra?.component.props" />
+        </template>
+        <template v-else-if="column.extra?.component.name === 'table-media'">
+            <xl-table-media :data="getTableValue(scope.row, column.prop)" v-bind="column.extra?.component.props" />
         </template>
         <template v-else-if="column.extra?.component.name === 'copy'">
             <xl-copy :content="getTableValue(scope.row, column.prop)" v-bind="column.extra?.component.props" />
@@ -88,6 +121,11 @@ const getComponentValue = (component: any, value: any) => {
                 v-if="getTableValue(scope.row, column.prop)" :src="getTableValue(scope.row, column.prop)"
                 :preview-src-list="tableDataPreview(column.prop)"
                 :initial-index="tableDataPreviewIndex(scope.row, column.prop)"></el-image>
+        </template>
+        <template v-else-if="column.extra?.component.name === 'link'">
+            <el-link v-bind="getTableLinkProps(scope.row, column)">
+                {{ getTableLinkText(scope.row, column.prop, column.extra?.component) }}
+            </el-link>
         </template>
 
         <template v-else>

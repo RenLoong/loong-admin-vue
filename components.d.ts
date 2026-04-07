@@ -104,6 +104,7 @@ declare module '@vue/runtime-core' {
     XlStatistic: typeof import('./src/components/data-builder/xl-statistic/index.vue')['default']
     XlTableAction: typeof import('./src/components/table-builder/xl-table-action/index.vue')['default']
     XlTableColumnForm: typeof import('./src/components/table-builder/xl-table-column-form/index.vue')['default']
+    XlTableMedia: typeof import('./src/components/table-builder/xl-table-media/index.vue')['default']
     XlTableTimes: typeof import('./src/components/table-builder/xl-table-times/index.vue')['default']
     XlTableUserinfo: typeof import('./src/components/table-builder/xl-table-userinfo/index.vue')['default']
     XlWangeditor: typeof import('./src/components/form-builder/xl-wangeditor/index.vue')['default']
