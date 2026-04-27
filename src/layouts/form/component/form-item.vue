@@ -55,7 +55,7 @@ const getOptions = () => {
 }
 const options = ref(getOptions());
 let timer: NodeJS.Timeout;
-const remoteMethod = (query: string) => {
+const remoteMethod = (query: string, field: string | undefined) => {
     if (timer) clearTimeout(timer)
     if (query) {
         timer = setTimeout(() => {
@@ -63,6 +63,7 @@ const remoteMethod = (query: string) => {
             options.value = [];
             $http.post(item.value?.extra.remote.url, {
                 query: query,
+                field: field,
                 form: form.value
             }).then((res: any) => {
                 if (res.code === $http.ResponseCode.SUCCESS) {
@@ -81,7 +82,7 @@ const remoteMethod = (query: string) => {
         options.value = item.value?.extra.options;
     }
 }
-const autocompleteRemoteMethod = (query: string, cb: (arg: any) => void) => {
+const autocompleteRemoteMethod = (query: string, field: string | undefined, cb: (arg: any) => void) => {
     if (timer) clearTimeout(timer)
     if (query) {
         timer = setTimeout(() => {
@@ -89,6 +90,7 @@ const autocompleteRemoteMethod = (query: string, cb: (arg: any) => void) => {
             options.value = [];
             $http.post(item.value?.extra.remote.url, {
                 query: query,
+                field: field,
                 form: form.value
             }).then((res: any) => {
                 if (res.code === $http.ResponseCode.SUCCESS) {
@@ -118,21 +120,27 @@ const elProps = computed(() => {
                     ...item.value.extra.props,
                     remote: true,
                     filterable: true,
-                    remoteMethod: remoteMethod,
+                    remoteMethod: (query: string)=>{
+                        return remoteMethod(query,item.value?.field);
+                    },
                     loading: loading.value
                 };
             case 'mention':
                 return {
                     ...item.value.extra.props,
                     options: options.value,
-                    onSearch: remoteMethod,
+                    onSearch: (query: string)=>{
+                        return remoteMethod(query,item.value?.field);
+                    },
                     loading: loading.value
                 };
             case 'autocomplete':
                 return {
                     ...item.value.extra.props,
                     options: options.value,
-                    fetchSuggestions: autocompleteRemoteMethod,
+                    fetchSuggestions: (query: string, cb: (arg: any) => void)=>{
+                        return autocompleteRemoteMethod(query,item.value?.field,cb);
+                    },
                     loading: loading.value
                 };
         }
