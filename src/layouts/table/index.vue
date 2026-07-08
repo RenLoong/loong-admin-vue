@@ -64,12 +64,19 @@ onBeforeMount(() => {
 			screen.value = res.data.screen;
 			if (res.data.screen) {
 				showScreen.value = true;
-				for (const key in res.data.screen.form) {
+				search.value={
+					...res.data.screen.form,
+					...currentRoute.query,
+					page: 1,
+					total: 0,
+					limit: 10,
+				};
+				/* for (const key in res.data.screen.form) {
 					if (Object.prototype.hasOwnProperty.call(res.data.screen.form, key)) {
 						const element = res.data.screen.form[key];
 						search.value[key] = element;
 					}
-				}
+				} */
 				rule.value = res.data.screen.rule;
 				parseRules(rules, rule.value, undefined, search);
 			}

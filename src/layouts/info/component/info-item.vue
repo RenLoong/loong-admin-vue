@@ -112,11 +112,11 @@ onUnmounted(() => {
 
             <template v-else>
                 <template v-if="Array.isArray(getTableValue(data, item.field))">
-                    <template v-for="(item, index) in getTableValue(data, item.field)">
-                        <component :is="`${item.component}`" :key="index"
-                            v-bind="getComponentProps(item.extra, item, index)"
-                            v-if="getComponentValue(item.extra, item)">
-                            {{ getComponentValue(item.extra, item) }}</component>
+                    <template v-for="(itemData, index) in getTableValue(data, item.field)">
+                        <component :is="`${itemData.component}`" :key="index"
+                            v-bind="getComponentProps(itemData.extra, itemData, Number(index))"
+                            v-if="getComponentValue(itemData.extra, itemData)">
+                            {{ getComponentValue(itemData.extra, itemData) }}</component>
                     </template>
                 </template>
                 <component v-else :is="`${item.component}`"

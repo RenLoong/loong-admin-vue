@@ -90,8 +90,8 @@ const LoginRes = (res: any) => {
 		})
 	} else if (res.code === $http.ResponseCode.REDIRECT_CONFIRM) {
 		ElMessageBox.confirm(res.msg, t('message.tips'), {
-			confirmButtonText: res.data.confirmButtonText || t('message.redirectText'),
-			cancelButtonText: t('message.cancelText'),
+			confirmButtonText: res.data.confirmButtonText || t('button.redirectText'),
+			cancelButtonText: t('button.cancelText'),
 			type: 'warning'
 		}).then(() => {
 			globalThis.location.href = res.data.url;
@@ -102,7 +102,7 @@ const LoginRes = (res: any) => {
 		ElMessage.info(res.msg);
 	}
 }
-const stateStore=useStateStore();
+const stateStore = useStateStore();
 const setLanguare = (lang: LanguageInterface) => {
 	stateStore.setState('language', lang);
 	document.documentElement.setAttribute('lang', lang);
@@ -205,7 +205,8 @@ const setLanguare = (lang: LanguageInterface) => {
 							{{ WEBCONFIG.qrcode_login?.title }}</div>
 					</div>
 					<div class="py-4 flex flex-center text-info" v-if="WEBCONFIG.register?.enable">
-						<el-link href="#/register" type="primary" underline="never">{{ WEBCONFIG.register.link_text }}</el-link>
+						<el-link :href="WEBCONFIG.register.path ? WEBCONFIG.register.path : '#/register'" type="primary"
+							underline="never">{{ WEBCONFIG.register.link_text }}</el-link>
 					</div>
 					<div class="py-4 flex flex-center text-dark" v-if="WEBCONFIG.login?.user_agreement">
 						<template v-if="WEBCONFIG.login.user_agreement_config">
@@ -232,11 +233,12 @@ const setLanguare = (lang: LanguageInterface) => {
 @use "@/pages/login/login.css";
 
 .login {
-	.languare{
+	.languare {
 		position: absolute;
 		right: 20px;
-		top:20px;
+		top: 20px;
 	}
+
 	.login-form {
 		position: relative;
 		overflow: hidden;

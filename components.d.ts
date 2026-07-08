@@ -96,6 +96,7 @@ declare module '@vue/runtime-core' {
     XlDragSort: typeof import('./src/components/form-builder/xl-drag-sort/index.vue')['default']
     XlEcharts: typeof import('./src/components/data-builder/xl-echarts/index.vue')['default']
     XlFormBuilder: typeof import('./src/components/form-builder/xl-form-builder/index.vue')['default']
+    XlMap: typeof import('./src/components/form-builder/xl-map/index.vue')['default']
     XlMarkedEditor: typeof import('./src/components/form-builder/xl-marked-editor/index.vue')['default']
     XlMarkedText: typeof import('./src/components/form-builder/xl-marked-text/index.vue')['default']
     XlPrompt: typeof import('./src/components/form-builder/xl-prompt/index.vue')['default']

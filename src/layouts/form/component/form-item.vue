@@ -120,8 +120,8 @@ const elProps = computed(() => {
                     ...item.value.extra.props,
                     remote: true,
                     filterable: true,
-                    remoteMethod: (query: string)=>{
-                        return remoteMethod(query,item.value?.field);
+                    remoteMethod: (query: string) => {
+                        return remoteMethod(query, item.value?.field);
                     },
                     loading: loading.value
                 };
@@ -129,8 +129,8 @@ const elProps = computed(() => {
                 return {
                     ...item.value.extra.props,
                     options: options.value,
-                    onSearch: (query: string)=>{
-                        return remoteMethod(query,item.value?.field);
+                    onSearch: (query: string) => {
+                        return remoteMethod(query, item.value?.field);
                     },
                     loading: loading.value
                 };
@@ -138,8 +138,8 @@ const elProps = computed(() => {
                 return {
                     ...item.value.extra.props,
                     options: options.value,
-                    fetchSuggestions: (query: string, cb: (arg: any) => void)=>{
-                        return autocompleteRemoteMethod(query,item.value?.field,cb);
+                    fetchSuggestions: (query: string, cb: (arg: any) => void) => {
+                        return autocompleteRemoteMethod(query, item.value?.field, cb);
                     },
                     loading: loading.value
                 };
@@ -254,13 +254,16 @@ onUnmounted(() => {
             <template v-else-if="['radio', 'checkbox'].includes(item.component)">
                 <component :is="'el-' + item.component + '-group'" v-model="form[item.field]" v-bind="item.extra.props"
                     class="el-group">
-                    <component :is="'el-' + item.component" v-for="(sub, subIndex) in options"
-                        :key="subIndex" :value="sub.value" v-bind="item.extra.subProps">{{ sub.label }}
+                    <component :is="'el-' + item.component" v-for="(sub, subIndex) in options" :key="subIndex"
+                        :value="sub.value" v-bind="item.extra.subProps">{{ sub.label }}
                     </component>
                 </component>
             </template>
             <template v-else-if="item.component === 'form-builder'">
                 <xl-form-builder v-model="form[item.field]" v-bind="item.extra.props" />
+            </template>
+            <template v-else-if="item.component === 'map'">
+                <xl-map v-model="form[item.field]" v-bind="item.extra.props" />
             </template>
             <!-- 自定义表单类 -->
             <!-- 常规表单类 -->

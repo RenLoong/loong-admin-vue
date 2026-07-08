@@ -5,6 +5,7 @@ import "@/assets/css/theme.min.css";
 import "@/assets/css/common.min.css";
 import "@/assets/css/style.min.css";
 import App from './App.vue'
+import TlbsMap from 'tlbs-map-vue';
 import { createPinia } from 'pinia'
 const pinia = createPinia()
 import router from "@/routers";
@@ -35,4 +36,5 @@ import { i18n } from './locale';
 app.use(i18n);
 app.use(pinia);
 app.use(router);
+app.use(TlbsMap);
 app.mount('#app')
