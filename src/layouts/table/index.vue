@@ -7,7 +7,7 @@ import ruleComponent from '@/layouts/form/component/rule.vue'
 import inlineRuleComponent from '@/layouts/form/component/inline-rule.vue'
 import columnComponent from './component/column.vue'
 import columnExpand from "./component/column-expand.vue";
-import { ElForm, ElMessage, ElTable } from 'element-plus';
+import { ElForm, ElMessage, ElTable, type TableInstance, type FormInstance } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const emit = defineEmits(['confirm', 'cannel', 'loading']);
@@ -17,8 +17,8 @@ const props = withDefaults(defineProps<{
 	showDialogSubmit?: boolean
 }>(), {
 });
-const formRef = ref<InstanceType<typeof ElForm>>()
-const tableRef = ref<InstanceType<typeof ElTable>>()
+const formRef = ref<FormInstance>()
+const tableRef = ref<TableInstance>()
 const loading = ref(true);
 const showTable = ref(false);
 const currentRoute = router.currentRoute.value;
@@ -64,7 +64,7 @@ onBeforeMount(() => {
 			screen.value = res.data.screen;
 			if (res.data.screen) {
 				showScreen.value = true;
-				search.value={
+				search.value = {
 					...res.data.screen.form,
 					...currentRoute.query,
 					page: 1,

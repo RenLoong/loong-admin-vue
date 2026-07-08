@@ -5,7 +5,7 @@ import router from '@/routers';
 import { useClick } from '@/common/functions/action';
 import ruleComponent from '@/layouts/form/component/rule.vue'
 import inlineRuleComponent from '@/layouts/form/component/inline-rule.vue'
-import { ElForm, ElMessage } from 'element-plus';
+import { ElForm, ElMessage, type FormInstance } from 'element-plus';
 import type { CheckboxValueType } from 'element-plus'
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<{
 }>(), {
 });
 const emit = defineEmits(['confirm', 'cannel', 'loading']);
-const formRef = ref<InstanceType<typeof ElForm>>()
+const formRef = ref<FormInstance>()
 const loading = ref(true);
 const currentRoute = router.currentRoute.value;
 const action = ref<any>();
@@ -270,7 +270,7 @@ const download = (item: any) => {
 							<div class="image-item" v-for="(item, index) in imagesData" :key="index" v-bind="gridProps"
 								:class="{ 'image-selection': selection }">
 								<el-image :src="getTableValue(item, gridProps.image)" alt="" fit="cover"
-									class="image-item-img" :preview-src-list="srcList" :initial-index="index"
+									class="image-item-img" :preview-src-list="srcList" :initial-index="index as number"
 									show-progress>
 									<template #toolbar="{ actions, prev, next, reset, setActiveItem }">
 										<el-icon @click="prev">
