@@ -13,6 +13,7 @@
     "update-version": "node build-version.mjs"
   },
   "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
     "@types/qrcode": "^1.5.0",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",

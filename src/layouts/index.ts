@@ -10,6 +10,7 @@ import rechargeComponent from './payment/recharge.vue';
 import databoardComponent from './databoard/index.vue';
 import infoComponent from './info/index.vue';
 import examineComponent from './examine/index.vue';
+import wechatMenuComponent from './wechat-menu/index.vue';
 const components = {
     defaultComponent,
     formComponent,
@@ -22,7 +23,8 @@ const components = {
     rechargeComponent,
     databoardComponent,
     infoComponent,
-    examineComponent
+    examineComponent,
+    wechatMenuComponent
 }
 export type componentsType = keyof typeof components;
 export default components;
