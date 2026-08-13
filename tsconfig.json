@@ -21,13 +21,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": "./",
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ],
       "@/pages/*": [
-        "src/pages/*"
+        "./src/pages/*"
       ]
     },
   },
